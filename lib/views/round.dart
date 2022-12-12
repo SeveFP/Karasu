@@ -109,10 +109,12 @@ Widget buildCardView(String title, CardModel c,
     Function(String cardID, String answerID) onChanged) {
   return KarasuScaffold(
     title: title,
-    body: CardDisplay(
-      key: Key(c.id),
-      c: c,
-      onChanged: onChanged,
+    body: SingleChildScrollView(
+      child: CardDisplay(
+        key: Key(c.id),
+        c: c,
+        onChanged: onChanged,
+      ),
     ),
   );
 }
