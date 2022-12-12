@@ -58,6 +58,7 @@ class LogInFormState extends State<LogInForm> {
             },
           ),
           TextFormField(
+            obscureText: true,
             controller: passwordController,
             decoration: const InputDecoration(
               helperText: ' ',

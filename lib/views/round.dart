@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:karasu/models/deck.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:karasu/views/summary.dart';
@@ -166,10 +167,7 @@ class _CardDisplayState extends State<CardDisplay> {
         child: Column(
           children: [
             ListTile(
-              title: Text(
-                widget.c.title,
-                style: const TextStyle(fontWeight: FontWeight.w500),
-              ),
+              title: MarkdownBody(data: widget.c.title),
               leading: Icon(
                 Icons.contact_support_rounded,
                 color: Colors.blue[500],
@@ -209,10 +207,7 @@ class AnswerDisplay extends StatelessWidget {
         duration: const Duration(milliseconds: 1),
         child: ListTile(
           onTap: _handleTap,
-          title: Text(
-            answer.text,
-            style: const TextStyle(fontWeight: FontWeight.w500),
-          ),
+          title: MarkdownBody(data: answer.text),
           trailing: active
               ? const Icon(
                   Icons.circle,
