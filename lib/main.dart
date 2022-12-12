@@ -9,12 +9,13 @@ import 'package:karasu/views/login.dart';
 import 'package:karasu/views/popularDecks.dart';
 import 'package:karasu/widgets/karasuScaffold.dart';
 
-final toshokanURL = 'localhost';
+final toshokanURL = 'localhost:8080';
+final protocol = 'http://';
 late String username = '';
 late String password = '';
 
 Future<String> fetchAccessToken() async {
-  final url = Uri.parse('http://' + toshokanURL + ':8080/login');
+  final url = Uri.parse(protocol + toshokanURL + '/login');
   final credentials = {
     'username': username,
     'password': password,
@@ -38,7 +39,7 @@ void main() async {
   await initHiveForFlutter();
 
   final HttpLink httpLink = HttpLink(
-    'http://' + toshokanURL + ':8080/query',
+    protocol + toshokanURL + '/query',
   );
 
   final AuthLink authLink = AuthLink(

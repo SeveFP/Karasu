@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:karasu/models/deck.dart';
 import 'package:karasu/widgets/karasuScaffold.dart';
 
@@ -95,10 +96,7 @@ class CardSummary extends StatelessWidget {
         child: Column(
           children: [
             ListTile(
-              title: Text(
-                c.title,
-                style: const TextStyle(fontWeight: FontWeight.w500),
-              ),
+              title: MarkdownBody(data: c.title),
               tileColor:
                   isCorrect ? Colors.green.shade100 : Colors.red.shade100,
             ),
@@ -123,10 +121,7 @@ class AnswerDisplaySummary extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ListTile(
-      title: Text(
-        answer.text,
-        style: const TextStyle(fontWeight: FontWeight.w500),
-      ),
+      title: MarkdownBody(data: answer.text),
       leading: answer.isCorrect
           ? const Icon(
               Icons.check,
