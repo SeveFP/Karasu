@@ -17,7 +17,9 @@ class DeckDisplay extends StatelessWidget {
       onTap: () {
         Navigator.of(context).push(
           MaterialPageRoute(
-            builder: (context) => RoundView(deck: deck),
+            builder: (context) => deck.cards.isEmpty
+                ? RoundView(deck: deck)
+                : OfflineRoundView(deck: deck),
           ),
         );
       },
@@ -102,21 +104,55 @@ class _PopularDecksDisplayState extends State<PopularDecksDisplay> {
           return const Text('No decks');
         }
 
-        List decks = [];
+        List<DeckModel> decks = [];
 
         for (var e in edges) {
           if (e['node']?['cards'] != null) {
-            decks.add(e);
+            decks.add(DeckModel.fromJson(e['node']));
           }
         }
+
+        // Store popular decks locally for offline usage
+        OfflineStorage().storeDecks(decks);
 
         return ListView.builder(
             itemCount: decks.length,
             itemBuilder: (context, index) {
-              final d = decks[index]['node'];
-              return DeckDisplay(
-                  deck: DeckModel(d['id'], d['title'], d['description']));
+              return DeckDisplay(deck: decks[index]);
             });
+      },
+    );
+  }
+}
+
+class OfflineDecks extends StatefulWidget {
+  final OfflineStorage storage;
+
+  const OfflineDecks({super.key, required this.storage});
+
+  @override
+  State<OfflineDecks> createState() => _OfflineDecksState();
+}
+
+class _OfflineDecksState extends State<OfflineDecks> {
+  List<DeckModel> _decks = [];
+
+  @override
+  void initState() {
+    super.initState();
+    widget.storage.getDecks().then((value) {
+      setState(() {
+        _decks = value;
+      });
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return ListView.builder(
+      itemCount: _decks.length,
+      itemBuilder: (context, index) {
+        return DeckDisplay(deck: _decks[index]);
       },
     );
   }

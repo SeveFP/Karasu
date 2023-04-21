@@ -8,6 +8,7 @@ import 'package:flutter/rendering.dart';
 import 'package:karasu/views/login.dart';
 import 'package:karasu/views/popularDecks.dart';
 import 'package:karasu/widgets/karasuScaffold.dart';
+import 'package:karasu/models/deck.dart';
 
 final toshokanURL = 'localhost:8080';
 final protocol = 'http://';
@@ -72,6 +73,7 @@ class MyApp extends StatefulWidget {
 class _MyAppState extends State<MyApp> {
   late Future<String> accessToken;
   bool _hasLoggedIn = false;
+  bool _offlineMode = false;
 
   void _setHasLoggedIn(String u, String p) {
     setState(() {
@@ -83,15 +85,31 @@ class _MyAppState extends State<MyApp> {
 
   @override
   Widget build(BuildContext context) {
+    Widget body = ListView(
+      children: [
+        LoginView(credentialsCallback: _setHasLoggedIn),
+        TextButton(
+          child: const Text('Offline Mode'),
+          onPressed: () => setState(() {
+            _offlineMode = true;
+          }),
+        ),
+      ],
+    );
+
+    if (_hasLoggedIn) {
+      body = const PopularDecksDisplay();
+    }
+
+    if (_offlineMode) {
+      body = OfflineDecks(storage: OfflineStorage());
+    }
+
     return MaterialApp(
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: KarasuScaffold(
-        body: _hasLoggedIn
-            ? const PopularDecksDisplay()
-            : LoginView(credentialsCallback: _setHasLoggedIn),
-      ),
+      home: KarasuScaffold(body: body),
     );
   }
 }

@@ -105,6 +105,42 @@ class _RoundViewState extends State<RoundView> {
   }
 }
 
+class OfflineRoundView extends StatefulWidget {
+  final DeckModel deck;
+
+  const OfflineRoundView({super.key, required this.deck});
+
+  @override
+  State<OfflineRoundView> createState() => _OfflineRoundViewState();
+}
+
+class _OfflineRoundViewState extends State<OfflineRoundView> {
+  Map<String, String> answeredIDs = {};
+
+  var currentCardIndex = 0;
+  bool inProgress = true;
+
+  void _handleTap(String cardID, String answerID) {
+    setState(() {
+      answeredIDs[cardID] = answerID;
+
+      currentCardIndex++;
+      if (currentCardIndex >= widget.deck.cards.length) {
+        inProgress = false;
+      }
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return inProgress
+        ? buildCardView(
+            widget.deck.title, widget.deck.cards[currentCardIndex], _handleTap)
+        : buildSummary(
+            widget.deck.title, Summary(widget.deck.cards, answeredIDs));
+  }
+}
+
 Widget buildCardView(String title, CardModel c,
     Function(String cardID, String answerID) onChanged) {
   return KarasuScaffold(
