@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+
+const usernameKey = "karasu:toshokan-username";
+const passwordKey = "karasu:toshokan-password";
 
 class LoginView extends StatelessWidget {
   final Function(String username, String password) credentialsCallback;
@@ -7,7 +11,6 @@ class LoginView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     Size screenSize = MediaQuery.of(context).size;
-    Orientation orientation = MediaQuery.of(context).orientation;
 
     return Center(
       child: SizedBox(
@@ -36,6 +39,24 @@ class LogInFormState extends State<LogInForm> {
   final _formKey = GlobalKey<FormState>();
   final usernameController = TextEditingController();
   final passwordController = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+
+    Future.delayed(Duration.zero, () async {
+      const storage = FlutterSecureStorage();
+      String? username = await storage.read(key: usernameKey);
+      String? password = await storage.read(key: passwordKey);
+
+      setState(() {
+        if (username != null && password != null) {
+          usernameController.text = username;
+          passwordController.text = password;
+        }
+      });
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -76,6 +97,12 @@ class LogInFormState extends State<LogInForm> {
               child: ElevatedButton(
                 onPressed: () {
                   if (_formKey.currentState!.validate()) {
+                    const storage = FlutterSecureStorage();
+                    storage.write(
+                        key: usernameKey, value: usernameController.text);
+                    storage.write(
+                        key: passwordKey, value: passwordController.text);
+
                     widget.credentialsCallback(
                         usernameController.text, passwordController.text);
                   }

@@ -14,20 +14,16 @@ class RoundView extends StatefulWidget {
   const RoundView({super.key, required this.deck});
 
   final String query = """
-    query GetDeck(\$id: ID!){
-      deck(id: \$id){
+    query Cards(\$deckID: ID!, \$maxCards: Int!) {
+      cards(input: {deckID: \$deckID, maxCards: \$maxCards}) {
         id
         title
-        description
-        cards {
+        answers {
           id
-          title
-          answers {
-            id
-            text
-            isCorrect
-          }
+          text
+          isCorrect
         }
+        explanation
       }
     }
   """;
@@ -38,14 +34,14 @@ class RoundView extends StatefulWidget {
 
 class _RoundViewState extends State<RoundView> {
   List<CardModel> cards = [];
-  Map<String, String> answeredIDs = {};
+  Map<String, AnswerModel> answers = {};
 
   var currentCardIndex = 0;
   bool inProgress = true;
 
-  void _handleTap(String cardID, String answerID) {
+  void _handleTap(String cardID, AnswerModel answer) {
     setState(() {
-      answeredIDs[cardID] = answerID;
+      answers[cardID] = answer;
 
       currentCardIndex++;
       if (currentCardIndex >= cards.length) {
@@ -55,58 +51,65 @@ class _RoundViewState extends State<RoundView> {
   }
 
   @override
-  Widget build(BuildContext context) {
-    return Query(
-      options: QueryOptions(
+  void initState() {
+    super.initState();
+
+    Future.delayed(Duration.zero, () async {
+      var client = GraphQLProvider.of(context).value;
+      final QueryResult result = await client.query(QueryOptions(
+        fetchPolicy: FetchPolicy.noCache,
         document: gql(widget.query),
         variables: {
-          'id': widget.deck.id,
+          'deckID': widget.deck.id,
+          'maxCards': 10,
         },
-      ),
-      builder: (QueryResult result,
-          {VoidCallback? refetch, FetchMore? fetchMore}) {
-        if (cards.isEmpty) {
-          if (result.hasException) {
-            return Text(result.exception.toString());
-          }
+      ));
 
-          if (result.isLoading) {
-            return const LoadingWidget();
-          }
+      if (result.hasException) {
+        throw result.exception!.linkException!.originalException;
+      }
 
-          List? cardResults = result.data?['deck']?['cards'];
-          if (cardResults == null) {
-            cards.add(CardModel('id', 'No cards!', []));
-            return buildCardView(
-                widget.deck.title, cards[currentCardIndex], _handleTap);
-          }
+      List? cardResults = result.data?['cards'];
+      if (cardResults == null) {
+        cards.add(CardModel('id', 'No cards!', []));
+        return buildCardView(
+            widget.deck.title, cards[currentCardIndex], _handleTap);
+      }
 
-          for (var c in cardResults) {
-            var answers = <AnswerModel>[];
-            List? possibleAnswers = c['answers'];
-            if (possibleAnswers == null) {
-              continue;
-            }
-
-            for (var a in possibleAnswers) {
-              answers.add(AnswerModel(a['id'], a['text'], a['isCorrect']));
-            }
-
-            cards.add(CardModel(c['id'], c['title'], answers));
-          }
+      for (var c in cardResults) {
+        var answers = <AnswerModel>[];
+        List? possibleAnswers = c['answers'];
+        if (possibleAnswers == null) {
+          continue;
         }
 
-        return inProgress
-            ? buildCardView(
-                widget.deck.title, cards[currentCardIndex], _handleTap)
-            : buildSummary(widget.deck.title, Summary(cards, answeredIDs));
-      },
-    );
+        for (var a in possibleAnswers) {
+          answers.add(AnswerModel(a['id'], a['text'], a['isCorrect']));
+        }
+
+        cards.add(CardModel(c['id'], c['title'], answers));
+      }
+
+      setState(() {
+        cards = cards;
+      });
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if (cards.isEmpty) {
+      return const LoadingWidget();
+    }
+
+    return inProgress
+        ? buildCardView(widget.deck.title, cards[currentCardIndex], _handleTap)
+        : Summary(deckTitle: widget.deck.title, cards: cards, answers: answers);
   }
 }
 
 Widget buildCardView(String title, CardModel c,
-    Function(String cardID, String answerID) onChanged) {
+    Function(String cardID, AnswerModel answer) onChanged) {
   return KarasuScaffold(
     title: title,
     body: SingleChildScrollView(
@@ -121,7 +124,7 @@ Widget buildCardView(String title, CardModel c,
 
 class CardDisplay extends StatefulWidget {
   final CardModel c;
-  final Function(String cardID, String answerID) onChanged;
+  final Function(String cardID, AnswerModel answer) onChanged;
 
   const CardDisplay({super.key, required this.c, required this.onChanged});
 
@@ -130,21 +133,21 @@ class CardDisplay extends StatefulWidget {
 }
 
 class _CardDisplayState extends State<CardDisplay> {
-  String _selectedAnswerID = '';
+  AnswerModel? _selectedAnswer;
 
-  void _handleTap(String answerID) {
+  void _handleTap(AnswerModel answer) {
     setState(() {
       // Allow choosing an answer just once.
-      if (_selectedAnswerID != '') {
+      if (_selectedAnswer != null) {
         return;
       }
 
-      _selectedAnswerID = answerID.toString();
+      _selectedAnswer = answer;
 
       // Move onto the next card with a bit of delay
       // so the user can confirm visually which answer they picked.
       Timer(const Duration(milliseconds: 400), () {
-        widget.onChanged(widget.c.id, _selectedAnswerID);
+        widget.onChanged(widget.c.id, _selectedAnswer!);
       });
     });
   }
@@ -156,8 +159,8 @@ class _CardDisplayState extends State<CardDisplay> {
     for (var a in widget.c.answers) {
       answers.add(AnswerDisplay(
         answer: a,
-        active: _selectedAnswerID == a.id ? true : false,
-        disabled: _selectedAnswerID.isNotEmpty && _selectedAnswerID != a.id
+        active: _selectedAnswer?.id == a.id ? true : false,
+        disabled: _selectedAnswer != null && _selectedAnswer?.id != a.id
             ? true
             : false,
         onChanged: _handleTap,
@@ -188,7 +191,7 @@ class AnswerDisplay extends StatelessWidget {
   final AnswerModel answer;
   final bool active;
   final bool disabled;
-  final ValueChanged<String> onChanged;
+  final ValueChanged<AnswerModel> onChanged;
 
   const AnswerDisplay({
     super.key,
@@ -199,7 +202,7 @@ class AnswerDisplay extends StatelessWidget {
   });
 
   void _handleTap() {
-    onChanged(answer.id);
+    onChanged(answer);
   }
 
   @override

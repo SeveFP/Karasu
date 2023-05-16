@@ -1,47 +1,92 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
+import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:karasu/models/deck.dart';
 import 'package:karasu/widgets/karasuScaffold.dart';
 
-class Summary {
-  List<CardModel> cards = [];
-  Map<String, String> answeredIDs = {};
+class Summary extends StatefulWidget {
+  final String deckTitle;
+  final List<CardModel> cards;
+  final Map<String, AnswerModel> answers;
 
-  Summary(this.cards, this.answeredIDs);
+  const Summary(
+      {super.key,
+      required this.deckTitle,
+      required this.cards,
+      required this.answers});
+
+  @override
+  State<Summary> createState() => _SummaryState();
 }
 
-Widget buildSummary(String title, Summary summary) {
+class _SummaryState extends State<Summary> {
   List<CardSummary> cardSummaries = [];
   int totalCards = 0;
   int totalCorrect = 0;
 
-  for (var c in summary.cards) {
-    totalCards++;
+  List<String> answeredIDs = [];
 
-    for (var a in c.answers) {
-      var answeredID = summary.answeredIDs[c.id];
+  @override
+  void initState() {
+    super.initState();
 
-      if (a.id == answeredID && a.isCorrect) {
+    for (var c in widget.cards) {
+      totalCards++;
+
+      AnswerModel? answer = widget.answers[c.id];
+      if (answer != null && answer.isCorrect) {
         totalCorrect++;
       }
+
+      if (answer != null) {
+        answeredIDs.add(answer.id);
+      }
+
+      cardSummaries.add(CardSummary(
+        c: c,
+        answeredID: answer?.id ?? '',
+      ));
     }
 
-    cardSummaries.add(CardSummary(
-      c: c,
-      answeredID: summary.answeredIDs[c.id] ?? '',
-    ));
+    Future.delayed(Duration.zero, () {
+      try {
+        var client = GraphQLProvider.of(context).value;
+        client.mutate(
+          MutationOptions(
+            document: gql("""
+        mutation AnswerCards(\$answerIDs: [ID!]!) {
+          answerCards(input: {answerIDs: \$answerIDs}) {
+            answerIDs
+          }
+        }
+      """),
+            variables: {'answerIDs': answeredIDs},
+          ),
+        );
+      } catch (e) {
+        showDialog(
+            context: context,
+            builder: (context) => AlertDialog(
+                  title: const Text('Error'),
+                  content: Text(e.toString()),
+                ));
+      }
+    });
   }
 
-  return KarasuScaffold(
-    title: title,
-    body: ListView(children: [
-      ScoreSummary(
-        totalCards: totalCards,
-        totalCorrect: totalCorrect,
-      ),
-      ...cardSummaries
-    ]),
-  );
+  @override
+  Widget build(BuildContext context) {
+    return KarasuScaffold(
+      title: widget.deckTitle,
+      body: ListView(children: [
+        ScoreSummary(
+          totalCards: totalCards,
+          totalCorrect: totalCorrect,
+        ),
+        ...cardSummaries
+      ]),
+    );
+  }
 }
 
 class ScoreSummary extends StatelessWidget {

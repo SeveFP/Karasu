@@ -5,12 +5,13 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:flutter/rendering.dart';
+import 'package:karasu/models/store.dart';
 import 'package:karasu/views/login.dart';
 import 'package:karasu/views/popularDecks.dart';
 import 'package:karasu/widgets/karasuScaffold.dart';
 
-final toshokanURL = 'localhost:8080';
-final protocol = 'http://';
+const toshokanURL = 'localhost:8080';
+const protocol = 'http://';
 late String username = '';
 late String password = '';
 
@@ -37,6 +38,8 @@ void main() async {
   // We're using HiveStore for persistence,
   // so we need to initialize Hive.
   await initHiveForFlutter();
+
+  await KStore.load();
 
   final HttpLink httpLink = HttpLink(
     protocol + toshokanURL + '/query',
@@ -83,15 +86,21 @@ class _MyAppState extends State<MyApp> {
 
   @override
   Widget build(BuildContext context) {
+    Widget body = ListView(
+      children: [
+        LoginView(credentialsCallback: _setHasLoggedIn),
+      ],
+    );
+
+    if (_hasLoggedIn) {
+      body = const PopularDecksDisplay();
+    }
+
     return MaterialApp(
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: KarasuScaffold(
-        body: _hasLoggedIn
-            ? const PopularDecksDisplay()
-            : LoginView(credentialsCallback: _setHasLoggedIn),
-      ),
+      home: KarasuScaffold(body: body),
     );
   }
 }

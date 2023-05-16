@@ -4,6 +4,8 @@ import 'package:karasu/models/deck.dart';
 import 'package:karasu/views/round.dart';
 import 'package:karasu/widgets/loading.dart';
 
+import '../models/store.dart';
+
 class DeckDisplay extends StatelessWidget {
   final DeckModel deck;
 
@@ -16,9 +18,9 @@ class DeckDisplay extends StatelessWidget {
       splashColor: Colors.amber,
       onTap: () {
         Navigator.of(context).push(
-          MaterialPageRoute(
-            builder: (context) => RoundView(deck: deck),
-          ),
+          MaterialPageRoute(builder: (context) {
+            return RoundView(deck: deck);
+          }),
         );
       },
       child: Card(
@@ -102,20 +104,19 @@ class _PopularDecksDisplayState extends State<PopularDecksDisplay> {
           return const Text('No decks');
         }
 
-        List decks = [];
+        List<DeckModel> decks = [];
 
         for (var e in edges) {
-          if (e['node']?['cards'] != null) {
-            decks.add(e);
-          }
+          decks.add(DeckModel.fromJson(e['node']));
         }
+
+        // Store popular decks locally for offline usage
+        KStore().addDecks(decks);
 
         return ListView.builder(
             itemCount: decks.length,
             itemBuilder: (context, index) {
-              final d = decks[index]['node'];
-              return DeckDisplay(
-                  deck: DeckModel(d['id'], d['title'], d['description']));
+              return DeckDisplay(deck: decks[index]);
             });
       },
     );
