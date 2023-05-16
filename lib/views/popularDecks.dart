@@ -4,6 +4,8 @@ import 'package:karasu/models/deck.dart';
 import 'package:karasu/views/round.dart';
 import 'package:karasu/widgets/loading.dart';
 
+import '../models/store.dart';
+
 class DeckDisplay extends StatelessWidget {
   final DeckModel deck;
 
@@ -16,11 +18,9 @@ class DeckDisplay extends StatelessWidget {
       splashColor: Colors.amber,
       onTap: () {
         Navigator.of(context).push(
-          MaterialPageRoute(
-            builder: (context) => deck.cards.isEmpty
-                ? RoundView(deck: deck)
-                : OfflineRoundView(deck: deck),
-          ),
+          MaterialPageRoute(builder: (context) {
+            return RoundView(deck: deck);
+          }),
         );
       },
       child: Card(
@@ -107,52 +107,17 @@ class _PopularDecksDisplayState extends State<PopularDecksDisplay> {
         List<DeckModel> decks = [];
 
         for (var e in edges) {
-          if (e['node']?['cards'] != null) {
-            decks.add(DeckModel.fromJson(e['node']));
-          }
+          decks.add(DeckModel.fromJson(e['node']));
         }
 
         // Store popular decks locally for offline usage
-        OfflineStorage().storeDecks(decks);
+        KStore().addDecks(decks);
 
         return ListView.builder(
             itemCount: decks.length,
             itemBuilder: (context, index) {
               return DeckDisplay(deck: decks[index]);
             });
-      },
-    );
-  }
-}
-
-class OfflineDecks extends StatefulWidget {
-  final OfflineStorage storage;
-
-  const OfflineDecks({super.key, required this.storage});
-
-  @override
-  State<OfflineDecks> createState() => _OfflineDecksState();
-}
-
-class _OfflineDecksState extends State<OfflineDecks> {
-  List<DeckModel> _decks = [];
-
-  @override
-  void initState() {
-    super.initState();
-    widget.storage.getDecks().then((value) {
-      setState(() {
-        _decks = value;
-      });
-    });
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return ListView.builder(
-      itemCount: _decks.length,
-      itemBuilder: (context, index) {
-        return DeckDisplay(deck: _decks[index]);
       },
     );
   }

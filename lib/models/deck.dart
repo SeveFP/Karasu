@@ -1,14 +1,8 @@
-import 'dart:async';
-import 'dart:convert';
-import 'dart:io';
-
-import 'package:path_provider/path_provider.dart';
-
 class DeckModel {
-  late String id;
-  late String title;
-  late String description;
-  late List<CardModel> cards;
+  String id = "";
+  String title = "";
+  String description = "";
+  List<CardModel> cards = [];
 
   DeckModel(this.id, this.title, this.description);
 
@@ -25,6 +19,9 @@ class DeckModel {
           description = value;
           break;
         case "cards":
+          if (value == null) {
+            break;
+          }
           var list = value as List;
           cards = list.map((card) => CardModel.fromJson(card)).toList();
           break;
@@ -92,38 +89,18 @@ class AnswerModel {
       };
 }
 
-class OfflineStorage {
-  Future<String> get _localPath async {
-    final directory = await getApplicationDocumentsDirectory();
+class DealModel {
+  int deckID;
+  List<CardModel> cards;
 
-    return directory.path;
-  }
+  DealModel(this.deckID, this.cards);
 
-  Future<File> get _localFile async {
-    final path = await _localPath;
-    return File('$path/offline_decks.json');
-  }
+  DealModel.fromJson(Map<String, dynamic> json)
+      : deckID = json['id'],
+        cards = json['cards'].map((card) => CardModel.fromJson(card));
 
-  Future<List<DeckModel>> getDecks() async {
-    try {
-      final file = await _localFile;
-
-      final content = await file.readAsString();
-
-      Map<String, dynamic> parsedContent = json.decode(content);
-      var jsonDecks = parsedContent['decks'] as List;
-
-      return jsonDecks.map((deck) => DeckModel.fromJson(deck)).toList();
-    } catch (e) {
-      return [];
-    }
-  }
-
-  Future<File> storeDecks(List<DeckModel> decks) async {
-    final file = await _localFile;
-
-    Map<String, dynamic> content = {'decks': decks};
-
-    return file.writeAsString(json.encode(content));
-  }
+  Map<String, dynamic> toJson() => {
+        'id': deckID,
+        'cards': cards.map((card) => card.toJson()),
+      };
 }
