@@ -6,12 +6,13 @@ import 'package:http/http.dart' as http;
 import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:flutter/rendering.dart';
 import 'package:karasu/models/store.dart';
+import 'package:karasu/views/create_card.dart';
 import 'package:karasu/views/login.dart';
 import 'package:karasu/views/popularDecks.dart';
 import 'package:karasu/widgets/karasuScaffold.dart';
 
 const toshokanURL = 'localhost:8080';
-const protocol = 'http://';
+const protocol = 'https://';
 late String username = '';
 late String password = '';
 
@@ -51,9 +52,14 @@ void main() async {
 
   final Link link = authLink.concat(httpLink);
 
+  final _loggerLink = LoggerLink();
+
+  _loggerLink.concat(link);
+
   ValueNotifier<GraphQLClient> client = ValueNotifier(
     GraphQLClient(
-      link: link,
+      // link: link,
+      link: _loggerLink.concat(link),
       // The default store is the InMemoryStore, which does NOT persist to disk
       cache: GraphQLCache(store: InMemoryStore()),
     ),
@@ -96,6 +102,7 @@ class _MyAppState extends State<MyApp> {
       body = const PopularDecksDisplay();
     }
 
+    // body = const CreateCard();
     return MaterialApp(
       theme: ThemeData(
         primarySwatch: Colors.blue,
@@ -103,4 +110,24 @@ class _MyAppState extends State<MyApp> {
       home: KarasuScaffold(body: body),
     );
   }
+}
+
+// TODO REMOVE THIS. ONLY DEBUGGING PURPOSES
+class LoggerLink extends Link {
+  @override
+  Stream<Response> request(
+    Request request, [
+    NextLink? forward,
+  ]) {
+    Stream<Response> response = forward!(request).map((Response fetchResult) {
+      print("Request: " + request.toString());
+      return fetchResult;
+    }).handleError((error) {
+      // throw error;
+    });
+
+    return response;
+  }
+
+  LoggerLink();
 }

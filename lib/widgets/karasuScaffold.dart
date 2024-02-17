@@ -1,9 +1,13 @@
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:karasu/views/create_card.dart';
+import 'package:karasu/views/popularDecks.dart';
 
 class KarasuScaffold extends StatefulWidget {
-  final Widget body;
+  late Widget body;
   final String? title;
-  const KarasuScaffold({super.key, required this.body, this.title});
+
+  KarasuScaffold({super.key, required this.body, this.title});
 
   @override
   State<KarasuScaffold> createState() => _KarasuScaffoldState();
@@ -19,26 +23,33 @@ class _KarasuScaffoldState extends State<KarasuScaffold> {
       appBar: AppBar(
         actions: <Widget>[
           IconButton(
-            icon: Icon(
-              Icons.wifi_off,
+            icon: const Icon(
+              Icons.new_label_sharp,
               color: Colors.white,
             ),
             onPressed: () {
               setState(() {
-                // widget.body = OfflineDecks();
+                widget.body = CreateCard();
               });
             },
           )
         ],
-        title: RichText(
-          text: TextSpan(
-            children: <TextSpan>[
-              const TextSpan(text: 'Karasu', style: TextStyle(fontSize: 24)),
-              const TextSpan(
-                  text: '𓅂',
-                  style: TextStyle(color: Colors.black, fontSize: 18)),
-              TextSpan(text: title),
-            ],
+        title: InkWell(
+          onTap: () {
+            setState(() {
+              widget.body = const PopularDecksDisplay();
+            });
+          },
+          child: RichText(
+            text: TextSpan(
+              children: <TextSpan>[
+                const TextSpan(text: 'Karasu', style: TextStyle(fontSize: 24)),
+                const TextSpan(
+                    text: '𓅂',
+                    style: TextStyle(color: Colors.black, fontSize: 18)),
+                TextSpan(text: title),
+              ],
+            ),
           ),
         ),
       ),
