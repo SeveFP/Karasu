@@ -19,8 +19,6 @@ class CreateCard extends StatefulWidget {
 
 class _CreateCardState extends State<CreateCard> {
   submitAndRestartForm() {
-    print("ginna submit and restart");
-    print(widget.cardModel.toJson());
     widget.cardModel.answers = widget.answerModels;
     List<CreateAnswerModel> newAnswers = <CreateAnswerModel>[];
     for (var i = 0; i < widget.answerModels.length; i++) {
@@ -69,15 +67,12 @@ class _CreateCardState extends State<CreateCard> {
       widget.createTitle = CreateTitle(
           key: UniqueKey(),
           onChangedCallback: (text) => setState(() {
-                print("putting t");
                 widget.cardModel.title = text;
-                print(widget.cardModel.toJson());
               }));
 
       widget.createExplanation = CreateExplanation(
           key: UniqueKey(),
           onChangedCallback: (text) => setState(() {
-                print(widget.cardModel.toJson());
                 widget.cardModel.explanation = text;
               }));
 
@@ -87,8 +82,6 @@ class _CreateCardState extends State<CreateCard> {
   }
 
   submitCreateCardForm(BuildContext context, CreateCardModel cardModel) {
-    print("submitting card");
-    print(cardModel.toJson());
     Future.delayed(Duration.zero, () async {
       try {
         var client = GraphQLProvider.of(context).value;
@@ -104,11 +97,6 @@ class _CreateCardState extends State<CreateCard> {
             variables: {'card': cardModel.toJson()},
           ),
         );
-
-        print("result from mutation");
-        print(result.data);
-        print(result.exception);
-        print(result.toString());
       } catch (e) {
         showDialog(
             context: context,
@@ -244,8 +232,7 @@ class _DeckIDDropDownState extends State<DeckIDDropDown> {
   @override
   Widget build(BuildContext context) {
     List<DropdownMenuEntry<String>> deckOptions = widget.deckOptions;
-    print("buildingdropwdonw");
-    print(deckOptions);
+
     return DropdownMenu<String>(
       enableFilter: true,
       leadingIcon: const Icon(Icons.search),
@@ -381,8 +368,10 @@ class _CreateExplanationState extends State<CreateExplanation> {
 extension ExtendedWidgetList on List<Widget> {
   /// Insert [widget] between each member of this list
   List<Widget> insertBetween(Widget widget) {
-    if (this.length > 1) {
-      for (var i = this.length - 1; i > 0; i--) this.insert(i, widget);
+    if (length > 1) {
+      for (var i = length - 1; i > 0; i--) {
+        insert(i, widget);
+      }
     }
 
     return this;
