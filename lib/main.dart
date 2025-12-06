@@ -109,6 +109,7 @@ class _MyAppState extends State<MyApp> {
     // body = const CreateCard();
     return MaterialApp(
       theme: ThemeData(
+        useMaterial3: false,
         primarySwatch: Colors.blue,
       ),
       home: KarasuScaffold(body: body),
