@@ -46,6 +46,8 @@ class ConfigService {
             secondaryColor: 0xFF625B71,
             tertiaryColor: 0xFF7D5260,
           ),
+          debugPaintSizeEnabled: false,
+          themeMode: AppThemeMode.system,
         );
       }
     }
@@ -60,6 +62,8 @@ class ConfigService {
       logoPath: baseConfig.logoPath,
       logoBackgroundColor: baseConfig.logoBackgroundColor,
       colorScheme: baseConfig.colorScheme,
+      debugPaintSizeEnabled: baseConfig.debugPaintSizeEnabled,
+      themeMode: baseConfig.themeMode,
     );
 
     print('TOSHOKAN_URL: ${_config.toshokanURL}');

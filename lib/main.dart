@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart' as rendering;
+import 'package:flutter/rendering.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:karasu/models/store.dart';
+import 'package:karasu/models/app_config.dart';
 import 'package:karasu/services/auth_service.dart';
 import 'package:karasu/services/config_service.dart';
 import 'package:karasu/services/graphql_service.dart';
@@ -10,14 +11,13 @@ import 'package:karasu/views/popularDecks.dart';
 import 'package:karasu/widgets/karasuScaffold.dart';
 
 void main() async {
-  rendering.debugPaintSizeEnabled = true;
   await initHiveForFlutter();
   await KStore.load();
 
-  // Load configuration
   await ConfigService().loadConfig();
 
-  // Initialize GraphQL
+  debugPaintSizeEnabled = ConfigService().config.debugPaintSizeEnabled;
+
   await GraphQLService().initialize();
 
   runApp(const MyApp());
@@ -55,6 +55,18 @@ class _MyAppState extends State<MyApp> {
       body = const PopularDecksDisplay();
     }
 
+    final themeMode = () {
+      switch (config.themeMode) {
+        case AppThemeMode.light:
+          return ThemeMode.light;
+        case AppThemeMode.dark:
+          return ThemeMode.dark;
+        case AppThemeMode.system:
+        default:
+          return ThemeMode.system;
+      }
+    }();
+
     return GraphQLProvider(
       client: graphqlService.client,
       child: MaterialApp(
@@ -73,6 +85,7 @@ class _MyAppState extends State<MyApp> {
             brightness: Brightness.dark,
           ),
         ),
+        themeMode: themeMode,
         home: KarasuScaffold(body: body),
       ),
     );

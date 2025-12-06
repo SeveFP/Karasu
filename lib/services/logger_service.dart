@@ -1,5 +1,4 @@
 import 'package:logger/logger.dart';
-import 'package:flutter/foundation.dart';
 
 class LoggerService {
   static final Logger _logger = Logger(
@@ -10,7 +9,7 @@ class LoggerService {
       lineLength: 120,
       colors: true,
       printEmojis: true,
-      printTime: true,
+      dateTimeFormat: DateTimeFormat.dateAndTime,
     ),
   );
 

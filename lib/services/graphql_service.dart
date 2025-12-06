@@ -23,7 +23,7 @@ class GraphQLService {
     final authService = AuthService();
 
     final HttpLink httpLink = HttpLink(
-      config.protocol + config.toshokanURL + '/query',
+      '${config.protocol}${config.toshokanURL}/query',
     );
 
     final AuthLink authLink = AuthLink(
@@ -56,6 +56,7 @@ class _LoggerLink extends Link {
   ]) {
     return forward!(request).map((Response fetchResult) {
       _logger.d('GraphQL Request: ${request.operation.operationName}');
+      _logger.d('GraphQL Response: ${fetchResult.data}');
       return fetchResult;
     }).handleError((error) {
       _logger.e('GraphQL Error', error: error);

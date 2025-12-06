@@ -8,5 +8,6 @@
         "primaryColor": 4294967295,
         "secondaryColor": 4294902015,
         "tertiaryColor": 4294967280
-    }
+    },
+    "themeMode": "light"
 }
