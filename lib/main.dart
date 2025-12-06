@@ -6,31 +6,35 @@ import 'package:http/http.dart' as http;
 import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:flutter/rendering.dart';
 import 'package:karasu/models/store.dart';
-import 'package:karasu/views/create_card.dart';
 import 'package:karasu/views/login.dart';
 import 'package:karasu/views/popularDecks.dart';
 import 'package:karasu/widgets/karasuScaffold.dart';
 
-const toshokanURL = 'localhost:8080';
+const toshokanURL =
+    String.fromEnvironment("toshokanURL", defaultValue: "localhost:8080");
 const protocol = 'https://';
 late String username = '';
 late String password = '';
 
 Future<String> fetchAccessToken() async {
+  if (username.isEmpty || password.isEmpty) {
+    throw Exception('Username or password cannot be empty');
+  }
+
   final url = Uri.parse(protocol + toshokanURL + '/login');
   final credentials = {
     'username': username,
     'password': password,
   };
-
   final response = await http.post(url,
       body: json.encode(credentials),
       headers: {"Content-Type": "application/json"});
+
   if (response.statusCode == 200) {
     final res = jsonDecode(response.body);
     return 'Bearer ' + res['token'];
   } else {
-    throw Exception('Failed to login');
+    throw Exception('Failed to login: ${response.body}');
   }
 }
 
@@ -52,14 +56,14 @@ void main() async {
 
   final Link link = authLink.concat(httpLink);
 
-  final _loggerLink = LoggerLink();
+  final loggerLink = LoggerLink();
 
-  _loggerLink.concat(link);
+  loggerLink.concat(link);
 
   ValueNotifier<GraphQLClient> client = ValueNotifier(
     GraphQLClient(
       // link: link,
-      link: _loggerLink.concat(link),
+      link: loggerLink.concat(link),
       // The default store is the InMemoryStore, which does NOT persist to disk
       cache: GraphQLCache(store: InMemoryStore()),
     ),
@@ -105,6 +109,7 @@ class _MyAppState extends State<MyApp> {
     // body = const CreateCard();
     return MaterialApp(
       theme: ThemeData(
+        useMaterial3: false,
         primarySwatch: Colors.blue,
       ),
       home: KarasuScaffold(body: body),
@@ -123,7 +128,7 @@ class LoggerLink extends Link {
       print("Request: " + request.toString());
       return fetchResult;
     }).handleError((error) {
-      // throw error;
+      print("Error: " + error.toString());
     });
 
     return response;

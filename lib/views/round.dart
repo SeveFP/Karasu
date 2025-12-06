@@ -1,7 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_markdown/flutter_markdown.dart';
+import 'package:flutter_markdown_plus/flutter_markdown_plus.dart';
 import 'package:karasu/models/deck.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:karasu/views/summary.dart';
@@ -66,7 +66,7 @@ class _RoundViewState extends State<RoundView> {
       ));
 
       if (result.hasException) {
-        throw result.exception!.linkException!.originalException;
+        throw Exception(result.exception!.linkException!.originalException);
       }
 
       List? cardResults = result.data?['cards'];
