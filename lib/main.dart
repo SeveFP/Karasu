@@ -9,10 +9,8 @@ import 'package:karasu/models/store.dart';
 import 'package:karasu/views/login.dart';
 import 'package:karasu/views/popularDecks.dart';
 import 'package:karasu/widgets/karasuScaffold.dart';
+import 'package:karasu/services/config_service.dart';
 
-const toshokanURL =
-    String.fromEnvironment("toshokanURL", defaultValue: "localhost:8080");
-const protocol = 'https://';
 late String username = '';
 late String password = '';
 
@@ -21,7 +19,8 @@ Future<String> fetchAccessToken() async {
     throw Exception('Username or password cannot be empty');
   }
 
-  final url = Uri.parse(protocol + toshokanURL + '/login');
+  final config = ConfigService().config;
+  final url = Uri.parse(config.protocol + config.toshokanURL + '/login');
   final credentials = {
     'username': username,
     'password': password,
@@ -40,14 +39,15 @@ Future<String> fetchAccessToken() async {
 
 void main() async {
   debugPaintSizeEnabled = false;
-  // We're using HiveStore for persistence,
-  // so we need to initialize Hive.
   await initHiveForFlutter();
-
   await KStore.load();
 
+  // Load configuration (will try dev config first)
+  await ConfigService().loadConfig();
+  final config = ConfigService().config;
+
   final HttpLink httpLink = HttpLink(
-    protocol + toshokanURL + '/query',
+    config.protocol + config.toshokanURL + '/query',
   );
 
   final AuthLink authLink = AuthLink(
@@ -55,16 +55,11 @@ void main() async {
   );
 
   final Link link = authLink.concat(httpLink);
-
   final loggerLink = LoggerLink();
-
-  loggerLink.concat(link);
 
   ValueNotifier<GraphQLClient> client = ValueNotifier(
     GraphQLClient(
-      // link: link,
       link: loggerLink.concat(link),
-      // The default store is the InMemoryStore, which does NOT persist to disk
       cache: GraphQLCache(store: InMemoryStore()),
     ),
   );
@@ -96,6 +91,8 @@ class _MyAppState extends State<MyApp> {
 
   @override
   Widget build(BuildContext context) {
+    final config = ConfigService().config;
+
     Widget body = ListView(
       children: [
         LoginView(credentialsCallback: _setHasLoggedIn),
@@ -106,18 +103,27 @@ class _MyAppState extends State<MyApp> {
       body = const PopularDecksDisplay();
     }
 
-    // body = const CreateCard();
     return MaterialApp(
+      title: config.appName,
       theme: ThemeData(
-        useMaterial3: false,
-        primarySwatch: Colors.blue,
+        useMaterial3: true,
+        colorScheme: ColorScheme.fromSeed(
+          seedColor: Color(config.colorScheme.primaryColor),
+          brightness: Brightness.light,
+        ),
+      ),
+      darkTheme: ThemeData(
+        useMaterial3: true,
+        colorScheme: ColorScheme.fromSeed(
+          seedColor: Color(config.colorScheme.primaryColor),
+          brightness: Brightness.dark,
+        ),
       ),
       home: KarasuScaffold(body: body),
     );
   }
 }
 
-// TODO REMOVE THIS. ONLY DEBUGGING PURPOSES
 class LoggerLink extends Link {
   @override
   Stream<Response> request(

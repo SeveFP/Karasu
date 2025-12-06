@@ -1,5 +1,6 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:karasu/services/config_service.dart';
 import 'package:karasu/views/create_card.dart';
 import 'package:karasu/views/popularDecks.dart';
 
@@ -16,6 +17,7 @@ class KarasuScaffold extends StatefulWidget {
 class _KarasuScaffoldState extends State<KarasuScaffold> {
   @override
   Widget build(BuildContext context) {
+    final config = ConfigService().config;
     var title = widget.title;
     title = title != null ? '- $title' : '';
 
@@ -40,16 +42,41 @@ class _KarasuScaffoldState extends State<KarasuScaffold> {
               widget.body = const PopularDecksDisplay();
             });
           },
-          child: RichText(
-            text: TextSpan(
-              children: <TextSpan>[
-                const TextSpan(text: 'Karasu', style: TextStyle(fontSize: 24)),
-                const TextSpan(
-                    text: '𓅂',
-                    style: TextStyle(color: Colors.black, fontSize: 18)),
-                TextSpan(text: title),
-              ],
-            ),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(
+                padding: const EdgeInsets.all(4),
+                decoration: config.logoBackgroundColor != null
+                    ? BoxDecoration(
+                        color: Color(config.logoBackgroundColor!),
+                        borderRadius: BorderRadius.circular(4),
+                      )
+                    : null,
+                child: Image.asset(
+                  config.logoPath,
+                  height: 32,
+                  errorBuilder: (context, error, stackTrace) {
+                    return RichText(
+                      text: TextSpan(
+                        children: <TextSpan>[
+                          TextSpan(text: config.appName, style: const TextStyle(fontSize: 24)),
+                          const TextSpan(
+                              text: '𓅂',
+                              style: TextStyle(color: Colors.black, fontSize: 18)),
+                          TextSpan(text: title),
+                        ],
+                      ),
+                    );
+                  },
+                ),
+              ),
+              const SizedBox(width: 8),
+              Text(
+                '${config.appName}$title',
+                style: const TextStyle(fontSize: 24),
+              ),
+            ],
           ),
         ),
       ),
