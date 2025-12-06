@@ -17,6 +17,10 @@ late String username = '';
 late String password = '';
 
 Future<String> fetchAccessToken() async {
+  if (username.isEmpty || password.isEmpty) {
+    throw Exception('Username or password cannot be empty');
+  }
+
   final url = Uri.parse(protocol + toshokanURL + '/login');
   final credentials = {
     'username': username,
@@ -25,11 +29,12 @@ Future<String> fetchAccessToken() async {
   final response = await http.post(url,
       body: json.encode(credentials),
       headers: {"Content-Type": "application/json"});
+
   if (response.statusCode == 200) {
     final res = jsonDecode(response.body);
     return 'Bearer ' + res['token'];
   } else {
-    throw Exception('Failed to login');
+    throw Exception('Failed to login: ${response.body}');
   }
 }
 
@@ -122,7 +127,7 @@ class LoggerLink extends Link {
       print("Request: " + request.toString());
       return fetchResult;
     }).handleError((error) {
-      // throw error;
+      print("Error: " + error.toString());
     });
 
     return response;
