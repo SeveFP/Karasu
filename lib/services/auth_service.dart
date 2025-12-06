@@ -30,7 +30,7 @@ class AuthService {
     }
 
     final config = ConfigService().config;
-    final url = Uri.parse(config.protocol + config.toshokanURL + '/login');
+    final url = Uri.parse('${config.protocol}${config.toshokanURL}/login');
     final credentials = {
       'username': _username,
       'password': _password,
@@ -44,7 +44,7 @@ class AuthService {
       if (response.statusCode == 200) {
         final res = jsonDecode(response.body);
         _logger.i('Login successful');
-        return 'Bearer ' + res['token'];
+        return 'Bearer ${res['token']}';
       } else {
         throw Exception('Failed to login: ${response.body}');
       }

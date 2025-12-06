@@ -5,7 +5,7 @@ import 'package:flutter_markdown_plus/flutter_markdown_plus.dart';
 import 'package:karasu/models/deck.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:karasu/views/summary.dart';
-import 'package:karasu/widgets/karasuScaffold.dart';
+import 'package:karasu/widgets/karasu_scaffold.dart';
 import 'package:karasu/widgets/loading.dart';
 
 class RoundView extends StatefulWidget {

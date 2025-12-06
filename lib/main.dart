@@ -8,7 +8,7 @@ import 'package:karasu/services/config_service.dart';
 import 'package:karasu/services/graphql_service.dart';
 import 'package:karasu/views/login.dart';
 import 'package:karasu/views/popularDecks.dart';
-import 'package:karasu/widgets/karasuScaffold.dart';
+import 'package:karasu/widgets/karasu_scaffold.dart';
 
 void main() async {
   await initHiveForFlutter();

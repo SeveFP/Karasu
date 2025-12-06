@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_markdown_plus/flutter_markdown_plus.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:karasu/models/deck.dart';
-import 'package:karasu/widgets/karasuScaffold.dart';
+import 'package:karasu/widgets/karasu_scaffold.dart';
 
 class Summary extends StatefulWidget {
   final String deckTitle;

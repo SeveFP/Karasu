@@ -18,7 +18,7 @@ class CreateCard extends StatefulWidget {
 }
 
 class _CreateCardState extends State<CreateCard> {
-  submitAndRestartForm() {
+  void submitAndRestartForm() {
     widget.cardModel.answers = widget.answerModels;
     List<CreateAnswerModel> newAnswers = <CreateAnswerModel>[];
     for (var i = 0; i < widget.answerModels.length; i++) {
@@ -36,7 +36,7 @@ class _CreateCardState extends State<CreateCard> {
     restartForm();
   }
 
-  restartForm() {
+  void restartForm() {
     setState(() {
       widget.cardModel.title = "";
       widget.cardModel.explanation = "";
@@ -45,7 +45,7 @@ class _CreateCardState extends State<CreateCard> {
     });
   }
 
-  newWidgets() {
+  void newWidgets() {
     List<CreateAnswerModel> newModels = <CreateAnswerModel>[];
     List<CreateAnswer> newWidgets = <CreateAnswer>[];
     for (var i = 0; i < widget.numOfAnswers; i++) {
@@ -53,10 +53,10 @@ class _CreateCardState extends State<CreateCard> {
       var answerWidget = CreateAnswer(
         key: UniqueKey(),
         answerIndex: i,
-        onChangedCallback: (text, isCorrect) => setState(() => {
-              answerModel.text = text,
-              answerModel.isCorrect = isCorrect,
-            }),
+        onChangedCallback: (text, isCorrect) => setState(() {
+          answerModel.text = text;
+          answerModel.isCorrect = isCorrect;
+        }),
       );
       newModels.add(answerModel);
 
@@ -309,7 +309,7 @@ class _CreateAnswerState extends State<CreateAnswer> {
           keyboardType: TextInputType.multiline,
           decoration: InputDecoration(
             border: const UnderlineInputBorder(),
-            labelText: 'Answer ' + widget.answerIndex.toString(),
+            labelText: 'Answer ${widget.answerIndex}',
           ),
           onChanged: (newValue) => setState(() {
             widget.text = newValue;

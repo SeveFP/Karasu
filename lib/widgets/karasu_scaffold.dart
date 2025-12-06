@@ -1,4 +1,3 @@
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:karasu/services/config_service.dart';
 import 'package:karasu/views/create_card.dart';
@@ -60,10 +59,13 @@ class _KarasuScaffoldState extends State<KarasuScaffold> {
                     return RichText(
                       text: TextSpan(
                         children: <TextSpan>[
-                          TextSpan(text: config.appName, style: const TextStyle(fontSize: 24)),
+                          TextSpan(
+                              text: config.appName,
+                              style: const TextStyle(fontSize: 24)),
                           const TextSpan(
                               text: '𓅂',
-                              style: TextStyle(color: Colors.black, fontSize: 18)),
+                              style:
+                                  TextStyle(color: Colors.black, fontSize: 18)),
                           TextSpan(text: title),
                         ],
                       ),
