@@ -2,9 +2,11 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/services.dart';
 import 'package:karasu/models/app_config.dart';
+import 'package:logger/logger.dart';
 
 class ConfigService {
   static final ConfigService _instance = ConfigService._internal();
+  static final Logger _logger = Logger();
   late AppConfig _config;
 
   factory ConfigService() {
@@ -23,17 +25,17 @@ class ConfigService {
       final jsonString = await rootBundle.loadString('assets/config.dev.json');
       final jsonMap = jsonDecode(jsonString) as Map<String, dynamic>;
       baseConfig = AppConfig.fromJson(jsonMap);
-      print('Loaded development config');
+      _logger.i('Loaded development config');
     } catch (e) {
-      print('No development config found, loading default config');
+      _logger.w('No development config found, loading default config');
       // Fallback to default config
       try {
         final jsonString = await rootBundle.loadString('assets/config.json');
         final jsonMap = jsonDecode(jsonString) as Map<String, dynamic>;
         baseConfig = AppConfig.fromJson(jsonMap);
-        print('Loaded default config');
+        _logger.i('Loaded default config');
       } catch (e) {
-        print('Error loading config: $e');
+        _logger.e('Error loading config: $e');
         // Use hardcoded defaults as last resort, but better defaults should be set
         baseConfig = AppConfig(
           appName: 'Karasu',
@@ -66,6 +68,6 @@ class ConfigService {
       themeMode: baseConfig.themeMode,
     );
 
-    print('TOSHOKAN_URL: ${_config.toshokanURL}');
+    _logger.i('TOSHOKAN_URL: ${_config.toshokanURL}');
   }
 }
