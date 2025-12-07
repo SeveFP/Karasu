@@ -1,78 +1,26 @@
-import 'dart:async';
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
-import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:flutter/rendering.dart';
+import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:karasu/models/store.dart';
+import 'package:karasu/models/app_config.dart';
+import 'package:karasu/services/auth_service.dart';
+import 'package:karasu/services/config_service.dart';
+import 'package:karasu/services/graphql_service.dart';
 import 'package:karasu/views/login.dart';
 import 'package:karasu/views/popularDecks.dart';
-import 'package:karasu/widgets/karasuScaffold.dart';
-
-const toshokanURL =
-    String.fromEnvironment("toshokanURL", defaultValue: "localhost:8080");
-const protocol = 'https://';
-late String username = '';
-late String password = '';
-
-Future<String> fetchAccessToken() async {
-  if (username.isEmpty || password.isEmpty) {
-    throw Exception('Username or password cannot be empty');
-  }
-
-  final url = Uri.parse(protocol + toshokanURL + '/login');
-  final credentials = {
-    'username': username,
-    'password': password,
-  };
-  final response = await http.post(url,
-      body: json.encode(credentials),
-      headers: {"Content-Type": "application/json"});
-
-  if (response.statusCode == 200) {
-    final res = jsonDecode(response.body);
-    return 'Bearer ' + res['token'];
-  } else {
-    throw Exception('Failed to login: ${response.body}');
-  }
-}
+import 'package:karasu/widgets/karasu_scaffold.dart';
 
 void main() async {
-  debugPaintSizeEnabled = false;
-  // We're using HiveStore for persistence,
-  // so we need to initialize Hive.
   await initHiveForFlutter();
-
   await KStore.load();
 
-  final HttpLink httpLink = HttpLink(
-    protocol + toshokanURL + '/query',
-  );
+  await ConfigService().loadConfig();
 
-  final AuthLink authLink = AuthLink(
-    getToken: fetchAccessToken,
-  );
+  debugPaintSizeEnabled = ConfigService().config.debugPaintSizeEnabled;
 
-  final Link link = authLink.concat(httpLink);
+  await GraphQLService().initialize();
 
-  final loggerLink = LoggerLink();
-
-  loggerLink.concat(link);
-
-  ValueNotifier<GraphQLClient> client = ValueNotifier(
-    GraphQLClient(
-      // link: link,
-      link: loggerLink.concat(link),
-      // The default store is the InMemoryStore, which does NOT persist to disk
-      cache: GraphQLCache(store: InMemoryStore()),
-    ),
-  );
-
-  runApp(GraphQLProvider(
-    client: client,
-    child: const MyApp(),
-  ));
+  runApp(const MyApp());
 }
 
 class MyApp extends StatefulWidget {
@@ -83,19 +31,20 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  late Future<String> accessToken;
   bool _hasLoggedIn = false;
 
-  void _setHasLoggedIn(String u, String p) {
+  void _setHasLoggedIn(String username, String password) {
     setState(() {
       _hasLoggedIn = true;
-      username = u;
-      password = p;
+      AuthService().setCredentials(username, password);
     });
   }
 
   @override
   Widget build(BuildContext context) {
+    final config = ConfigService().config;
+    final graphqlService = GraphQLService();
+
     Widget body = ListView(
       children: [
         LoginView(credentialsCallback: _setHasLoggedIn),
@@ -106,33 +55,40 @@ class _MyAppState extends State<MyApp> {
       body = const PopularDecksDisplay();
     }
 
-    // body = const CreateCard();
-    return MaterialApp(
-      theme: ThemeData(
-        useMaterial3: false,
-        primarySwatch: Colors.blue,
+    final themeMode = () {
+      switch (config.themeMode) {
+        case AppThemeMode.light:
+          return ThemeMode.light;
+        case AppThemeMode.dark:
+          return ThemeMode.dark;
+        case AppThemeMode.system:
+        default:
+          return ThemeMode.system;
+      }
+    }();
+
+    return GraphQLProvider(
+      client: graphqlService.client,
+      child: MaterialApp(
+        title: config.appName,
+        theme: ThemeData(
+          colorScheme: ColorScheme.fromSeed(
+            seedColor: Color(config.colorScheme.primaryColor),
+            brightness: Brightness.light,
+          ),
+        ),
+        darkTheme: ThemeData(
+          colorScheme: ColorScheme.fromSeed(
+            seedColor: Color(config.colorScheme.primaryColor),
+            brightness: Brightness.dark,
+          ),
+        ),
+        themeMode: themeMode,
+        home: KarasuScaffold(
+          body: body,
+          isLoggedIn: _hasLoggedIn,
+        ),
       ),
-      home: KarasuScaffold(body: body),
     );
   }
-}
-
-// TODO REMOVE THIS. ONLY DEBUGGING PURPOSES
-class LoggerLink extends Link {
-  @override
-  Stream<Response> request(
-    Request request, [
-    NextLink? forward,
-  ]) {
-    Stream<Response> response = forward!(request).map((Response fetchResult) {
-      print("Request: " + request.toString());
-      return fetchResult;
-    }).handleError((error) {
-      print("Error: " + error.toString());
-    });
-
-    return response;
-  }
-
-  LoggerLink();
 }

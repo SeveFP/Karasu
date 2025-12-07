@@ -1,0 +1,13 @@
+{
+    "appName": "Karasu",
+    "toshokanURL": "localhost:8000",
+    "protocol": "https://",
+    "logoPath": "assets/logo.png",
+    "logoBackgroundColor": 4294967295,
+    "colorScheme": {
+        "primaryColor": 4294967295,
+        "secondaryColor": 4294902015,
+        "tertiaryColor": 4294967280
+    },
+    "themeMode": "light"
+}
