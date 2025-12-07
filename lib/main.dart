@@ -86,7 +86,10 @@ class _MyAppState extends State<MyApp> {
           ),
         ),
         themeMode: themeMode,
-        home: KarasuScaffold(body: body),
+        home: KarasuScaffold(
+          body: body,
+          isLoggedIn: _hasLoggedIn,
+        ),
       ),
     );
   }
