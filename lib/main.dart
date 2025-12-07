@@ -72,14 +72,12 @@ class _MyAppState extends State<MyApp> {
       child: MaterialApp(
         title: config.appName,
         theme: ThemeData(
-          useMaterial3: true,
           colorScheme: ColorScheme.fromSeed(
             seedColor: Color(config.colorScheme.primaryColor),
             brightness: Brightness.light,
           ),
         ),
         darkTheme: ThemeData(
-          useMaterial3: true,
           colorScheme: ColorScheme.fromSeed(
             seedColor: Color(config.colorScheme.primaryColor),
             brightness: Brightness.dark,
