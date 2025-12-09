@@ -32,6 +32,33 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
   bool _hasLoggedIn = false;
+  late ThemeMode _themeMode;
+
+  @override
+  void initState() {
+    super.initState();
+    final config = ConfigService().config;
+    _themeMode = _themeModeFromConfig(config.themeMode);
+  }
+
+  ThemeMode _themeModeFromConfig(AppThemeMode mode) {
+    switch (mode) {
+      case AppThemeMode.light:
+        return ThemeMode.light;
+      case AppThemeMode.dark:
+        return ThemeMode.dark;
+      case AppThemeMode.system:
+      default:
+        return ThemeMode.system;
+    }
+  }
+
+  void _toggleTheme() {
+    setState(() {
+      _themeMode =
+          _themeMode == ThemeMode.light ? ThemeMode.dark : ThemeMode.light;
+    });
+  }
 
   void _setHasLoggedIn(String username, String password) {
     setState(() {
@@ -55,18 +82,6 @@ class _MyAppState extends State<MyApp> {
       body = const PopularDecksDisplay();
     }
 
-    final themeMode = () {
-      switch (config.themeMode) {
-        case AppThemeMode.light:
-          return ThemeMode.light;
-        case AppThemeMode.dark:
-          return ThemeMode.dark;
-        case AppThemeMode.system:
-        default:
-          return ThemeMode.system;
-      }
-    }();
-
     return GraphQLProvider(
       client: graphqlService.client,
       child: MaterialApp(
@@ -83,10 +98,12 @@ class _MyAppState extends State<MyApp> {
             brightness: Brightness.dark,
           ),
         ),
-        themeMode: themeMode,
+        themeMode: _themeMode,
         home: KarasuScaffold(
           body: body,
           isLoggedIn: _hasLoggedIn,
+          onThemeToggle: _toggleTheme,
+          currentThemeMode: _themeMode,
         ),
       ),
     );
