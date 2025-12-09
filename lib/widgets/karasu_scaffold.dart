@@ -8,12 +8,16 @@ class KarasuScaffold extends StatefulWidget {
   final Widget body;
   final String? title;
   final bool isLoggedIn;
+  final VoidCallback? onThemeToggle;
+  final ThemeMode? currentThemeMode;
 
   const KarasuScaffold({
     super.key,
     required this.body,
     this.title,
     this.isLoggedIn = false,
+    this.onThemeToggle,
+    this.currentThemeMode,
   });
 
   @override
@@ -33,7 +37,9 @@ class _KarasuScaffoldState extends State<KarasuScaffold> {
   void didUpdateWidget(KarasuScaffold oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (widget.body != oldWidget.body) {
-      _body = widget.body;
+      setState(() {
+        _body = widget.body;
+      });
     }
   }
 
@@ -41,11 +47,21 @@ class _KarasuScaffoldState extends State<KarasuScaffold> {
   Widget build(BuildContext context) {
     final config = ConfigService().config;
     var title = widget.title;
-    title = title != null ? '- $title' : '';
+    title = title != null ? ' - $title' : '';
 
     return Scaffold(
       appBar: AppBar(
         actions: <Widget>[
+          if (widget.onThemeToggle != null)
+            IconButton(
+              icon: Icon(
+                widget.currentThemeMode == ThemeMode.light
+                    ? Icons.dark_mode
+                    : Icons.light_mode,
+              ),
+              onPressed: widget.onThemeToggle,
+              tooltip: 'Toggle theme',
+            ),
           if (widget.isLoggedIn)
             IconButton(
               icon: const Icon(

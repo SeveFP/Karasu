@@ -119,6 +119,7 @@ Widget buildCardView(String title, CardModel c,
         onChanged: onChanged,
       ),
     ),
+    isLoggedIn: true,
   );
 }
 
