@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_markdown_plus/flutter_markdown_plus.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:karasu/models/deck.dart';
+import 'package:karasu/services/config_service.dart';
 import 'package:karasu/widgets/karasu_scaffold.dart';
 
 class Summary extends StatefulWidget {
@@ -136,14 +137,19 @@ class CardSummary extends StatelessWidget {
           key: Key(correctAnswer.id), answer: correctAnswer));
     }
 
+    final config = ConfigService().config;
+    final brightness = Theme.of(context).brightness;
+    final tileColor = isCorrect
+        ? config.statusColors.getSuccessContainerColor(brightness)
+        : config.statusColors.getErrorContainerColor(brightness);
+
     return SizedBox(
       child: Card(
         child: Column(
           children: [
             ListTile(
               title: MarkdownBody(data: c.title),
-              tileColor:
-                  isCorrect ? Colors.green.shade100 : Colors.red.shade100,
+              tileColor: tileColor,
             ),
             const Divider(),
             ...answers,
@@ -164,16 +170,23 @@ class AnswerDisplaySummary extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final config = ConfigService().config;
+    final brightness = Theme.of(context).brightness;
+
+    final iconColor = answer.isCorrect
+        ? config.statusColors.getSuccessColor(brightness)
+        : config.statusColors.getErrorColor(brightness);
+
     return ListTile(
       title: MarkdownBody(data: answer.text),
       leading: answer.isCorrect
-          ? const Icon(
+          ? Icon(
               Icons.check,
-              color: Colors.green,
+              color: iconColor,
             )
-          : const Icon(
+          : Icon(
               Icons.close,
-              color: Colors.red,
+              color: iconColor,
             ),
     );
   }
