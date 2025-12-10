@@ -49,6 +49,7 @@ class ConfigService {
           ),
           debugPaintSizeEnabled: false,
           themeMode: AppThemeMode.system,
+          defaultMaxCards: 10,
         );
       }
     }
@@ -62,6 +63,7 @@ class ConfigService {
       colorScheme: baseConfig.colorScheme,
       debugPaintSizeEnabled: baseConfig.debugPaintSizeEnabled,
       themeMode: baseConfig.themeMode,
+      defaultMaxCards: baseConfig.defaultMaxCards,
     );
 
     _logger.i('TOSHOKAN_URL: ${_config.toshokanURL}');

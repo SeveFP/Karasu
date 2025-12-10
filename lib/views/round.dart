@@ -10,8 +10,9 @@ import 'package:karasu/widgets/loading.dart';
 
 class RoundView extends StatefulWidget {
   final DeckModel deck;
+  final int maxCards;
 
-  const RoundView({super.key, required this.deck});
+  const RoundView({super.key, required this.deck, required this.maxCards});
 
   final String query = """
     query Cards(\$deckID: ID!, \$maxCards: Int!) {
@@ -61,7 +62,7 @@ class _RoundViewState extends State<RoundView> {
         document: gql(widget.query),
         variables: {
           'deckID': widget.deck.id,
-          'maxCards': 10,
+          'maxCards': widget.maxCards,
         },
       ));
 
@@ -86,6 +87,10 @@ class _RoundViewState extends State<RoundView> {
         for (var a in possibleAnswers) {
           answers.add(AnswerModel(a['id'], a['text'], a['isCorrect']));
         }
+
+        // Randomly shuffle the answers to avoid always having the correct answer
+        // in the same position.
+        answers.shuffle();
 
         cards.add(CardModel(c['id'], c['title'], answers));
       }

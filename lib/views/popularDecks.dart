@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:karasu/models/deck.dart';
+import 'package:karasu/services/config_service.dart';
 import 'package:karasu/views/round.dart';
 import 'package:karasu/widgets/loading.dart';
 
@@ -8,8 +9,9 @@ import '../models/store.dart';
 
 class DeckDisplay extends StatelessWidget {
   final DeckModel deck;
+  final int maxCards;
 
-  const DeckDisplay({super.key, required this.deck});
+  const DeckDisplay({super.key, required this.deck, required this.maxCards});
 
   @override
   Widget build(BuildContext context) {
@@ -19,7 +21,7 @@ class DeckDisplay extends StatelessWidget {
       onTap: () {
         Navigator.of(context).push(
           MaterialPageRoute(builder: (context) {
-            return RoundView(deck: deck);
+            return RoundView(deck: deck, maxCards: maxCards);
           }),
         );
       },
@@ -116,7 +118,9 @@ class _PopularDecksDisplayState extends State<PopularDecksDisplay> {
         return ListView.builder(
             itemCount: decks.length,
             itemBuilder: (context, index) {
-              return DeckDisplay(deck: decks[index]);
+              return DeckDisplay(
+                  deck: decks[index],
+                  maxCards: ConfigService().config.defaultMaxCards);
             });
       },
     );

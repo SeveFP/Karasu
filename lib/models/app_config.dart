@@ -11,6 +11,7 @@ class AppConfig {
   final AppColorScheme colorScheme;
   final bool debugPaintSizeEnabled;
   final AppThemeMode themeMode;
+  final int defaultMaxCards;
 
   AppConfig({
     required this.appName,
@@ -21,6 +22,7 @@ class AppConfig {
     required this.colorScheme,
     this.debugPaintSizeEnabled = false,
     this.themeMode = AppThemeMode.system,
+    required this.defaultMaxCards,
   });
 
   factory AppConfig.fromJson(Map<String, dynamic> json) {
@@ -44,6 +46,7 @@ class AppConfig {
       colorScheme: AppColorScheme.fromJson(json['colorScheme'] ?? {}),
       debugPaintSizeEnabled: json['debugPaintSizeEnabled'] ?? false,
       themeMode: _modeFromJson(json['themeMode'] as String?),
+      defaultMaxCards: json['defaultMaxCards'] ?? 10,
     );
   }
 }
