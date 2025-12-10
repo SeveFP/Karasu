@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:io';
 import 'package:flutter/services.dart';
 import 'package:karasu/models/app_config.dart';
 import 'package:logger/logger.dart';
@@ -54,12 +53,9 @@ class ConfigService {
       }
     }
 
-    // Override URL with environment variable if it exists
-    final envToshokanURL = Platform.environment['TOSHOKAN_URL'];
-
     _config = AppConfig(
       appName: baseConfig.appName,
-      toshokanURL: envToshokanURL ?? baseConfig.toshokanURL,
+      toshokanURL: baseConfig.toshokanURL,
       protocol: baseConfig.protocol,
       logoPath: baseConfig.logoPath,
       logoBackgroundColor: baseConfig.logoBackgroundColor,
