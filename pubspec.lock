@@ -190,6 +190,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "3.1.2"
+  flutter_soloud:
+    dependency: "direct main"
+    description:
+      name: flutter_soloud
+      sha256: "39e94081befccec71275d724c559aaec1a717b093228b2824a0c323327bcaf2d"
+      url: "https://pub.dev"
+    source: hosted
+    version: "3.4.6"
   flutter_test:
     dependency: "direct dev"
     description: flutter
