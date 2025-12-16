@@ -4,6 +4,7 @@ import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:karasu/models/deck.dart';
 import 'package:karasu/services/config_service.dart';
 import 'package:karasu/widgets/karasu_scaffold.dart';
+import 'package:karasu/widgets/markdown_with_audio.dart';
 
 class Summary extends StatefulWidget {
   final String deckTitle;
@@ -148,7 +149,7 @@ class CardSummary extends StatelessWidget {
         child: Column(
           children: [
             ListTile(
-              title: MarkdownBody(data: c.title),
+              title: MarkdownWithAudio(data: c.title),
               tileColor: tileColor,
             ),
             const Divider(),

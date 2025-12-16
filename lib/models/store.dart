@@ -65,7 +65,7 @@ class KStore {
     return _instance.data.decks;
   }
 
-  addDecks(List<DeckModel> decks) {
+  void addDecks(List<DeckModel> decks) {
     _instance.data.decks.addAll(decks);
     _instance.persist();
   }

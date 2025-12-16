@@ -38,7 +38,7 @@ class CreateCardModel {
         'deckID': deckID,
       };
 
-  setAnswer(int index, String text, bool isCorrect) {}
+  void setAnswer(int index, String text, bool isCorrect) {}
 }
 
 class CreateAnswerModel {

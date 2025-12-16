@@ -28,7 +28,7 @@ class AppConfig {
   });
 
   factory AppConfig.fromJson(Map<String, dynamic> json) {
-    AppThemeMode _modeFromJson(String? v) {
+    AppThemeMode modeFromJson(String? v) {
       switch (v) {
         case 'light':
           return AppThemeMode.light;
@@ -48,7 +48,7 @@ class AppConfig {
       colorScheme: AppColorScheme.fromJson(json['colorScheme'] ?? {}),
       statusColors: AppStatusColors.fromJson(json['statusColors'] ?? {}),
       debugPaintSizeEnabled: json['debugPaintSizeEnabled'] ?? false,
-      themeMode: _modeFromJson(json['themeMode'] as String?),
+      themeMode: modeFromJson(json['themeMode'] as String?),
       defaultMaxCards: json['defaultMaxCards'] ?? 10,
     );
   }

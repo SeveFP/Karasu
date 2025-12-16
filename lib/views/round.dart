@@ -1,12 +1,12 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_markdown_plus/flutter_markdown_plus.dart';
 import 'package:karasu/models/deck.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:karasu/views/summary.dart';
 import 'package:karasu/widgets/karasu_scaffold.dart';
 import 'package:karasu/widgets/loading.dart';
+import 'package:karasu/widgets/markdown_with_audio.dart';
 
 class RoundView extends StatefulWidget {
   final DeckModel deck;
@@ -178,7 +178,7 @@ class _CardDisplayState extends State<CardDisplay> {
         child: Column(
           children: [
             ListTile(
-              title: MarkdownBody(data: widget.c.title),
+              title: MarkdownWithAudio(data: widget.c.title),
               leading: Icon(
                 Icons.contact_support_rounded,
                 color: Colors.blue[500],
@@ -218,7 +218,7 @@ class AnswerDisplay extends StatelessWidget {
         duration: const Duration(milliseconds: 1),
         child: ListTile(
           onTap: _handleTap,
-          title: MarkdownBody(data: answer.text),
+          title: MarkdownWithAudio(data: answer.text),
           trailing: active
               ? const Icon(
                   Icons.circle,
