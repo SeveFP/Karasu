@@ -46,3 +46,4 @@ app.*.map.json
 
 # Development configuration (do not commit)
 assets/config.dev.json
+

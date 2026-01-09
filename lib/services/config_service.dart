@@ -47,7 +47,7 @@ class ConfigService {
             secondaryColor: 0xFF625B71,
             tertiaryColor: 0xFF7D5260,
           ),
-            statusColors: AppStatusColors(
+          statusColors: AppStatusColors(
             successColorLight: 4281896508,
             successColorDark: 4284922730,
             successContainerLight: 4291356361,
@@ -56,7 +56,7 @@ class ConfigService {
             errorColorDark: 4293874512,
             errorContainerLight: 4294954450,
             errorContainerDark: 4290190364,
-            ),
+          ),
           debugPaintSizeEnabled: false,
           themeMode: AppThemeMode.system,
           defaultMaxCards: 10,

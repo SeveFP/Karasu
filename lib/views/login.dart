@@ -1,5 +1,7 @@
+import 'dart:math' show min;
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:karasu/services/openapi_client.dart';
 
 const usernameKey = "karasu:toshokan-username";
 const passwordKey = "karasu:toshokan-password";
@@ -10,16 +12,20 @@ class LoginView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    Size screenSize = MediaQuery.of(context).size;
+    final screenWidth = MediaQuery.of(context).size.width;
+    // Use 90% width on small screens, half on large, max 500px
+    final formWidth = min(
+      500.0,
+      screenWidth < 600 ? screenWidth * 0.9 : screenWidth / 2,
+    );
 
     return Center(
       child: SizedBox(
-        width: screenSize.width / 2,
-        child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-          LogInForm(
-            credentialsCallback: credentialsCallback,
-          )
-        ]),
+        width: formWidth,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [LogInForm(credentialsCallback: credentialsCallback)],
+        ),
       ),
     );
   }
@@ -99,12 +105,18 @@ class LogInFormState extends State<LogInForm> {
                   if (_formKey.currentState!.validate()) {
                     const storage = FlutterSecureStorage();
                     storage.write(
-                        key: usernameKey, value: usernameController.text);
+                      key: usernameKey,
+                      value: usernameController.text,
+                    );
                     storage.write(
-                        key: passwordKey, value: passwordController.text);
+                      key: passwordKey,
+                      value: passwordController.text,
+                    );
 
                     widget.credentialsCallback(
-                        usernameController.text, passwordController.text);
+                      usernameController.text,
+                      passwordController.text,
+                    );
                   }
                 },
                 child: const Text('Log in'),
