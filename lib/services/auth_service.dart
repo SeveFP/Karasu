@@ -9,6 +9,11 @@ class AuthService {
   late String _password = '';
   final _logger = LoggerService.instance;
 
+  // Token cache with 10-minute expiration
+  String? _cachedToken;
+  DateTime? _tokenExpiry;
+  static const _tokenCacheDuration = Duration(minutes: 10);
+
   factory AuthService() {
     return _instance;
   }
@@ -52,5 +57,29 @@ class AuthService {
       _logger.e('Login failed', error: e);
       rethrow;
     }
+  }
+
+  Future<String?> getOrFetchAccessToken() async {
+    if (_cachedToken != null &&
+        _tokenExpiry != null &&
+        DateTime.now().isBefore(_tokenExpiry!)) {
+      return _cachedToken;
+    }
+
+    try {
+      final token = await fetchAccessToken();
+      _cachedToken = token;
+      _tokenExpiry = DateTime.now().add(_tokenCacheDuration);
+      return token;
+    } catch (e) {
+      clearCache();
+
+      return null;
+    }
+  }
+
+  void clearCache() {
+    _cachedToken = null;
+    _tokenExpiry = null;
   }
 }

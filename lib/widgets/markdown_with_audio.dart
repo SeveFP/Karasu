@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_markdown_plus/flutter_markdown_plus.dart';
 import 'package:markdown/markdown.dart' as md;
-import 'package:karasu/widgets/audio_player_widget.dart';
+import 'package:karasu/widgets/markdown_builders.dart';
 
 class MarkdownWithAudio extends StatelessWidget {
   final String data;
@@ -16,28 +16,12 @@ class MarkdownWithAudio extends StatelessWidget {
         'audio': AudioBuilder(),
       },
       extensionSet: md.ExtensionSet(
-        [],
-        [AudioSyntax()],
+        md.ExtensionSet.gitHubFlavored.blockSyntaxes,
+        [
+          ...md.ExtensionSet.gitHubFlavored.inlineSyntaxes,
+          AudioSyntax(),
+        ],
       ),
     );
-  }
-}
-
-class AudioBuilder extends MarkdownElementBuilder {
-  @override
-  Widget visitElementAfter(md.Element element, TextStyle? style) {
-    return AudioPlayerWidget(url: element.textContent);
-  }
-}
-
-class AudioSyntax extends md.InlineSyntax {
-  AudioSyntax() : super(r'\!\[audio\]\(([^\)]+)\)');
-
-  @override
-  bool onMatch(md.InlineParser parser, Match match) {
-    final url = match.group(1)!;
-    final el = md.Element('audio', [md.Text(url)]);
-    parser.addNode(el);
-    return true;
   }
 }

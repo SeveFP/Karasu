@@ -6,9 +6,13 @@ import 'package:karasu/models/app_config.dart';
 import 'package:karasu/services/auth_service.dart';
 import 'package:karasu/services/config_service.dart';
 import 'package:karasu/services/graphql_service.dart';
+import 'package:karasu/services/openapi_client.dart';
+import 'package:karasu/services/logger_service.dart';
 import 'package:karasu/views/login.dart';
-import 'package:karasu/views/popularDecks.dart';
+import 'package:karasu/views/courses.dart';
+// import 'package:karasu/views/popularDecks.dart';
 import 'package:karasu/widgets/karasu_scaffold.dart';
+import 'package:karasu/router.dart';
 
 void main() async {
   await initHiveForFlutter();
@@ -19,6 +23,7 @@ void main() async {
   debugPaintSizeEnabled = ConfigService().config.debugPaintSizeEnabled;
 
   await GraphQLService().initialize();
+  await OpenApiClient.instance.initialize();
 
   runApp(const MyApp());
 }
@@ -39,6 +44,15 @@ class _MyAppState extends State<MyApp> {
     super.initState();
     final config = ConfigService().config;
     _themeMode = _themeModeFromConfig(config.themeMode);
+
+    // Set auth failure callback - kick user out on auth failure
+    OpenApiClient.instance.onAuthFailure = () {
+      if (mounted) {
+        setState(() {
+          _hasLoggedIn = false;
+        });
+      }
+    };
   }
 
   ThemeMode _themeModeFromConfig(AppThemeMode mode) {
@@ -47,7 +61,6 @@ class _MyAppState extends State<MyApp> {
         return ThemeMode.light;
       case AppThemeMode.dark:
         return ThemeMode.dark;
-      case AppThemeMode.system:
       default:
         return ThemeMode.system;
     }
@@ -55,16 +68,41 @@ class _MyAppState extends State<MyApp> {
 
   void _toggleTheme() {
     setState(() {
-      _themeMode =
-          _themeMode == ThemeMode.light ? ThemeMode.dark : ThemeMode.light;
+      _themeMode = _themeMode == ThemeMode.light
+          ? ThemeMode.dark
+          : ThemeMode.light;
     });
   }
 
-  void _setHasLoggedIn(String username, String password) {
-    setState(() {
-      _hasLoggedIn = true;
-      AuthService().setCredentials(username, password);
-    });
+  void _setHasLoggedIn(String username, String password) async {
+    try {
+      await OpenApiClient.instance.loginAndSetToken(
+        username: username,
+        password: password,
+      );
+
+      if (!mounted) return;
+
+      setState(() {
+        _hasLoggedIn = true;
+        AuthService().setCredentials(username, password);
+      });
+    } catch (e) {
+      LoggerService.instance.e('Login failed', error: e);
+
+      if (!mounted) return;
+
+      setState(() {
+        _hasLoggedIn = false;
+      });
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Login failed: $e'),
+          backgroundColor: Theme.of(context).colorScheme.error,
+        ),
+      );
+    }
   }
 
   @override
@@ -73,13 +111,11 @@ class _MyAppState extends State<MyApp> {
     final graphqlService = GraphQLService();
 
     Widget body = ListView(
-      children: [
-        LoginView(credentialsCallback: _setHasLoggedIn),
-      ],
+      children: [LoginView(credentialsCallback: _setHasLoggedIn)],
     );
 
     if (_hasLoggedIn) {
-      body = const PopularDecksDisplay();
+      body = const CoursesView();
     }
 
     return GraphQLProvider(
@@ -105,6 +141,7 @@ class _MyAppState extends State<MyApp> {
           onThemeToggle: _toggleTheme,
           currentThemeMode: _themeMode,
         ),
+        onGenerateRoute: AppRouter.onGenerateRoute,
       ),
     );
   }
