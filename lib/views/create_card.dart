@@ -4,51 +4,53 @@ import 'package:karasu/models/deck.dart';
 import 'package:karasu/models/create_card.dart';
 
 class CreateCard extends StatefulWidget {
-  CreateCard({super.key});
-  final int numOfAnswers = 4;
-  // TODO: Do not make them required to detect possible bugs if not initialized
-  CreateCardModel cardModel = CreateCardModel("", "", [], "");
-  late CreateTitle createTitle;
-  late CreateExplanation createExplanation;
-  List<CreateAnswerModel> answerModels = <CreateAnswerModel>[];
-  List<CreateAnswer> answerWidgets = <CreateAnswer>[];
+  const CreateCard({super.key});
 
   @override
   State<CreateCard> createState() => _CreateCardState();
 }
 
 class _CreateCardState extends State<CreateCard> {
+  static const int numOfAnswers = 4;
+  CreateCardModel cardModel = CreateCardModel("", "", [], "");
+  late CreateTitle createTitle;
+  late CreateExplanation createExplanation;
+  List<CreateAnswerModel> answerModels = <CreateAnswerModel>[];
+  List<CreateAnswer> answerWidgets = <CreateAnswer>[];
+
   void submitAndRestartForm() {
-    widget.cardModel.answers = widget.answerModels;
+    cardModel.answers = answerModels;
     List<CreateAnswerModel> newAnswers = <CreateAnswerModel>[];
-    for (var i = 0; i < widget.answerModels.length; i++) {
+    for (var i = 0; i < answerModels.length; i++) {
       var answerModel = CreateAnswerModel(
-          widget.answerModels[i].text, widget.answerModels[i].isCorrect);
+        answerModels[i].text,
+        answerModels[i].isCorrect,
+      );
       newAnswers.add(answerModel);
     }
     CreateCardModel newCard = CreateCardModel(
-      widget.cardModel.deckID,
-      widget.cardModel.title,
+      cardModel.deckID,
+      cardModel.title,
       newAnswers,
-      widget.cardModel.explanation,
+      cardModel.explanation,
     );
-    submitCreateCardForm(context, newCard);
+    _submitCreateCardForm(newCard);
     restartForm();
   }
 
   void restartForm() {
     setState(() {
-      widget.cardModel.title = "";
-      widget.cardModel.explanation = "";
-      widget.cardModel.answers.clear();
+      cardModel.title = "";
+      cardModel.explanation = "";
+      cardModel.answers.clear();
       newWidgets();
     });
   }
 
   void newWidgets() {
     List<CreateAnswerModel> newModels = <CreateAnswerModel>[];
-    List<CreateAnswer> newWidgets = <CreateAnswer>[];
-    for (var i = 0; i < widget.numOfAnswers; i++) {
+    List<CreateAnswer> newCreateWidgets = <CreateAnswer>[];
+    for (var i = 0; i < numOfAnswers; i++) {
       var answerModel = CreateAnswerModel("", false);
       var answerWidget = CreateAnswer(
         key: UniqueKey(),
@@ -60,52 +62,54 @@ class _CreateCardState extends State<CreateCard> {
       );
       newModels.add(answerModel);
 
-      newWidgets.add(answerWidget);
+      newCreateWidgets.add(answerWidget);
     }
 
     setState(() {
-      widget.createTitle = CreateTitle(
-          key: UniqueKey(),
-          onChangedCallback: (text) => setState(() {
-                widget.cardModel.title = text;
-              }));
+      createTitle = CreateTitle(
+        key: UniqueKey(),
+        onChangedCallback: (text) => setState(() {
+          cardModel.title = text;
+        }),
+      );
 
-      widget.createExplanation = CreateExplanation(
-          key: UniqueKey(),
-          onChangedCallback: (text) => setState(() {
-                widget.cardModel.explanation = text;
-              }));
+      createExplanation = CreateExplanation(
+        key: UniqueKey(),
+        onChangedCallback: (text) => setState(() {
+          cardModel.explanation = text;
+        }),
+      );
 
-      widget.answerModels = newModels;
-      widget.answerWidgets = newWidgets;
+      answerModels = newModels;
+      answerWidgets = newCreateWidgets;
     });
   }
 
-  submitCreateCardForm(BuildContext context, CreateCardModel cardModel) {
-    Future.delayed(Duration.zero, () async {
-      try {
-        var client = GraphQLProvider.of(context).value;
-        var result = await client.mutate(
-          MutationOptions(
-            document: gql("""
+  Future<void> _submitCreateCardForm(CreateCardModel cardModel) async {
+    final client = GraphQLProvider.of(context).value;
+    try {
+      await client.mutate(
+        MutationOptions(
+          document: gql("""
         mutation CreateDeckCard(\$card: CreateDeckCardInput!) {
           createDeckCard(input:\$card) {
             success
           }
         }
       """),
-            variables: {'card': cardModel.toJson()},
-          ),
-        );
-      } catch (e) {
-        showDialog(
-            context: context,
-            builder: (context) => AlertDialog(
-                  title: const Text('Error'),
-                  content: Text(e.toString()),
-                ));
-      }
-    });
+          variables: {'card': cardModel.toJson()},
+        ),
+      );
+    } catch (e) {
+      if (!mounted) return;
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: const Text('Error'),
+          content: Text(e.toString()),
+        ),
+      );
+    }
   }
 
   @override
@@ -116,52 +120,48 @@ class _CreateCardState extends State<CreateCard> {
 
   @override
   Widget build(BuildContext context) {
-    List<CreateAnswer> answerWidgets = widget.answerWidgets;
-    CreateTitle titleWidget = widget.createTitle;
-    CreateExplanation explanationWidget = widget.createExplanation;
+    List<CreateAnswer> currentAnswerWidgets = answerWidgets;
+    CreateTitle titleWidget = createTitle;
+    CreateExplanation explanationWidget = createExplanation;
 
     return Center(
       child: SizedBox(
         height: MediaQuery.of(context).size.height * 0.9,
         width: MediaQuery.of(context).size.width * 0.8,
         child: Column(
-            children: [
-          Row(
-            children: [
-              DeckIDDropDown(
-                deckIDCallback: (deckID) {
-                  setState(() {
-                    widget.cardModel.deckID = deckID ?? "";
-                  });
-                },
-              )
-            ],
-          ),
-          titleWidget,
-          ...answerWidgets,
-          explanationWidget,
-          ElevatedButton(
-            onPressed: () {
-              submitAndRestartForm();
-            },
-            child: const Text('Submit'),
-          )
-        ].insertBetween(const SizedBox(height: 10.0))),
+          children: [
+            Row(
+              children: [
+                DeckIDDropDown(
+                  deckIDCallback: (deckID) {
+                    setState(() {
+                      cardModel.deckID = deckID ?? "";
+                    });
+                  },
+                ),
+              ],
+            ),
+            titleWidget,
+            ...currentAnswerWidgets,
+            explanationWidget,
+            ElevatedButton(
+              onPressed: () {
+                submitAndRestartForm();
+              },
+              child: const Text('Submit'),
+            ),
+          ].insertBetween(const SizedBox(height: 10.0)),
+        ),
       ),
     );
   }
 }
 
 class DeckIDDropDown extends StatefulWidget {
-  DeckIDDropDown({super.key, required this.deckIDCallback});
+  const DeckIDDropDown({super.key, required this.deckIDCallback});
   final void Function(String? deckID) deckIDCallback;
 
-  late List<DeckModel> decks;
-  late String deckID;
-  // Temporary solution. Should be replaced with an inactive widget while loading.
-  List<DropdownMenuEntry<String>> deckOptions = [];
-
-  final String query = """
+  static const String query = """
     query GetPopularDecks(\$first: Int!) {
       popularDecks(first: \$first){
         edges {
@@ -187,58 +187,60 @@ class DeckIDDropDown extends StatefulWidget {
 }
 
 class _DeckIDDropDownState extends State<DeckIDDropDown> {
+  List<DropdownMenuEntry<String>> _deckOptions = [];
+
   @override
   void initState() {
     super.initState();
+    _loadDecks();
+  }
 
-    Future.delayed(Duration.zero, () async {
-      var client = GraphQLProvider.of(context).value;
-      final QueryResult result = await client.query(QueryOptions(
+  Future<void> _loadDecks() async {
+    final client = GraphQLProvider.of(context).value;
+    final QueryResult result = await client.query(
+      QueryOptions(
         fetchPolicy: FetchPolicy.noCache,
-        document: gql(widget.query),
-        variables: const {
-          'first': 50,
-        },
-      ));
+        document: gql(DeckIDDropDown.query),
+        variables: const {'first': 50},
+      ),
+    );
 
-      if (result.hasException) {
-        return Text(result.exception.toString());
-      }
+    if (!mounted) return;
 
-      List? edges = result.data?['popularDecks']?['edges'];
+    if (result.hasException) {
+      return;
+    }
 
-      if (edges == null) {
-        return const Text('No decks');
-      }
+    List? edges = result.data?['popularDecks']?['edges'];
 
-      List<DeckModel> decks = [];
+    if (edges == null) {
+      return;
+    }
 
-      for (var e in edges) {
-        decks.add(DeckModel.fromJson(e['node']));
-      }
+    List<DeckModel> decks = [];
 
-      List<DropdownMenuEntry<String>> deckOptions = [];
-      for (var d in decks) {
-        deckOptions.add(DropdownMenuEntry(value: d.id, label: d.title));
-      }
+    for (var e in edges) {
+      decks.add(DeckModel.fromJson(e['node']));
+    }
 
-      setState(() {
-        widget.decks = decks;
-        widget.deckOptions = deckOptions;
-      });
+    List<DropdownMenuEntry<String>> deckOptions = [];
+    for (var d in decks) {
+      deckOptions.add(DropdownMenuEntry(value: d.id, label: d.title));
+    }
+
+    setState(() {
+      _deckOptions = deckOptions;
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    List<DropdownMenuEntry<String>> deckOptions = widget.deckOptions;
-
     return DropdownMenu<String>(
       enableFilter: true,
       leadingIcon: const Icon(Icons.search),
       label: const Text('Deck'),
       width: 300, // TODO: Use a sane default
-      dropdownMenuEntries: deckOptions,
+      dropdownMenuEntries: _deckOptions,
       inputDecorationTheme: const InputDecorationTheme(
         filled: true,
         contentPadding: EdgeInsets.symmetric(vertical: 5.0),
@@ -249,12 +251,8 @@ class _DeckIDDropDownState extends State<DeckIDDropDown> {
 }
 
 class CreateTitle extends StatefulWidget {
-  const CreateTitle({
-    required this.key,
-    required this.onChangedCallback,
-  });
+  const CreateTitle({super.key, required this.onChangedCallback});
 
-  final Key key;
   final Function(String text) onChangedCallback;
 
   @override
@@ -268,75 +266,73 @@ class _CreateTitleState extends State<CreateTitle> {
       children: [
         Expanded(
           child: TextFormField(
-            key: widget.key,
             decoration: const InputDecoration(
               border: UnderlineInputBorder(),
               labelText: 'Card Title',
             ),
             onChanged: (newValue) => {widget.onChangedCallback(newValue)},
           ),
-        )
+        ),
       ],
     );
   }
 }
 
 class CreateAnswer extends StatefulWidget {
-  CreateAnswer(
-      {required this.key,
-      required this.answerIndex,
-      required this.onChangedCallback});
+  const CreateAnswer({
+    super.key,
+    required this.answerIndex,
+    required this.onChangedCallback,
+  });
 
-  final Key? key;
   final int answerIndex;
   final Function(String text, bool isCorrect) onChangedCallback;
-
-  String text = "";
-  bool isCorrect = false;
 
   @override
   State<CreateAnswer> createState() => _CreateAnswerState();
 }
 
 class _CreateAnswerState extends State<CreateAnswer> {
+  String _text = "";
+  bool _isCorrect = false;
+
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      child: Row(children: [
-        Expanded(
+      child: Row(
+        children: [
+          Expanded(
             child: TextFormField(
-          maxLines: null,
-          keyboardType: TextInputType.multiline,
-          decoration: InputDecoration(
-            border: const UnderlineInputBorder(),
-            labelText: 'Answer ${widget.answerIndex}',
+              maxLines: null,
+              keyboardType: TextInputType.multiline,
+              decoration: InputDecoration(
+                border: const UnderlineInputBorder(),
+                labelText: 'Answer ${widget.answerIndex}',
+              ),
+              onChanged: (newValue) => setState(() {
+                _text = newValue;
+                widget.onChangedCallback(_text, _isCorrect);
+              }),
+            ),
           ),
-          onChanged: (newValue) => setState(() {
-            widget.text = newValue;
-            widget.onChangedCallback(widget.text, widget.isCorrect);
-          }),
-        )),
-        Checkbox(
-          value: widget.isCorrect,
-          onChanged: (newValue) {
-            setState(() {
-              widget.isCorrect = newValue!;
-              widget.onChangedCallback(widget.text, widget.isCorrect);
-            });
-          },
-        )
-      ]),
+          Checkbox(
+            value: _isCorrect,
+            onChanged: (newValue) {
+              setState(() {
+                _isCorrect = newValue!;
+                widget.onChangedCallback(_text, _isCorrect);
+              });
+            },
+          ),
+        ],
+      ),
     );
   }
 }
 
 class CreateExplanation extends StatefulWidget {
-  const CreateExplanation({
-    required this.key,
-    required this.onChangedCallback,
-  });
+  const CreateExplanation({super.key, required this.onChangedCallback});
 
-  final Key key;
   final Function(String text) onChangedCallback;
 
   @override
@@ -350,14 +346,13 @@ class _CreateExplanationState extends State<CreateExplanation> {
       children: [
         Expanded(
           child: TextFormField(
-            key: widget.key,
             decoration: const InputDecoration(
               border: UnderlineInputBorder(),
               labelText: 'Card Explanation',
             ),
             onChanged: (newValue) => {widget.onChangedCallback(newValue)},
           ),
-        )
+        ),
       ],
     );
   }

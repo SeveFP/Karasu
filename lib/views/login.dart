@@ -1,10 +1,8 @@
 import 'dart:math' show min;
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:karasu/services/openapi_client.dart';
-
-const usernameKey = "karasu:toshokan-username";
-const passwordKey = "karasu:toshokan-password";
+import 'package:karasu/services/auth_service.dart';
+import 'package:karasu/widgets/shell_scaffold.dart';
 
 class LoginView extends StatelessWidget {
   final Function(String username, String password) credentialsCallback;
@@ -19,12 +17,16 @@ class LoginView extends StatelessWidget {
       screenWidth < 600 ? screenWidth * 0.9 : screenWidth / 2,
     );
 
-    return Center(
-      child: SizedBox(
-        width: formWidth,
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [LogInForm(credentialsCallback: credentialsCallback)],
+    return ShellScaffold(
+      title: '',
+      showAppBranding: true,
+      body: Center(
+        child: SizedBox(
+          width: formWidth,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [LogInForm(credentialsCallback: credentialsCallback)],
+          ),
         ),
       ),
     );
@@ -45,27 +47,47 @@ class LogInFormState extends State<LogInForm> {
   final _formKey = GlobalKey<FormState>();
   final usernameController = TextEditingController();
   final passwordController = TextEditingController();
+  bool _isAutoLoggingIn = false;
 
   @override
   void initState() {
     super.initState();
+    _tryAutoLogin();
+  }
 
-    Future.delayed(Duration.zero, () async {
-      const storage = FlutterSecureStorage();
-      String? username = await storage.read(key: usernameKey);
-      String? password = await storage.read(key: passwordKey);
+  Future<void> _tryAutoLogin() async {
+    const storage = FlutterSecureStorage();
+    final username = await storage.read(key: usernameKey);
+    final password = await storage.read(key: passwordKey);
 
+    if (!mounted) return;
+
+    if (username != null && password != null) {
       setState(() {
-        if (username != null && password != null) {
-          usernameController.text = username;
-          passwordController.text = password;
-        }
+        usernameController.text = username;
+        passwordController.text = password;
+        _isAutoLoggingIn = true;
       });
-    });
+      // Auto-login with stored credentials
+      widget.credentialsCallback(username, password);
+    }
   }
 
   @override
   Widget build(BuildContext context) {
+    if (_isAutoLoggingIn) {
+      return const Center(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            CircularProgressIndicator(),
+            SizedBox(height: 16),
+            Text('Logging in...'),
+          ],
+        ),
+      );
+    }
+
     return Form(
       key: _formKey,
       child: Column(
@@ -75,11 +97,11 @@ class LogInFormState extends State<LogInForm> {
             controller: usernameController,
             decoration: const InputDecoration(
               helperText: ' ',
-              labelText: 'Email',
+              labelText: 'Username',
             ),
             validator: (value) {
               if (value == null || value.isEmpty) {
-                return 'Email is missing';
+                return 'Username is missing';
               }
               return null;
             },

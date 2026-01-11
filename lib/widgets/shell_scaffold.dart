@@ -2,76 +2,50 @@ import 'package:flutter/material.dart';
 import 'package:karasu/models/app_config.dart';
 import 'package:karasu/services/config_service.dart';
 import 'package:karasu/services/logger_service.dart';
-import 'package:karasu/views/courses.dart';
+import 'package:karasu/widgets/settings_sheet.dart';
 import 'package:karasu/widgets/responsive_container.dart';
 
-class KarasuScaffold extends StatefulWidget {
+/// Shared scaffold for authenticated area with consistent AppBar and settings action.
+class ShellScaffold extends StatelessWidget {
+  final String title;
   final Widget body;
-  final String? title;
-  final bool isLoggedIn;
-  final VoidCallback? onThemeToggle;
-  final ThemeMode? currentThemeMode;
-  final VoidCallback? onLogout;
+  final List<Widget>? actions;
 
-  const KarasuScaffold({
+  /// When true, shows app logo + name. When false, shows only the title.
+  final bool showAppBranding;
+
+  const ShellScaffold({
     super.key,
+    required this.title,
     required this.body,
-    this.title,
-    this.isLoggedIn = false,
-    this.onThemeToggle,
-    this.currentThemeMode,
-    this.onLogout,
+    this.actions,
+    this.showAppBranding = false,
   });
-
-  @override
-  State<KarasuScaffold> createState() => _KarasuScaffoldState();
-}
-
-class _KarasuScaffoldState extends State<KarasuScaffold> {
-  late Widget _body;
-  final _logger = LoggerService.instance;
-
-  @override
-  void initState() {
-    super.initState();
-    _body = widget.body;
-  }
-
-  @override
-  void didUpdateWidget(KarasuScaffold oldWidget) {
-    super.didUpdateWidget(oldWidget);
-    if (widget.body != oldWidget.body) {
-      setState(() {
-        _body = widget.body;
-      });
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
     final config = ConfigService().config;
-    var title = widget.title;
-    title = title != null ? ' - $title' : '';
 
     return Scaffold(
       appBar: AppBar(
-        title: widget.isLoggedIn
-            ? InkWell(
-                onTap: () {
-                  setState(() {
-                    _body = CoursesView();
-                  });
-                },
-                child: _buildTitle(config, title),
-              )
-            : _buildTitle(config, title),
+        title: showAppBranding ? _buildBrandedTitle(config) : Text(title),
+        actions: [
+          ...?actions,
+          IconButton(
+            icon: const Icon(Icons.settings),
+            onPressed: () => showSettingsSheet(context),
+            tooltip: 'Settings',
+          ),
+        ],
       ),
-      body: ResponsiveBody(child: _body),
+      body: ResponsiveBody(child: body),
     );
   }
 
-  Widget _buildTitle(AppConfig config, String title) {
-    _logger.d('Building title with logo: ${config.logoPath}');
+  Widget _buildBrandedTitle(AppConfig config) {
+    final logger = LoggerService.instance;
+    logger.d('Building title with logo: ${config.logoPath}');
+
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
@@ -87,7 +61,7 @@ class _KarasuScaffoldState extends State<KarasuScaffold> {
             config.logoPath,
             height: 32,
             errorBuilder: (context, error, stackTrace) {
-              _logger.e(
+              logger.e(
                 'Failed to load logo image',
                 error: error,
                 stackTrace: stackTrace,
@@ -103,7 +77,6 @@ class _KarasuScaffoldState extends State<KarasuScaffold> {
                       text: '𓅂',
                       style: TextStyle(color: Colors.black, fontSize: 18),
                     ),
-                    TextSpan(text: title),
                   ],
                 ),
               );
@@ -111,7 +84,7 @@ class _KarasuScaffoldState extends State<KarasuScaffold> {
           ),
         ),
         const SizedBox(width: 8),
-        Text('${config.appName}$title', style: const TextStyle(fontSize: 24)),
+        Text(config.appName, style: const TextStyle(fontSize: 24)),
       ],
     );
   }

@@ -11,7 +11,7 @@ import 'package:karasu/services/logger_service.dart';
 import 'package:karasu/views/login.dart';
 import 'package:karasu/views/courses.dart';
 // import 'package:karasu/views/popularDecks.dart';
-import 'package:karasu/widgets/karasu_scaffold.dart';
+import 'package:karasu/widgets/app_actions.dart';
 import 'package:karasu/router.dart';
 
 void main() async {
@@ -74,6 +74,13 @@ class _MyAppState extends State<MyApp> {
     });
   }
 
+  void _handleLogout() {
+    AuthService().clearCredentials();
+    setState(() {
+      _hasLoggedIn = false;
+    });
+  }
+
   void _setHasLoggedIn(String username, String password) async {
     try {
       await OpenApiClient.instance.loginAndSetToken(
@@ -110,9 +117,7 @@ class _MyAppState extends State<MyApp> {
     final config = ConfigService().config;
     final graphqlService = GraphQLService();
 
-    Widget body = ListView(
-      children: [LoginView(credentialsCallback: _setHasLoggedIn)],
-    );
+    Widget body = LoginView(credentialsCallback: _setHasLoggedIn);
 
     if (_hasLoggedIn) {
       body = const CoursesView();
@@ -135,13 +140,16 @@ class _MyAppState extends State<MyApp> {
           ),
         ),
         themeMode: _themeMode,
-        home: KarasuScaffold(
-          body: body,
-          isLoggedIn: _hasLoggedIn,
-          onThemeToggle: _toggleTheme,
-          currentThemeMode: _themeMode,
-        ),
+        home: body,
         onGenerateRoute: AppRouter.onGenerateRoute,
+        builder: (context, child) {
+          return AppActions(
+            onThemeToggle: _toggleTheme,
+            currentThemeMode: _themeMode,
+            onLogout: _handleLogout,
+            child: child ?? const SizedBox.shrink(),
+          );
+        },
       ),
     );
   }

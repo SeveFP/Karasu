@@ -15,7 +15,7 @@ import 'package:karasu/widgets/lesson_deck_player.dart';
 
 class AudioBuilder extends MarkdownElementBuilder {
   @override
-  Widget visitElementAfter(md.Element element, TextStyle? style) {
+  Widget visitElementAfter(md.Element element, TextStyle? preferredStyle) {
     final originalUrl = element.textContent;
     return FutureBuilder<String>(
       future: SignedUrlService.instance.resolve(originalUrl),
@@ -57,7 +57,7 @@ class DeckBuilder extends MarkdownElementBuilder {
   DeckBuilder({this.courseId, this.lessonId, this.deckStates});
 
   @override
-  Widget? visitElementAfter(md.Element element, TextStyle? style) {
+  Widget? visitElementAfter(md.Element element, TextStyle? preferredStyle) {
     final deckId = element.textContent;
     if (deckId.isEmpty) return const SizedBox.shrink();
     final future = LessonService.instance.getDeck(deckId);

@@ -54,50 +54,51 @@ class _RoundViewState extends State<RoundView> {
   @override
   void initState() {
     super.initState();
+    _loadCards();
+  }
 
-    Future.delayed(Duration.zero, () async {
-      var client = GraphQLProvider.of(context).value;
-      final QueryResult result = await client.query(QueryOptions(
+  Future<void> _loadCards() async {
+    final client = GraphQLProvider.of(context).value;
+    final QueryResult result = await client.query(
+      QueryOptions(
         fetchPolicy: FetchPolicy.noCache,
         document: gql(widget.query),
-        variables: {
-          'deckID': widget.deck.id,
-          'maxCards': widget.maxCards,
-        },
-      ));
+        variables: {'deckID': widget.deck.id, 'maxCards': widget.maxCards},
+      ),
+    );
 
-      if (result.hasException) {
-        throw Exception(result.exception!.linkException!.originalException);
+    if (!mounted) return;
+
+    if (result.hasException) {
+      throw Exception(result.exception!.linkException!.originalException);
+    }
+
+    List? cardResults = result.data?['cards'];
+    if (cardResults == null) {
+      cards.add(CardModel('id', 'No cards!', []));
+      return;
+    }
+
+    for (var c in cardResults) {
+      var answers = <AnswerModel>[];
+      List? possibleAnswers = c['answers'];
+      if (possibleAnswers == null) {
+        continue;
       }
 
-      List? cardResults = result.data?['cards'];
-      if (cardResults == null) {
-        cards.add(CardModel('id', 'No cards!', []));
-        return buildCardView(
-            widget.deck.title, cards[currentCardIndex], _handleTap);
+      for (var a in possibleAnswers) {
+        answers.add(AnswerModel(a['id'], a['text'], a['isCorrect']));
       }
 
-      for (var c in cardResults) {
-        var answers = <AnswerModel>[];
-        List? possibleAnswers = c['answers'];
-        if (possibleAnswers == null) {
-          continue;
-        }
+      // Randomly shuffle the answers to avoid always having the correct answer
+      // in the same position.
+      answers.shuffle();
 
-        for (var a in possibleAnswers) {
-          answers.add(AnswerModel(a['id'], a['text'], a['isCorrect']));
-        }
+      cards.add(CardModel(c['id'], c['title'], answers));
+    }
 
-        // Randomly shuffle the answers to avoid always having the correct answer
-        // in the same position.
-        answers.shuffle();
-
-        cards.add(CardModel(c['id'], c['title'], answers));
-      }
-
-      setState(() {
-        cards = cards;
-      });
+    setState(() {
+      cards = cards;
     });
   }
 
@@ -113,16 +114,15 @@ class _RoundViewState extends State<RoundView> {
   }
 }
 
-Widget buildCardView(String title, CardModel c,
-    Function(String cardID, AnswerModel answer) onChanged) {
+Widget buildCardView(
+  String title,
+  CardModel c,
+  Function(String cardID, AnswerModel answer) onChanged,
+) {
   return KarasuScaffold(
     title: title,
     body: SingleChildScrollView(
-      child: CardDisplay(
-        key: Key(c.id),
-        c: c,
-        onChanged: onChanged,
-      ),
+      child: CardDisplay(key: Key(c.id), c: c, onChanged: onChanged),
     ),
     isLoggedIn: true,
   );
@@ -163,14 +163,16 @@ class _CardDisplayState extends State<CardDisplay> {
     List answers = <AnswerDisplay>[];
 
     for (var a in widget.c.answers) {
-      answers.add(AnswerDisplay(
-        answer: a,
-        active: _selectedAnswer?.id == a.id ? true : false,
-        disabled: _selectedAnswer != null && _selectedAnswer?.id != a.id
-            ? true
-            : false,
-        onChanged: _handleTap,
-      ));
+      answers.add(
+        AnswerDisplay(
+          answer: a,
+          active: _selectedAnswer?.id == a.id ? true : false,
+          disabled: _selectedAnswer != null && _selectedAnswer?.id != a.id
+              ? true
+              : false,
+          onChanged: _handleTap,
+        ),
+      );
     }
 
     return SizedBox(
@@ -214,20 +216,15 @@ class AnswerDisplay extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return AnimatedOpacity(
-        opacity: !disabled ? 1.0 : 0.2,
-        duration: const Duration(milliseconds: 1),
-        child: ListTile(
-          onTap: _handleTap,
-          title: MarkdownWithAudio(data: answer.text),
-          trailing: active
-              ? const Icon(
-                  Icons.circle,
-                  color: Colors.blue,
-                )
-              : const Icon(
-                  Icons.circle,
-                  color: Colors.grey,
-                ),
-        ));
+      opacity: !disabled ? 1.0 : 0.2,
+      duration: const Duration(milliseconds: 1),
+      child: ListTile(
+        onTap: _handleTap,
+        title: MarkdownWithAudio(data: answer.text),
+        trailing: active
+            ? const Icon(Icons.circle, color: Colors.blue)
+            : const Icon(Icons.circle, color: Colors.grey),
+      ),
+    );
   }
 }
