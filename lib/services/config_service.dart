@@ -16,6 +16,8 @@ class ConfigService {
 
   AppConfig get config => _config;
 
+  bool get isDebugMode => _config.mode == AppMode.debug;
+
   Future<void> loadConfig() async {
     AppConfig baseConfig;
 
@@ -60,6 +62,7 @@ class ConfigService {
           debugPaintSizeEnabled: false,
           themeMode: AppThemeMode.system,
           defaultMaxCards: 10,
+          mode: AppMode.production,
         );
       }
     }
@@ -75,6 +78,7 @@ class ConfigService {
       debugPaintSizeEnabled: baseConfig.debugPaintSizeEnabled,
       themeMode: baseConfig.themeMode,
       defaultMaxCards: baseConfig.defaultMaxCards,
+      mode: baseConfig.mode,
     );
 
     _logger.i('TOSHOKAN_URL: ${_config.toshokanURL}');

@@ -1,10 +1,12 @@
-import 'package:flutter/foundation.dart';
+import 'package:karasu/services/config_service.dart';
 import 'package:logger/logger.dart';
 
 class LoggerService {
   static final Logger _logger = Logger(
-    // Use DevelopmentFilter in debug mode, ProductionFilter in release
-    filter: kDebugMode ? DevelopmentFilter() : ProductionFilter(),
+    // Use DevelopmentFilter in debug mode, ProductionFilter otherwise
+    filter: ConfigService().isDebugMode
+        ? DevelopmentFilter()
+        : ProductionFilter(),
     printer: PrettyPrinter(
       methodCount: 2,
       errorMethodCount: 8,

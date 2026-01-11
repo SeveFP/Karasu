@@ -1,6 +1,5 @@
 import 'dart:async';
 
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:karasu/api/lib/toshokan_api.dart' as api;
 import 'package:karasu/services/config_service.dart';
@@ -250,7 +249,7 @@ class _LessonDeckPlayerState extends State<LessonDeckPlayer> {
               key: ValueKey(card.id), // ensure state resets when card changes
               card: card,
               disabled: _answers.containsKey(card.id),
-              allowSkip: kDebugMode,
+              allowSkip: ConfigService().isDebugMode,
               onSubmit: (answer) {
                 if (_answers.containsKey(card.id)) return;
                 _handleTap(card.id, answer);
