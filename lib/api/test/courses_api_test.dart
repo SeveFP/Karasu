@@ -34,5 +34,14 @@ void main() {
       // TODO
     });
 
+    // Get enrolled courses
+    //
+    // Retrieve paginated list of courses the authenticated user is enrolled in, with progress information
+    //
+    //Future<CoursesWithProgressConnectionResponse> getEnrolledCourses({ String after, String before, int first, int last }) async
+    test('test getEnrolledCourses', () async {
+      // TODO
+    });
+
   });
 }

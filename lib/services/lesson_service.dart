@@ -58,6 +58,19 @@ class LessonService {
     }
   }
 
+  /// Get enrolled courses with progress information.
+  /// Returns all courses the authenticated user is enrolled in.
+  Future<List<CourseWithProgress>> getEnrolledCourses() async {
+    try {
+      final res = await _client.courses.getEnrolledCourses(first: 100);
+      final edges = res.data?.edges ?? [];
+      return edges.map((e) => e.node).toList();
+    } catch (e) {
+      _logger.e('Get enrolled courses failed', error: e);
+      rethrow;
+    }
+  }
+
   // ===== Lesson Operations =====
 
   /// Create a new lesson within a course.

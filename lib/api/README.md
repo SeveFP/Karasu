@@ -104,6 +104,7 @@ Class | Method | HTTP request | Description
 [*CoursesApi*](doc/CoursesApi.md) | [**createCourse**](doc/CoursesApi.md#createcourse) | **POST** /courses | Create a new course
 [*CoursesApi*](doc/CoursesApi.md) | [**enrollCourse**](doc/CoursesApi.md#enrollcourse) | **POST** /courses/{courseId}/enroll | Enroll in a course
 [*CoursesApi*](doc/CoursesApi.md) | [**getCourse**](doc/CoursesApi.md#getcourse) | **GET** /courses/{courseId} | Get course details
+[*CoursesApi*](doc/CoursesApi.md) | [**getEnrolledCourses**](doc/CoursesApi.md#getenrolledcourses) | **GET** /courses/enrolled | Get enrolled courses
 [*DecksApi*](doc/DecksApi.md) | [**createDeck**](doc/DecksApi.md#createdeck) | **POST** /decks | Create a new deck
 [*DecksApi*](doc/DecksApi.md) | [**deleteDeck**](doc/DecksApi.md#deletedeck) | **DELETE** /decks/{id} | Delete a deck
 [*DecksApi*](doc/DecksApi.md) | [**getDeck**](doc/DecksApi.md#getdeck) | **GET** /decks/{id} | Get deck details
@@ -124,6 +125,9 @@ Class | Method | HTTP request | Description
  - [CardInput](doc/CardInput.md)
  - [CardState](doc/CardState.md)
  - [Course](doc/Course.md)
+ - [CourseWithProgress](doc/CourseWithProgress.md)
+ - [CourseWithProgressEdge](doc/CourseWithProgressEdge.md)
+ - [CoursesWithProgressConnectionResponse](doc/CoursesWithProgressConnectionResponse.md)
  - [CreateCourseRequest](doc/CreateCourseRequest.md)
  - [CreateLessonRequest](doc/CreateLessonRequest.md)
  - [Deck](doc/Deck.md)

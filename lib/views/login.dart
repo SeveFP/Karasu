@@ -6,7 +6,13 @@ import 'package:karasu/widgets/shell_scaffold.dart';
 
 class LoginView extends StatelessWidget {
   final Function(String username, String password) credentialsCallback;
-  const LoginView({super.key, required this.credentialsCallback});
+  final bool loginFailed;
+  
+  const LoginView({
+    super.key, 
+    required this.credentialsCallback,
+    this.loginFailed = false,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -25,7 +31,12 @@ class LoginView extends StatelessWidget {
           width: formWidth,
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
-            children: [LogInForm(credentialsCallback: credentialsCallback)],
+            children: [
+              LogInForm(
+                credentialsCallback: credentialsCallback,
+                loginFailed: loginFailed,
+              ),
+            ],
           ),
         ),
       ),
@@ -35,7 +46,13 @@ class LoginView extends StatelessWidget {
 
 class LogInForm extends StatefulWidget {
   final Function(String username, String password) credentialsCallback;
-  const LogInForm({super.key, required this.credentialsCallback});
+  final bool loginFailed;
+  
+  const LogInForm({
+    super.key, 
+    required this.credentialsCallback,
+    this.loginFailed = false,
+  });
 
   @override
   LogInFormState createState() {
@@ -53,6 +70,17 @@ class LogInFormState extends State<LogInForm> {
   void initState() {
     super.initState();
     _tryAutoLogin();
+  }
+
+  @override
+  void didUpdateWidget(LogInForm oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    // If login failed, stop showing the spinner
+    if (widget.loginFailed && _isAutoLoggingIn) {
+      setState(() {
+        _isAutoLoggingIn = false;
+      });
+    }
   }
 
   Future<void> _tryAutoLogin() async {

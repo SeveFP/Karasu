@@ -36,8 +36,7 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  bool _hasLoggedIn = false;
-  late ThemeMode _themeMode;
+  bool _hasLoggedIn = false;  bool _loginFailed = false;  late ThemeMode _themeMode;
 
   @override
   void initState() {
@@ -92,6 +91,7 @@ class _MyAppState extends State<MyApp> {
 
       setState(() {
         _hasLoggedIn = true;
+        _loginFailed = false;
         AuthService().setCredentials(username, password);
       });
     } catch (e) {
@@ -101,6 +101,7 @@ class _MyAppState extends State<MyApp> {
 
       setState(() {
         _hasLoggedIn = false;
+        _loginFailed = true;
       });
 
       ScaffoldMessenger.of(context).showSnackBar(
@@ -117,7 +118,10 @@ class _MyAppState extends State<MyApp> {
     final config = ConfigService().config;
     final graphqlService = GraphQLService();
 
-    Widget body = LoginView(credentialsCallback: _setHasLoggedIn);
+    Widget body = LoginView(
+      credentialsCallback: _setHasLoggedIn,
+      loginFailed: _loginFailed,
+    );
 
     if (_hasLoggedIn) {
       body = const CoursesView();

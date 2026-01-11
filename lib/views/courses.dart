@@ -2,9 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:karasu/widgets/shell_scaffold.dart';
 import 'courses_body.dart';
 
-/// Courses view showing user's enrolled courses.
-/// Currently fetches a hardcoded course ID until the backend provides
-/// a GET /courses/enrolled endpoint to list enrolled courses.
+/// Courses view showing user's enrolled courses with progress information.
 class CoursesView extends StatelessWidget {
   const CoursesView({super.key});
 

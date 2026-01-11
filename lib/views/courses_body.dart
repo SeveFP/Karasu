@@ -14,7 +14,7 @@ class CoursesBody extends StatefulWidget {
 class _CoursesBodyState extends State<CoursesBody> {
   final _logger = LoggerService.instance;
   final _service = LessonService.instance;
-  final List<api.Course> _courses = [];
+  final List<api.CourseWithProgress> _courses = [];
   bool _isLoading = false;
   String? _error;
 
@@ -27,14 +27,10 @@ class _CoursesBodyState extends State<CoursesBody> {
   Future<void> _fetchCourses() async {
     setState(() => _isLoading = true);
     try {
-      // TODO: replace with real enrolled courses fetch when available
-      // Currently hardcoded id fetch
-      final course = await _service.getCourse(
-        '7ee33974-3982-41cf-aca3-1a3154060bfc',
-      );
+      final courses = await _service.getEnrolledCourses();
       setState(() {
         _courses.clear();
-        _courses.add(course);
+        _courses.addAll(courses);
         _isLoading = false;
       });
     } catch (e) {
@@ -46,7 +42,7 @@ class _CoursesBodyState extends State<CoursesBody> {
     }
   }
 
-  void _openCourse(api.Course course) {
+  void _openCourse(api.CourseWithProgress course) {
     Navigator.pushNamed(
       context,
       AppRouter.lessons,
