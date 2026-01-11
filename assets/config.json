@@ -5,6 +5,7 @@
     "logoPath": "assets/logo.png",
     "logoBackgroundColor": 4294967295,
     "debugPaintSizeEnabled": false,
+    "mode": "production",
     "colorScheme": {
         "primaryColor": 4294198259,
         "secondaryColor": 4285822833,

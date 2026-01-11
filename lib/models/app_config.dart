@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 
 enum AppThemeMode { system, light, dark }
 
+enum AppMode { debug, production }
+
 class AppConfig {
   final String appName;
   final String toshokanURL;
@@ -13,6 +15,7 @@ class AppConfig {
   final bool debugPaintSizeEnabled;
   final AppThemeMode themeMode;
   final int defaultMaxCards;
+  final AppMode mode;
 
   AppConfig({
     required this.appName,
@@ -25,6 +28,7 @@ class AppConfig {
     this.debugPaintSizeEnabled = false,
     this.themeMode = AppThemeMode.system,
     required this.defaultMaxCards,
+    this.mode = AppMode.production,
   });
 
   factory AppConfig.fromJson(Map<String, dynamic> json) {
@@ -39,6 +43,16 @@ class AppConfig {
       }
     }
 
+    AppMode appModeFromJson(String? v) {
+      switch (v) {
+        case 'debug':
+          return AppMode.debug;
+        case 'production':
+        default:
+          return AppMode.production;
+      }
+    }
+
     return AppConfig(
       appName: json['appName'] ?? 'Karasu',
       toshokanURL: json['toshokanURL'] ?? 'localhost:8080',
@@ -50,6 +64,7 @@ class AppConfig {
       debugPaintSizeEnabled: json['debugPaintSizeEnabled'] ?? false,
       themeMode: modeFromJson(json['themeMode'] as String?),
       defaultMaxCards: json['defaultMaxCards'] ?? 10,
+      mode: appModeFromJson(json['mode'] as String?),
     );
   }
 }
