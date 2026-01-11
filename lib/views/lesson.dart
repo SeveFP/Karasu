@@ -15,17 +15,16 @@ class LessonView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text(lesson.title ?? 'Lesson')),
+      appBar: AppBar(title: Text(lesson.title)),
       body: ResponsiveBody(
         child: SingleChildScrollView(
           padding: const EdgeInsets.all(16.0),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              if (lesson.description != null &&
-                  lesson.description!.isNotEmpty) ...[
+              if (lesson.description.isNotEmpty) ...[
                 Text(
-                  lesson.description!,
+                  lesson.description,
                   style: Theme.of(context).textTheme.titleMedium?.copyWith(
                     color: Theme.of(context).colorScheme.onSurfaceVariant,
                   ),
@@ -33,8 +32,10 @@ class LessonView extends StatelessWidget {
                 const SizedBox(height: 24),
               ],
               LessonMarkdown(
-                data: lesson.body ?? '',
-                forceResponsive: false, // Force responsive mode for testing
+                data: lesson.body,
+                courseId: lesson.courseId,
+                lessonId: lesson.id,
+                forceResponsive: false,
                 responsiveTableStyle: ResponsiveTableStyle.stacked,
               ),
             ],

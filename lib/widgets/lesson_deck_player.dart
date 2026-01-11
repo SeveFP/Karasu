@@ -3,13 +3,27 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:karasu/api/lib/toshokan_api.dart' as api;
 import 'package:karasu/services/config_service.dart';
+import 'package:karasu/services/lesson_service.dart';
+import 'package:karasu/services/logger_service.dart';
 import 'package:karasu/widgets/markdown_with_audio.dart';
 
-/// Lightweight deck runner for lesson embeds (no network calls).
+/// Lightweight deck runner for lesson embeds.
+/// Submits answers to the backend when courseId and lessonId are provided.
 class LessonDeckPlayer extends StatefulWidget {
   final api.Deck deck;
 
-  const LessonDeckPlayer({super.key, required this.deck});
+  /// Course ID for submitting answers. Optional for preview mode.
+  final String? courseId;
+
+  /// Lesson ID for submitting answers. Optional for preview mode.
+  final String? lessonId;
+
+  const LessonDeckPlayer({
+    super.key,
+    required this.deck,
+    this.courseId,
+    this.lessonId,
+  });
 
   @override
   State<LessonDeckPlayer> createState() => _LessonDeckPlayerState();
@@ -20,6 +34,8 @@ class _LessonDeckPlayerState extends State<LessonDeckPlayer> {
   final Map<String, api.Answer> _answers = {};
   int _current = 0;
   bool _completed = false;
+  bool _submitting = false;
+  final _logger = LoggerService.instance;
 
   @override
   void initState() {
@@ -27,12 +43,59 @@ class _LessonDeckPlayerState extends State<LessonDeckPlayer> {
     _cards = widget.deck.cards;
   }
 
+  Future<void> _submitAnswer(String cardId, api.Answer answer) async {
+    if (widget.courseId == null || widget.lessonId == null) {
+      _logger.w(
+        'No courseId/lessonId provided - answer not submitted to backend',
+      );
+      return;
+    }
+
+    try {
+      setState(() => _submitting = true);
+
+      final cardAnswer = api.CardAnswer(cardId: cardId, answerId: answer.id);
+
+      final response = await LessonService.instance.answerCards(
+        courseId: widget.courseId!,
+        lessonId: widget.lessonId!,
+        deckId: widget.deck.id,
+        answers: [cardAnswer],
+      );
+
+      // TODO: This info is not currently returned by the backend
+      // It should be fetched via the getLessonState endpoint after the round
+      _logger.i(
+        'Answer submitted: deckCompleted=${response.deckCompleted}, '
+        'lessonCompleted=${response.lessonCompleted}',
+      );
+    } catch (e) {
+      _logger.e('Failed to submit answer', error: e);
+      // Don't block the UI on failure - answer is stored locally
+    } finally {
+      if (mounted) {
+        setState(() => _submitting = false);
+      }
+    }
+  }
+
   void _handleTap(String cardID, api.Answer answer) {
     setState(() {
       _answers[cardID] = answer;
-      _current++;
-      if (_current >= _cards.length) {
-        _completed = true;
+    });
+
+    // Submit answer to backend (fire and forget)
+    _submitAnswer(cardID, answer);
+
+    // Move to next card after a short delay
+    Future.delayed(const Duration(milliseconds: 300), () {
+      if (mounted) {
+        setState(() {
+          _current++;
+          if (_current >= _cards.length) {
+            _completed = true;
+          }
+        });
       }
     });
   }
@@ -57,7 +120,9 @@ class _LessonDeckPlayerState extends State<LessonDeckPlayer> {
       final successColor = statusColors.getSuccessColor(brightness);
       final errorColor = statusColors.getErrorColor(brightness);
 
-      final correctCount = _answers.values.where((a) => a.isCorrect == true).length;
+      final correctCount = _answers.values
+          .where((a) => a.isCorrect == true)
+          .length;
       final incorrectCount = _answers.length - correctCount;
 
       return Card(
@@ -124,32 +189,44 @@ class _LessonDeckPlayerState extends State<LessonDeckPlayer> {
           ListTile(
             title: MarkdownWithAudio(data: card.title),
             leading: const Icon(Icons.contact_support_rounded),
-            trailing: Padding(
-              padding: const EdgeInsets.only(top: 8.0),
-              child: Text(
-                '${_current + 1}/${_cards.length}',
-                textAlign: TextAlign.right,
-                style: Theme.of(context).textTheme.bodySmall?.copyWith(
+            trailing: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                if (_submitting)
+                  const Padding(
+                    padding: EdgeInsets.only(right: 8),
+                    child: SizedBox(
+                      width: 16,
+                      height: 16,
+                      child: CircularProgressIndicator(strokeWidth: 2),
+                    ),
+                  ),
+                Padding(
+                  padding: const EdgeInsets.only(top: 8.0),
+                  child: Text(
+                    '${_current + 1}/${_cards.length}',
+                    textAlign: TextAlign.right,
+                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
                       color: Theme.of(context).colorScheme.secondary,
                     ),
-              ),
+                  ),
+                ),
+              ],
             ),
           ),
-          // Padding(
-          //   padding: const EdgeInsets.all(16.0),
-          //   child: MarkdownWithAudio(data: card.title),
-          // ),
           const Divider(height: 1),
-          ...card.possibleAnswers.map((a) => _AnswerDisplay(
-                answer: a,
-                disabled: _answers.containsKey(card.id),
-                active: _answers[card.id]?.id == a.id,
-                onChanged: (ans) {
-                  // Allow choosing once per card
-                  if (_answers.containsKey(card.id)) return;
-                  _handleTap(card.id, ans);
-                },
-              )),
+          ...card.possibleAnswers.map(
+            (a) => _AnswerDisplay(
+              answer: a,
+              disabled: _answers.containsKey(card.id),
+              active: _answers[card.id]?.id == a.id,
+              onChanged: (ans) {
+                // Allow choosing once per card
+                if (_answers.containsKey(card.id)) return;
+                _handleTap(card.id, ans);
+              },
+            ),
+          ),
         ],
       ),
     );
@@ -195,10 +272,7 @@ class _AnswerDisplayState extends State<_AnswerDisplay> {
       child: ListTile(
         onTap: _handleTap,
         title: MarkdownWithAudio(data: widget.answer.text),
-        trailing: Icon(
-          Icons.circle,
-          color: active ? Colors.blue : Colors.grey,
-        ),
+        trailing: Icon(Icons.circle, color: active ? Colors.blue : Colors.grey),
       ),
     );
   }
