@@ -12,7 +12,7 @@ import 'package:dio/dio.dart';
 import 'package:toshokan_api/src/model/answer_cards_response.dart';
 import 'package:toshokan_api/src/model/card_answer.dart';
 import 'package:toshokan_api/src/model/error.dart';
-import 'package:toshokan_api/src/model/lesson_state_response.dart';
+import 'package:toshokan_api/src/model/get_lesson_state_response.dart';
 
 class ProgressApi {
 
@@ -135,9 +135,9 @@ _responseData = rawData == null ? null : deserialize<AnswerCardsResponse, Answer
   /// * [onSendProgress] - A [ProgressCallback] that can be used to get the send progress
   /// * [onReceiveProgress] - A [ProgressCallback] that can be used to get the receive progress
   ///
-  /// Returns a [Future] containing a [Response] with a [LessonStateResponse] as data
+  /// Returns a [Future] containing a [Response] with a [GetLessonStateResponse] as data
   /// Throws [DioException] if API call or serialization fails
-  Future<Response<LessonStateResponse>> getLessonState({ 
+  Future<Response<GetLessonStateResponse>> getLessonState({ 
     required String courseId,
     required String lessonId,
     CancelToken? cancelToken,
@@ -174,11 +174,11 @@ _responseData = rawData == null ? null : deserialize<AnswerCardsResponse, Answer
       onReceiveProgress: onReceiveProgress,
     );
 
-    LessonStateResponse? _responseData;
+    GetLessonStateResponse? _responseData;
 
     try {
 final rawData = _response.data;
-_responseData = rawData == null ? null : deserialize<LessonStateResponse, LessonStateResponse>(rawData, 'LessonStateResponse', growable: true);
+_responseData = rawData == null ? null : deserialize<GetLessonStateResponse, GetLessonStateResponse>(rawData, 'GetLessonStateResponse', growable: true);
 
     } catch (error, stackTrace) {
       throw DioException(
@@ -190,7 +190,7 @@ _responseData = rawData == null ? null : deserialize<LessonStateResponse, Lesson
       );
     }
 
-    return Response<LessonStateResponse>(
+    return Response<GetLessonStateResponse>(
       data: _responseData,
       headers: _response.headers,
       isRedirect: _response.isRedirect,

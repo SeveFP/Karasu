@@ -120,7 +120,7 @@ class LessonService {
   ) async {
     try {
       final res = await _client.lessons.getFocusedLessons(courseId: courseId);
-      _logger.d('Focused lessons: ${res.data?.edges?.length ?? 0} edges');
+      _logger.d('Focused lessons: ${res.data?.edges.length ?? 0} edges');
       return res.data!;
     } catch (e) {
       _logger.e('Get focused lessons failed', error: e);
@@ -131,8 +131,8 @@ class LessonService {
   // ===== Progress Operations =====
 
   /// Get the completion state of a lesson and its decks.
-  /// Returns detailed progress including card-level completion.
-  Future<LessonStateResponse> getLessonState(
+  /// Returns detailed state including card-level completion.
+  Future<GetLessonStateResponse> getLessonState(
     String courseId,
     String lessonId,
   ) async {
@@ -146,6 +146,20 @@ class LessonService {
       _logger.e('Get lesson state failed', error: e);
       rethrow;
     }
+  }
+
+  /// Extract deck completion states from the nested response.
+  /// Returns a map of deckId → isCompleted.
+  Map<String, bool> extractDeckStates(
+    GetLessonStateResponse response,
+    String lessonId,
+  ) {
+    final lessonState = response.lessonState[lessonId];
+    if (lessonState == null) return {};
+    return {
+      for (final entry in lessonState.decks.entries)
+        entry.key: entry.value.isCompleted,
+    };
   }
 
   /// Submit answers for cards in a deck and update progress.
@@ -230,18 +244,18 @@ class LessonService {
     return matches.map((m) => m.group(1)!).toList();
   }
 
-  /// Check if all decks in a lesson are completed.
-  bool isLessonComplete(LessonStateResponse state) {
-    return state.completed ?? false;
+  /// Check if a lesson is completed from the response.
+  bool isLessonComplete(GetLessonStateResponse response, String lessonId) {
+    return response.lessonState[lessonId]?.isCompleted ?? false;
   }
 
-  /// Get count of completed cards in a deck.
-  int getCompletedCardsCount(LessonStateResponseDecksInner deck) {
-    return deck.cards?.where((c) => c.completed == true).length ?? 0;
+  /// Get count of completed cards in a deck state.
+  int getCompletedCardsCount(DeckState deckState) {
+    return deckState.cards.values.where((c) => c.isCompleted).length;
   }
 
-  /// Get total cards count in a deck.
-  int getTotalCardsCount(LessonStateResponseDecksInner deck) {
-    return deck.cards?.length ?? 0;
+  /// Get total cards count in a deck state.
+  int getTotalCardsCount(DeckState deckState) {
+    return deckState.cards.length;
   }
 }

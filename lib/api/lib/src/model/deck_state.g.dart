@@ -7,9 +7,11 @@ part of 'deck_state.dart';
 // **************************************************************************
 
 abstract class _$DeckStateCWProxy {
-  DeckState id(String id);
+  DeckState cards(Map<String, CardState> cards);
 
-  DeckState completed(bool completed);
+  DeckState isCompleted(bool isCompleted);
+
+  DeckState completedAt(DateTime? completedAt);
 
   /// This function **does support** nullification of nullable fields. All `null` values passed to `non-nullable` fields will be ignored. You can also use `DeckState(...).copyWith.fieldName(...)` to override fields one at a time with nullification support.
   ///
@@ -17,7 +19,11 @@ abstract class _$DeckStateCWProxy {
   /// ```dart
   /// DeckState(...).copyWith(id: 12, name: "My name")
   /// ````
-  DeckState call({String id, bool completed});
+  DeckState call({
+    Map<String, CardState> cards,
+    bool isCompleted,
+    DateTime? completedAt,
+  });
 }
 
 /// Proxy class for `copyWith` functionality. This is a callable class and can be used as follows: `instanceOfDeckState.copyWith(...)`. Additionally contains functions for specific fields e.g. `instanceOfDeckState.copyWith.fieldName(...)`
@@ -27,10 +33,14 @@ class _$DeckStateCWProxyImpl implements _$DeckStateCWProxy {
   final DeckState _value;
 
   @override
-  DeckState id(String id) => this(id: id);
+  DeckState cards(Map<String, CardState> cards) => this(cards: cards);
 
   @override
-  DeckState completed(bool completed) => this(completed: completed);
+  DeckState isCompleted(bool isCompleted) => this(isCompleted: isCompleted);
+
+  @override
+  DeckState completedAt(DateTime? completedAt) =>
+      this(completedAt: completedAt);
 
   @override
   /// This function **does support** nullification of nullable fields. All `null` values passed to `non-nullable` fields will be ignored. You can also use `DeckState(...).copyWith.fieldName(...)` to override fields one at a time with nullification support.
@@ -40,18 +50,23 @@ class _$DeckStateCWProxyImpl implements _$DeckStateCWProxy {
   /// DeckState(...).copyWith(id: 12, name: "My name")
   /// ````
   DeckState call({
-    Object? id = const $CopyWithPlaceholder(),
-    Object? completed = const $CopyWithPlaceholder(),
+    Object? cards = const $CopyWithPlaceholder(),
+    Object? isCompleted = const $CopyWithPlaceholder(),
+    Object? completedAt = const $CopyWithPlaceholder(),
   }) {
     return DeckState(
-      id: id == const $CopyWithPlaceholder()
-          ? _value.id
+      cards: cards == const $CopyWithPlaceholder()
+          ? _value.cards
           // ignore: cast_nullable_to_non_nullable
-          : id as String,
-      completed: completed == const $CopyWithPlaceholder()
-          ? _value.completed
+          : cards as Map<String, CardState>,
+      isCompleted: isCompleted == const $CopyWithPlaceholder()
+          ? _value.isCompleted
           // ignore: cast_nullable_to_non_nullable
-          : completed as bool,
+          : isCompleted as bool,
+      completedAt: completedAt == const $CopyWithPlaceholder()
+          ? _value.completedAt
+          // ignore: cast_nullable_to_non_nullable
+          : completedAt as DateTime?,
     );
   }
 }
@@ -66,17 +81,34 @@ extension $DeckStateCopyWith on DeckState {
 // JsonSerializableGenerator
 // **************************************************************************
 
-DeckState _$DeckStateFromJson(Map<String, dynamic> json) =>
-    $checkedCreate('DeckState', json, ($checkedConvert) {
-      $checkKeys(json, requiredKeys: const ['id', 'completed']);
-      final val = DeckState(
-        id: $checkedConvert('id', (v) => v as String),
-        completed: $checkedConvert('completed', (v) => v as bool),
-      );
-      return val;
-    });
+DeckState _$DeckStateFromJson(Map<String, dynamic> json) => $checkedCreate(
+  'DeckState',
+  json,
+  ($checkedConvert) {
+    $checkKeys(json, requiredKeys: const ['cards', 'is_completed']);
+    final val = DeckState(
+      cards: $checkedConvert(
+        'cards',
+        (v) => (v as Map<String, dynamic>).map(
+          (k, e) => MapEntry(k, CardState.fromJson(e as Map<String, dynamic>)),
+        ),
+      ),
+      isCompleted: $checkedConvert('is_completed', (v) => v as bool),
+      completedAt: $checkedConvert(
+        'completed_at',
+        (v) => v == null ? null : DateTime.parse(v as String),
+      ),
+    );
+    return val;
+  },
+  fieldKeyMap: const {
+    'isCompleted': 'is_completed',
+    'completedAt': 'completed_at',
+  },
+);
 
 Map<String, dynamic> _$DeckStateToJson(DeckState instance) => <String, dynamic>{
-  'id': instance.id,
-  'completed': instance.completed,
+  'cards': instance.cards.map((k, e) => MapEntry(k, e.toJson())),
+  'is_completed': instance.isCompleted,
+  'completed_at': ?instance.completedAt?.toIso8601String(),
 };

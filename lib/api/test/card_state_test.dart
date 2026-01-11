@@ -1,12 +1,12 @@
 import 'package:test/test.dart';
 import 'package:toshokan_api/toshokan_api.dart';
 
-// tests for CardProgress
+// tests for CardState
 void main() {
-  final CardProgress? instance = /* CardProgress(...) */ null;
+  final CardState? instance = /* CardState(...) */ null;
   // TODO add properties to the entity
 
-  group(CardProgress, () {
+  group(CardState, () {
     // Number of correct answers for this card
     // int correctAnswers
     test('to test the property `correctAnswers`', () async {
