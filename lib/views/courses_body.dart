@@ -90,7 +90,9 @@ class _CoursesBodyState extends State<CoursesBody> {
             Icon(
               Icons.school_outlined,
               size: 64,
-              color: Theme.of(context).colorScheme.onSurface.withOpacity(0.38),
+              color: Theme.of(
+                context,
+              ).colorScheme.onSurface.withValues(alpha: 0.38),
             ),
             const SizedBox(height: 24),
             Text(

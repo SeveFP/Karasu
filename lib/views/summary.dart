@@ -11,11 +11,12 @@ class Summary extends StatefulWidget {
   final List<CardModel> cards;
   final Map<String, AnswerModel> answers;
 
-  const Summary(
-      {super.key,
-      required this.deckTitle,
-      required this.cards,
-      required this.answers});
+  const Summary({
+    super.key,
+    required this.deckTitle,
+    required this.cards,
+    required this.answers,
+  });
 
   @override
   State<Summary> createState() => _SummaryState();
@@ -44,49 +45,49 @@ class _SummaryState extends State<Summary> {
         answeredIDs.add(answer.id);
       }
 
-      cardSummaries.add(CardSummary(
-        c: c,
-        answeredID: answer?.id ?? '',
-      ));
+      cardSummaries.add(CardSummary(c: c, answeredID: answer?.id ?? ''));
     }
 
-    Future.delayed(Duration.zero, () {
-      try {
-        var client = GraphQLProvider.of(context).value;
-        client.mutate(
-          MutationOptions(
-            document: gql("""
+    _submitAnswers();
+  }
+
+  Future<void> _submitAnswers() async {
+    try {
+      final client = GraphQLProvider.of(context).value;
+      await client.mutate(
+        MutationOptions(
+          document: gql("""
         mutation AnswerCards(\$answerIDs: [ID!]!) {
           answerCards(input: {answerIDs: \$answerIDs}) {
             answerIDs
           }
         }
       """),
-            variables: {'answerIDs': answeredIDs},
-          ),
-        );
-      } catch (e) {
-        showDialog(
-            context: context,
-            builder: (context) => AlertDialog(
-                  title: const Text('Error'),
-                  content: Text(e.toString()),
-                ));
-      }
-    });
+          variables: {'answerIDs': answeredIDs},
+        ),
+      );
+    } catch (e) {
+      if (!mounted) return;
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: const Text('Error'),
+          content: Text(e.toString()),
+        ),
+      );
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     return KarasuScaffold(
       title: widget.deckTitle,
-      body: ListView(children: [
-        ScoreSummary(
-          totalCards: totalCards,
-          totalCorrect: totalCorrect,
-        ),
-        ...cardSummaries
-      ]),
+      body: ListView(
+        children: [
+          ScoreSummary(totalCards: totalCards, totalCorrect: totalCorrect),
+          ...cardSummaries,
+        ],
+      ),
     );
   }
 }
@@ -94,8 +95,11 @@ class _SummaryState extends State<Summary> {
 class ScoreSummary extends StatelessWidget {
   final int totalCards;
   final int totalCorrect;
-  const ScoreSummary(
-      {super.key, required this.totalCards, required this.totalCorrect});
+  const ScoreSummary({
+    super.key,
+    required this.totalCards,
+    required this.totalCorrect,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -130,12 +134,14 @@ class CardSummary extends StatelessWidget {
       }
     }
 
-    answers.add(AnswerDisplaySummary(
-        key: Key(answeredAnswer.id), answer: answeredAnswer));
+    answers.add(
+      AnswerDisplaySummary(key: Key(answeredAnswer.id), answer: answeredAnswer),
+    );
     if (answeredAnswer != correctAnswer) {
       isCorrect = false;
-      answers.add(AnswerDisplaySummary(
-          key: Key(correctAnswer.id), answer: correctAnswer));
+      answers.add(
+        AnswerDisplaySummary(key: Key(correctAnswer.id), answer: correctAnswer),
+      );
     }
 
     final config = ConfigService().config;
@@ -164,10 +170,7 @@ class CardSummary extends StatelessWidget {
 class AnswerDisplaySummary extends StatelessWidget {
   final AnswerModel answer;
 
-  const AnswerDisplaySummary({
-    super.key,
-    required this.answer,
-  });
+  const AnswerDisplaySummary({super.key, required this.answer});
 
   @override
   Widget build(BuildContext context) {
@@ -181,14 +184,8 @@ class AnswerDisplaySummary extends StatelessWidget {
     return ListTile(
       title: MarkdownBody(data: answer.text),
       leading: answer.isCorrect
-          ? Icon(
-              Icons.check,
-              color: iconColor,
-            )
-          : Icon(
-              Icons.close,
-              color: iconColor,
-            ),
+          ? Icon(Icons.check, color: iconColor)
+          : Icon(Icons.close, color: iconColor),
     );
   }
 }

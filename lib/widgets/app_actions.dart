@@ -10,8 +10,8 @@ class AppActions extends InheritedWidget {
     required this.onThemeToggle,
     required this.currentThemeMode,
     required this.onLogout,
-    required Widget child,
-  }) : super(child: child);
+    required super.child,
+  });
 
   static AppActions? of(BuildContext context) {
     return context.dependOnInheritedWidgetOfExactType<AppActions>();
