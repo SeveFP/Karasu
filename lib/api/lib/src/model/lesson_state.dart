@@ -3,7 +3,7 @@
 //
 
 // ignore_for_file: unused_element
-import 'package:toshokan_api/src/model/lesson_progress.dart';
+import 'package:toshokan_api/src/model/deck_state.dart';
 import 'package:copy_with_extension/copy_with_extension.dart';
 import 'package:json_annotation/json_annotation.dart';
 
@@ -21,19 +21,49 @@ class LessonState {
   /// Returns a new [LessonState] instance.
   LessonState({
 
-    required  this.lessonState,
+    required  this.decks,
+
+    required  this.isCompleted,
+
+     this.completedAt,
   });
 
-      /// Map of lesson UUID to lesson progress (lesson_id → LessonProgress)
+      /// Map of deck UUID to deck state (deck_id → DeckState)
   @JsonKey(
     
-    name: r'lesson_state',
+    name: r'decks',
     required: true,
     includeIfNull: false,
   )
 
 
-  final Map<String, LessonProgress> lessonState;
+  final Map<String, DeckState> decks;
+
+
+
+      /// Whether all decks in the lesson are completed
+  @JsonKey(
+    
+    name: r'is_completed',
+    required: true,
+    includeIfNull: false,
+  )
+
+
+  final bool isCompleted;
+
+
+
+      /// Timestamp when the lesson was completed
+  @JsonKey(
+    
+    name: r'completed_at',
+    required: false,
+    includeIfNull: false,
+  )
+
+
+  final DateTime? completedAt;
 
 
 
@@ -41,11 +71,15 @@ class LessonState {
 
     @override
     bool operator ==(Object other) => identical(this, other) || other is LessonState &&
-      other.lessonState == lessonState;
+      other.decks == decks &&
+      other.isCompleted == isCompleted &&
+      other.completedAt == completedAt;
 
     @override
     int get hashCode =>
-        lessonState.hashCode;
+        decks.hashCode +
+        isCompleted.hashCode +
+        completedAt.hashCode;
 
   factory LessonState.fromJson(Map<String, dynamic> json) => _$LessonStateFromJson(json);
 

@@ -3,11 +3,10 @@
 //
 
 // ignore_for_file: unused_element
-import 'package:toshokan_api/src/model/deck_progress.dart';
 import 'package:copy_with_extension/copy_with_extension.dart';
 import 'package:json_annotation/json_annotation.dart';
 
-part 'lesson_progress.g.dart';
+part 'card_state.g.dart';
 
 
 @CopyWith()
@@ -17,31 +16,46 @@ part 'lesson_progress.g.dart';
   disallowUnrecognizedKeys: false,
   explicitToJson: true,
 )
-class LessonProgress {
-  /// Returns a new [LessonProgress] instance.
-  LessonProgress({
+class CardState {
+  /// Returns a new [CardState] instance.
+  CardState({
 
-    required  this.decks,
+    required  this.correctAnswers,
+
+    required  this.incorrectAnswers,
 
     required  this.isCompleted,
 
      this.completedAt,
   });
 
-      /// Map of deck UUID to deck progress (deck_id → DeckProgress)
+      /// Number of correct answers for this card
   @JsonKey(
     
-    name: r'decks',
+    name: r'correct_answers',
     required: true,
     includeIfNull: false,
   )
 
 
-  final Map<String, DeckProgress> decks;
+  final int correctAnswers;
 
 
 
-      /// Whether all decks in the lesson are completed
+      /// Number of incorrect answers for this card
+  @JsonKey(
+    
+    name: r'incorrect_answers',
+    required: true,
+    includeIfNull: false,
+  )
+
+
+  final int incorrectAnswers;
+
+
+
+      /// Whether the card is completed (answered correctly at least once)
   @JsonKey(
     
     name: r'is_completed',
@@ -54,7 +68,7 @@ class LessonProgress {
 
 
 
-      /// Timestamp when the lesson was completed
+      /// Timestamp when the card was completed
   @JsonKey(
     
     name: r'completed_at',
@@ -70,20 +84,22 @@ class LessonProgress {
 
 
     @override
-    bool operator ==(Object other) => identical(this, other) || other is LessonProgress &&
-      other.decks == decks &&
+    bool operator ==(Object other) => identical(this, other) || other is CardState &&
+      other.correctAnswers == correctAnswers &&
+      other.incorrectAnswers == incorrectAnswers &&
       other.isCompleted == isCompleted &&
       other.completedAt == completedAt;
 
     @override
     int get hashCode =>
-        decks.hashCode +
+        correctAnswers.hashCode +
+        incorrectAnswers.hashCode +
         isCompleted.hashCode +
         completedAt.hashCode;
 
-  factory LessonProgress.fromJson(Map<String, dynamic> json) => _$LessonProgressFromJson(json);
+  factory CardState.fromJson(Map<String, dynamic> json) => _$CardStateFromJson(json);
 
-  Map<String, dynamic> toJson() => _$LessonProgressToJson(this);
+  Map<String, dynamic> toJson() => _$CardStateToJson(this);
 
   @override
   String toString() {

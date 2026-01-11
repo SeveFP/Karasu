@@ -4,23 +4,19 @@ import 'package:toshokan_api/src/model/answer_input.dart';
 import 'package:toshokan_api/src/model/card.dart';
 import 'package:toshokan_api/src/model/card_answer.dart';
 import 'package:toshokan_api/src/model/card_input.dart';
-import 'package:toshokan_api/src/model/card_progress.dart';
+import 'package:toshokan_api/src/model/card_state.dart';
 import 'package:toshokan_api/src/model/course.dart';
 import 'package:toshokan_api/src/model/create_course_request.dart';
 import 'package:toshokan_api/src/model/create_lesson_request.dart';
 import 'package:toshokan_api/src/model/deck.dart';
 import 'package:toshokan_api/src/model/deck_input.dart';
-import 'package:toshokan_api/src/model/deck_progress.dart';
 import 'package:toshokan_api/src/model/deck_state.dart';
 import 'package:toshokan_api/src/model/enroll_course200_response.dart';
 import 'package:toshokan_api/src/model/error.dart';
+import 'package:toshokan_api/src/model/get_lesson_state_response.dart';
 import 'package:toshokan_api/src/model/lesson.dart';
 import 'package:toshokan_api/src/model/lesson_edge.dart';
-import 'package:toshokan_api/src/model/lesson_progress.dart';
 import 'package:toshokan_api/src/model/lesson_state.dart';
-import 'package:toshokan_api/src/model/lesson_state_response.dart';
-import 'package:toshokan_api/src/model/lesson_state_response_decks_inner.dart';
-import 'package:toshokan_api/src/model/lesson_state_response_decks_inner_cards_inner.dart';
 import 'package:toshokan_api/src/model/lesson_with_progress.dart';
 import 'package:toshokan_api/src/model/lesson_with_progress_edge.dart';
 import 'package:toshokan_api/src/model/lessons_connection_response.dart';
@@ -61,8 +57,8 @@ final _regMap = RegExp(r'^Map<String,(.*)>$');
           return CardAnswer.fromJson(value as Map<String, dynamic>) as ReturnType;
         case 'CardInput':
           return CardInput.fromJson(value as Map<String, dynamic>) as ReturnType;
-        case 'CardProgress':
-          return CardProgress.fromJson(value as Map<String, dynamic>) as ReturnType;
+        case 'CardState':
+          return CardState.fromJson(value as Map<String, dynamic>) as ReturnType;
         case 'Course':
           return Course.fromJson(value as Map<String, dynamic>) as ReturnType;
         case 'CreateCourseRequest':
@@ -73,28 +69,20 @@ final _regMap = RegExp(r'^Map<String,(.*)>$');
           return Deck.fromJson(value as Map<String, dynamic>) as ReturnType;
         case 'DeckInput':
           return DeckInput.fromJson(value as Map<String, dynamic>) as ReturnType;
-        case 'DeckProgress':
-          return DeckProgress.fromJson(value as Map<String, dynamic>) as ReturnType;
         case 'DeckState':
           return DeckState.fromJson(value as Map<String, dynamic>) as ReturnType;
         case 'EnrollCourse200Response':
           return EnrollCourse200Response.fromJson(value as Map<String, dynamic>) as ReturnType;
         case 'Error':
           return Error.fromJson(value as Map<String, dynamic>) as ReturnType;
+        case 'GetLessonStateResponse':
+          return GetLessonStateResponse.fromJson(value as Map<String, dynamic>) as ReturnType;
         case 'Lesson':
           return Lesson.fromJson(value as Map<String, dynamic>) as ReturnType;
         case 'LessonEdge':
           return LessonEdge.fromJson(value as Map<String, dynamic>) as ReturnType;
-        case 'LessonProgress':
-          return LessonProgress.fromJson(value as Map<String, dynamic>) as ReturnType;
         case 'LessonState':
           return LessonState.fromJson(value as Map<String, dynamic>) as ReturnType;
-        case 'LessonStateResponse':
-          return LessonStateResponse.fromJson(value as Map<String, dynamic>) as ReturnType;
-        case 'LessonStateResponseDecksInner':
-          return LessonStateResponseDecksInner.fromJson(value as Map<String, dynamic>) as ReturnType;
-        case 'LessonStateResponseDecksInnerCardsInner':
-          return LessonStateResponseDecksInnerCardsInner.fromJson(value as Map<String, dynamic>) as ReturnType;
         case 'LessonWithProgress':
           return LessonWithProgress.fromJson(value as Map<String, dynamic>) as ReturnType;
         case 'LessonWithProgressEdge':

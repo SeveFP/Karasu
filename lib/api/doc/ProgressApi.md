@@ -63,7 +63,7 @@ Name | Type | Description  | Notes
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
 # **getLessonState**
-> LessonStateResponse getLessonState(courseId, lessonId)
+> GetLessonStateResponse getLessonState(courseId, lessonId)
 
 Get lesson state
 
@@ -94,7 +94,7 @@ Name | Type | Description  | Notes
 
 ### Return type
 
-[**LessonStateResponse**](LessonStateResponse.md)
+[**GetLessonStateResponse**](GetLessonStateResponse.md)
 
 ### Authorization
 

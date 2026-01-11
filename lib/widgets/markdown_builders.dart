@@ -52,8 +52,9 @@ class AudioSyntax extends md.InlineSyntax {
 class DeckBuilder extends MarkdownElementBuilder {
   final String? courseId;
   final String? lessonId;
+  final Map<String, bool>? deckStates;
 
-  DeckBuilder({this.courseId, this.lessonId});
+  DeckBuilder({this.courseId, this.lessonId, this.deckStates});
 
   @override
   Widget? visitElementAfter(md.Element element, TextStyle? style) {
@@ -114,10 +115,13 @@ class DeckBuilder extends MarkdownElementBuilder {
           );
         }
         if (snapshot.hasData) {
+          final deck = snapshot.data!;
+          final isCompleted = deckStates?[deck.id] ?? false;
           return LessonDeckPlayer(
-            deck: snapshot.data!,
+            deck: deck,
             courseId: courseId,
             lessonId: lessonId,
+            initiallyCompleted: isCompleted,
           );
         }
         return const SizedBox.shrink();

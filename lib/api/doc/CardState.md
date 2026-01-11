@@ -1,4 +1,4 @@
-# toshokan_api.model.CardProgress
+# toshokan_api.model.CardState
 
 ## Load the model package
 ```dart

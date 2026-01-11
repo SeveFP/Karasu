@@ -18,11 +18,15 @@ class LessonDeckPlayer extends StatefulWidget {
   /// Lesson ID for submitting answers. Optional for preview mode.
   final String? lessonId;
 
+  /// Whether the deck was already completed. If true, shows completed state initially.
+  final bool initiallyCompleted;
+
   const LessonDeckPlayer({
     super.key,
     required this.deck,
     this.courseId,
     this.lessonId,
+    this.initiallyCompleted = false,
   });
 
   @override
@@ -33,7 +37,7 @@ class _LessonDeckPlayerState extends State<LessonDeckPlayer> {
   late List<api.Card> _cards;
   final Map<String, api.Answer> _answers = {};
   int _current = 0;
-  bool _completed = false;
+  late bool _completed;
   bool _submitting = false;
   final _logger = LoggerService.instance;
 
@@ -41,6 +45,18 @@ class _LessonDeckPlayerState extends State<LessonDeckPlayer> {
   void initState() {
     super.initState();
     _cards = widget.deck.cards;
+    _completed = widget.initiallyCompleted;
+
+    // If initially completed, simulate all correct answers for display
+    if (_completed) {
+      for (final card in _cards) {
+        final correctAnswer = card.possibleAnswers.firstWhere(
+          (a) => a.isCorrect == true,
+          orElse: () => card.possibleAnswers.first,
+        );
+        _answers[card.id] = correctAnswer;
+      }
+    }
   }
 
   Future<void> _submitAnswer(String cardId, api.Answer answer) async {
@@ -63,12 +79,7 @@ class _LessonDeckPlayerState extends State<LessonDeckPlayer> {
         answers: [cardAnswer],
       );
 
-      // TODO: This info is not currently returned by the backend
-      // It should be fetched via the getLessonState endpoint after the round
-      _logger.i(
-        'Answer submitted: deckCompleted=${response.deckCompleted}, '
-        'lessonCompleted=${response.lessonCompleted}',
-      );
+      _logger.d('Answer submitted: success=${response.success} ');
     } catch (e) {
       _logger.e('Failed to submit answer', error: e);
       // Don't block the UI on failure - answer is stored locally

@@ -20,7 +20,7 @@ void main() {
     //
     // Retrieve the completion state of a lesson and its decks
     //
-    //Future<LessonStateResponse> getLessonState(String courseId, String lessonId) async
+    //Future<GetLessonStateResponse> getLessonState(String courseId, String lessonId) async
     test('test getLessonState', () async {
       // TODO
     });

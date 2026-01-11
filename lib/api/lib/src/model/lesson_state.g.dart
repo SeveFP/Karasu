@@ -7,7 +7,11 @@ part of 'lesson_state.dart';
 // **************************************************************************
 
 abstract class _$LessonStateCWProxy {
-  LessonState lessonState(Map<String, LessonProgress> lessonState);
+  LessonState decks(Map<String, DeckState> decks);
+
+  LessonState isCompleted(bool isCompleted);
+
+  LessonState completedAt(DateTime? completedAt);
 
   /// This function **does support** nullification of nullable fields. All `null` values passed to `non-nullable` fields will be ignored. You can also use `LessonState(...).copyWith.fieldName(...)` to override fields one at a time with nullification support.
   ///
@@ -15,7 +19,11 @@ abstract class _$LessonStateCWProxy {
   /// ```dart
   /// LessonState(...).copyWith(id: 12, name: "My name")
   /// ````
-  LessonState call({Map<String, LessonProgress> lessonState});
+  LessonState call({
+    Map<String, DeckState> decks,
+    bool isCompleted,
+    DateTime? completedAt,
+  });
 }
 
 /// Proxy class for `copyWith` functionality. This is a callable class and can be used as follows: `instanceOfLessonState.copyWith(...)`. Additionally contains functions for specific fields e.g. `instanceOfLessonState.copyWith.fieldName(...)`
@@ -25,8 +33,14 @@ class _$LessonStateCWProxyImpl implements _$LessonStateCWProxy {
   final LessonState _value;
 
   @override
-  LessonState lessonState(Map<String, LessonProgress> lessonState) =>
-      this(lessonState: lessonState);
+  LessonState decks(Map<String, DeckState> decks) => this(decks: decks);
+
+  @override
+  LessonState isCompleted(bool isCompleted) => this(isCompleted: isCompleted);
+
+  @override
+  LessonState completedAt(DateTime? completedAt) =>
+      this(completedAt: completedAt);
 
   @override
   /// This function **does support** nullification of nullable fields. All `null` values passed to `non-nullable` fields will be ignored. You can also use `LessonState(...).copyWith.fieldName(...)` to override fields one at a time with nullification support.
@@ -35,12 +49,24 @@ class _$LessonStateCWProxyImpl implements _$LessonStateCWProxy {
   /// ```dart
   /// LessonState(...).copyWith(id: 12, name: "My name")
   /// ````
-  LessonState call({Object? lessonState = const $CopyWithPlaceholder()}) {
+  LessonState call({
+    Object? decks = const $CopyWithPlaceholder(),
+    Object? isCompleted = const $CopyWithPlaceholder(),
+    Object? completedAt = const $CopyWithPlaceholder(),
+  }) {
     return LessonState(
-      lessonState: lessonState == const $CopyWithPlaceholder()
-          ? _value.lessonState
+      decks: decks == const $CopyWithPlaceholder()
+          ? _value.decks
           // ignore: cast_nullable_to_non_nullable
-          : lessonState as Map<String, LessonProgress>,
+          : decks as Map<String, DeckState>,
+      isCompleted: isCompleted == const $CopyWithPlaceholder()
+          ? _value.isCompleted
+          // ignore: cast_nullable_to_non_nullable
+          : isCompleted as bool,
+      completedAt: completedAt == const $CopyWithPlaceholder()
+          ? _value.completedAt
+          // ignore: cast_nullable_to_non_nullable
+          : completedAt as DateTime?,
     );
   }
 }
@@ -55,23 +81,35 @@ extension $LessonStateCopyWith on LessonState {
 // JsonSerializableGenerator
 // **************************************************************************
 
-LessonState _$LessonStateFromJson(Map<String, dynamic> json) =>
-    $checkedCreate('LessonState', json, ($checkedConvert) {
-      $checkKeys(json, requiredKeys: const ['lesson_state']);
-      final val = LessonState(
-        lessonState: $checkedConvert(
-          'lesson_state',
-          (v) => (v as Map<String, dynamic>).map(
-            (k, e) =>
-                MapEntry(k, LessonProgress.fromJson(e as Map<String, dynamic>)),
-          ),
+LessonState _$LessonStateFromJson(Map<String, dynamic> json) => $checkedCreate(
+  'LessonState',
+  json,
+  ($checkedConvert) {
+    $checkKeys(json, requiredKeys: const ['decks', 'is_completed']);
+    final val = LessonState(
+      decks: $checkedConvert(
+        'decks',
+        (v) => (v as Map<String, dynamic>).map(
+          (k, e) => MapEntry(k, DeckState.fromJson(e as Map<String, dynamic>)),
         ),
-      );
-      return val;
-    }, fieldKeyMap: const {'lessonState': 'lesson_state'});
+      ),
+      isCompleted: $checkedConvert('is_completed', (v) => v as bool),
+      completedAt: $checkedConvert(
+        'completed_at',
+        (v) => v == null ? null : DateTime.parse(v as String),
+      ),
+    );
+    return val;
+  },
+  fieldKeyMap: const {
+    'isCompleted': 'is_completed',
+    'completedAt': 'completed_at',
+  },
+);
 
-Map<String, dynamic> _$LessonStateToJson(
-  LessonState instance,
-) => <String, dynamic>{
-  'lesson_state': instance.lessonState.map((k, e) => MapEntry(k, e.toJson())),
-};
+Map<String, dynamic> _$LessonStateToJson(LessonState instance) =>
+    <String, dynamic>{
+      'decks': instance.decks.map((k, e) => MapEntry(k, e.toJson())),
+      'is_completed': instance.isCompleted,
+      'completed_at': ?instance.completedAt?.toIso8601String(),
+    };

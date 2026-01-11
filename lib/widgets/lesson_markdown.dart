@@ -21,6 +21,9 @@ class LessonMarkdown extends StatelessWidget {
   /// Lesson ID for submitting deck answers. Optional for preview mode.
   final String? lessonId;
 
+  /// Map of deck ID to completion state. Used to show decks as already completed.
+  final Map<String, bool>? deckStates;
+
   /// When true, tables transform on narrow screens.
   /// When false, uses standard MarkdownBody rendering.
   final bool enableResponsiveTables;
@@ -38,6 +41,7 @@ class LessonMarkdown extends StatelessWidget {
     required this.data,
     this.courseId,
     this.lessonId,
+    this.deckStates,
     this.enableResponsiveTables = true,
     this.responsiveTableStyle = ResponsiveTableStyle.stacked,
     this.forceResponsive = false,
@@ -62,7 +66,11 @@ class LessonMarkdown extends StatelessWidget {
       imageBuilder: (uri, title, alt) => ProxiedImage(uri: uri, alt: alt),
       builders: {
         'audio': AudioBuilder(),
-        'deck': DeckBuilder(courseId: courseId, lessonId: lessonId),
+        'deck': DeckBuilder(
+          courseId: courseId,
+          lessonId: lessonId,
+          deckStates: deckStates,
+        ),
       },
       extensionSet:
           md.ExtensionSet(md.ExtensionSet.gitHubFlavored.blockSyntaxes, [
