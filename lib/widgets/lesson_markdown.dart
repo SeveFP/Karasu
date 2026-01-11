@@ -15,6 +15,12 @@ export 'package:karasu/widgets/responsive_table_builder.dart'
 class LessonMarkdown extends StatelessWidget {
   final String data;
 
+  /// Course ID for submitting deck answers. Optional for preview mode.
+  final String? courseId;
+
+  /// Lesson ID for submitting deck answers. Optional for preview mode.
+  final String? lessonId;
+
   /// When true, tables transform on narrow screens.
   /// When false, uses standard MarkdownBody rendering.
   final bool enableResponsiveTables;
@@ -30,6 +36,8 @@ class LessonMarkdown extends StatelessWidget {
   const LessonMarkdown({
     super.key,
     required this.data,
+    this.courseId,
+    this.lessonId,
     this.enableResponsiveTables = true,
     this.responsiveTableStyle = ResponsiveTableStyle.stacked,
     this.forceResponsive = false,
@@ -52,7 +60,10 @@ class LessonMarkdown extends StatelessWidget {
     return MarkdownBody(
       data: markdownContent,
       imageBuilder: (uri, title, alt) => ProxiedImage(uri: uri, alt: alt),
-      builders: {'audio': AudioBuilder(), 'deck': DeckBuilder()},
+      builders: {
+        'audio': AudioBuilder(),
+        'deck': DeckBuilder(courseId: courseId, lessonId: lessonId),
+      },
       extensionSet:
           md.ExtensionSet(md.ExtensionSet.gitHubFlavored.blockSyntaxes, [
             ...md.ExtensionSet.gitHubFlavored.inlineSyntaxes,
