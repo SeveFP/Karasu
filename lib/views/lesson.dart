@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:karasu/services/lesson_service.dart';
 import 'package:karasu/widgets/lesson_markdown.dart';
-import 'package:karasu/widgets/responsive_container.dart';
+import 'package:karasu/widgets/shell_scaffold.dart';
 import 'package:toshokan_api/toshokan_api.dart' as api;
 
 /// Individual lesson view displaying lesson content with embedded deck players.
@@ -57,50 +57,45 @@ class _LessonViewState extends State<LessonView> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: Text(widget.lesson.title)),
-      body: ResponsiveBody(
-        child: _isLoading
-            ? const Center(child: CircularProgressIndicator())
-            : SingleChildScrollView(
-                padding: const EdgeInsets.all(16.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    if (_error != null)
-                      Padding(
-                        padding: const EdgeInsets.only(bottom: 16),
-                        child: Text(
-                          'Could not load progress: $_error',
-                          style: TextStyle(
-                            color: Theme.of(context).colorScheme.error,
-                          ),
+    return ShellScaffold(
+      title: widget.lesson.title,
+      body: _isLoading
+          ? const Center(child: CircularProgressIndicator())
+          : SingleChildScrollView(
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  if (_error != null)
+                    Padding(
+                      padding: const EdgeInsets.only(bottom: 16),
+                      child: Text(
+                        'Could not load progress: $_error',
+                        style: TextStyle(
+                          color: Theme.of(context).colorScheme.error,
                         ),
                       ),
-                    if (widget.lesson.description.isNotEmpty) ...[
-                      Text(
-                        widget.lesson.description,
-                        style: Theme.of(context).textTheme.titleMedium
-                            ?.copyWith(
-                              color: Theme.of(
-                                context,
-                              ).colorScheme.onSurfaceVariant,
-                            ),
-                      ),
-                      const SizedBox(height: 24),
-                    ],
-                    LessonMarkdown(
-                      data: widget.lesson.body,
-                      courseId: widget.lesson.courseId,
-                      lessonId: widget.lesson.id,
-                      deckStates: _deckStates,
-                      forceResponsive: false,
-                      responsiveTableStyle: ResponsiveTableStyle.stacked,
                     ),
+                  if (widget.lesson.description.isNotEmpty) ...[
+                    Text(
+                      widget.lesson.description,
+                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                        color: Theme.of(context).colorScheme.onSurfaceVariant,
+                      ),
+                    ),
+                    const SizedBox(height: 24),
                   ],
-                ),
+                  LessonMarkdown(
+                    data: widget.lesson.body,
+                    courseId: widget.lesson.courseId,
+                    lessonId: widget.lesson.id,
+                    deckStates: _deckStates,
+                    forceResponsive: false,
+                    responsiveTableStyle: ResponsiveTableStyle.stacked,
+                  ),
+                ],
               ),
-      ),
+            ),
     );
   }
 }

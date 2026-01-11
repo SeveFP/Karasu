@@ -1,7 +1,7 @@
 import 'dart:math' show min;
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:karasu/services/openapi_client.dart';
+import 'package:karasu/widgets/shell_scaffold.dart';
 
 const usernameKey = "karasu:toshokan-username";
 const passwordKey = "karasu:toshokan-password";
@@ -19,12 +19,16 @@ class LoginView extends StatelessWidget {
       screenWidth < 600 ? screenWidth * 0.9 : screenWidth / 2,
     );
 
-    return Center(
-      child: SizedBox(
-        width: formWidth,
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [LogInForm(credentialsCallback: credentialsCallback)],
+    return ShellScaffold(
+      title: '',
+      showAppBranding: true,
+      body: Center(
+        child: SizedBox(
+          width: formWidth,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [LogInForm(credentialsCallback: credentialsCallback)],
+          ),
         ),
       ),
     );

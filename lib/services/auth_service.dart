@@ -36,15 +36,14 @@ class AuthService {
 
     final config = ConfigService().config;
     final url = Uri.parse('${config.protocol}${config.toshokanURL}/login');
-    final credentials = {
-      'username': _username,
-      'password': _password,
-    };
+    final credentials = {'username': _username, 'password': _password};
 
     try {
-      final response = await http.post(url,
-          body: json.encode(credentials),
-          headers: {"Content-Type": "application/json"});
+      final response = await http.post(
+        url,
+        body: json.encode(credentials),
+        headers: {"Content-Type": "application/json"},
+      );
 
       if (response.statusCode == 200) {
         final res = jsonDecode(response.body);
@@ -81,5 +80,13 @@ class AuthService {
   void clearCache() {
     _cachedToken = null;
     _tokenExpiry = null;
+  }
+
+  /// Clear all stored credentials and cache
+  void clearCredentials() {
+    _username = '';
+    _password = '';
+    clearCache();
+    _logger.i('Credentials cleared');
   }
 }

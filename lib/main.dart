@@ -11,7 +11,7 @@ import 'package:karasu/services/logger_service.dart';
 import 'package:karasu/views/login.dart';
 import 'package:karasu/views/courses.dart';
 // import 'package:karasu/views/popularDecks.dart';
-import 'package:karasu/widgets/karasu_scaffold.dart';
+import 'package:karasu/widgets/app_actions.dart';
 import 'package:karasu/router.dart';
 
 void main() async {
@@ -74,6 +74,13 @@ class _MyAppState extends State<MyApp> {
     });
   }
 
+  void _handleLogout() {
+    AuthService().clearCredentials();
+    setState(() {
+      _hasLoggedIn = false;
+    });
+  }
+
   void _setHasLoggedIn(String username, String password) async {
     try {
       await OpenApiClient.instance.loginAndSetToken(
@@ -110,9 +117,7 @@ class _MyAppState extends State<MyApp> {
     final config = ConfigService().config;
     final graphqlService = GraphQLService();
 
-    Widget body = ListView(
-      children: [LoginView(credentialsCallback: _setHasLoggedIn)],
-    );
+    Widget body = LoginView(credentialsCallback: _setHasLoggedIn);
 
     if (_hasLoggedIn) {
       body = const CoursesView();
@@ -120,28 +125,28 @@ class _MyAppState extends State<MyApp> {
 
     return GraphQLProvider(
       client: graphqlService.client,
-      child: MaterialApp(
-        title: config.appName,
-        theme: ThemeData(
-          colorScheme: ColorScheme.fromSeed(
-            seedColor: Color(config.colorScheme.primaryColor),
-            brightness: Brightness.light,
+      child: AppActions(
+        onThemeToggle: _toggleTheme,
+        currentThemeMode: _themeMode,
+        onLogout: _handleLogout,
+        child: MaterialApp(
+          title: config.appName,
+          theme: ThemeData(
+            colorScheme: ColorScheme.fromSeed(
+              seedColor: Color(config.colorScheme.primaryColor),
+              brightness: Brightness.light,
+            ),
           ),
-        ),
-        darkTheme: ThemeData(
-          colorScheme: ColorScheme.fromSeed(
-            seedColor: Color(config.colorScheme.primaryColor),
-            brightness: Brightness.dark,
+          darkTheme: ThemeData(
+            colorScheme: ColorScheme.fromSeed(
+              seedColor: Color(config.colorScheme.primaryColor),
+              brightness: Brightness.dark,
+            ),
           ),
+          themeMode: _themeMode,
+          home: body,
+          onGenerateRoute: AppRouter.onGenerateRoute,
         ),
-        themeMode: _themeMode,
-        home: KarasuScaffold(
-          body: body,
-          isLoggedIn: _hasLoggedIn,
-          onThemeToggle: _toggleTheme,
-          currentThemeMode: _themeMode,
-        ),
-        onGenerateRoute: AppRouter.onGenerateRoute,
       ),
     );
   }
