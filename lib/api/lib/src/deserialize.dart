@@ -6,6 +6,9 @@ import 'package:toshokan_api/src/model/card_answer.dart';
 import 'package:toshokan_api/src/model/card_input.dart';
 import 'package:toshokan_api/src/model/card_state.dart';
 import 'package:toshokan_api/src/model/course.dart';
+import 'package:toshokan_api/src/model/course_with_progress.dart';
+import 'package:toshokan_api/src/model/course_with_progress_edge.dart';
+import 'package:toshokan_api/src/model/courses_with_progress_connection_response.dart';
 import 'package:toshokan_api/src/model/create_course_request.dart';
 import 'package:toshokan_api/src/model/create_lesson_request.dart';
 import 'package:toshokan_api/src/model/deck.dart';
@@ -61,6 +64,12 @@ final _regMap = RegExp(r'^Map<String,(.*)>$');
           return CardState.fromJson(value as Map<String, dynamic>) as ReturnType;
         case 'Course':
           return Course.fromJson(value as Map<String, dynamic>) as ReturnType;
+        case 'CourseWithProgress':
+          return CourseWithProgress.fromJson(value as Map<String, dynamic>) as ReturnType;
+        case 'CourseWithProgressEdge':
+          return CourseWithProgressEdge.fromJson(value as Map<String, dynamic>) as ReturnType;
+        case 'CoursesWithProgressConnectionResponse':
+          return CoursesWithProgressConnectionResponse.fromJson(value as Map<String, dynamic>) as ReturnType;
         case 'CreateCourseRequest':
           return CreateCourseRequest.fromJson(value as Map<String, dynamic>) as ReturnType;
         case 'CreateLessonRequest':

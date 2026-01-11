@@ -12,7 +12,10 @@ doc/CardAnswer.md
 doc/CardInput.md
 doc/CardState.md
 doc/Course.md
+doc/CourseWithProgress.md
+doc/CourseWithProgressEdge.md
 doc/CoursesApi.md
+doc/CoursesWithProgressConnectionResponse.md
 doc/CreateCourseRequest.md
 doc/CreateLessonRequest.md
 doc/Deck.md
@@ -56,6 +59,9 @@ lib/src/model/card_answer.dart
 lib/src/model/card_input.dart
 lib/src/model/card_state.dart
 lib/src/model/course.dart
+lib/src/model/course_with_progress.dart
+lib/src/model/course_with_progress_edge.dart
+lib/src/model/courses_with_progress_connection_response.dart
 lib/src/model/create_course_request.dart
 lib/src/model/create_lesson_request.dart
 lib/src/model/deck.dart
@@ -87,7 +93,10 @@ test/card_input_test.dart
 test/card_state_test.dart
 test/card_test.dart
 test/course_test.dart
+test/course_with_progress_edge_test.dart
+test/course_with_progress_test.dart
 test/courses_api_test.dart
+test/courses_with_progress_connection_response_test.dart
 test/create_course_request_test.dart
 test/create_lesson_request_test.dart
 test/deck_input_test.dart
