@@ -47,27 +47,47 @@ class LogInFormState extends State<LogInForm> {
   final _formKey = GlobalKey<FormState>();
   final usernameController = TextEditingController();
   final passwordController = TextEditingController();
+  bool _isAutoLoggingIn = false;
 
   @override
   void initState() {
     super.initState();
+    _tryAutoLogin();
+  }
 
-    Future.delayed(Duration.zero, () async {
-      const storage = FlutterSecureStorage();
-      String? username = await storage.read(key: usernameKey);
-      String? password = await storage.read(key: passwordKey);
+  Future<void> _tryAutoLogin() async {
+    const storage = FlutterSecureStorage();
+    final username = await storage.read(key: usernameKey);
+    final password = await storage.read(key: passwordKey);
 
+    if (!mounted) return;
+
+    if (username != null && password != null) {
       setState(() {
-        if (username != null && password != null) {
-          usernameController.text = username;
-          passwordController.text = password;
-        }
+        usernameController.text = username;
+        passwordController.text = password;
+        _isAutoLoggingIn = true;
       });
-    });
+      // Auto-login with stored credentials
+      widget.credentialsCallback(username, password);
+    }
   }
 
   @override
   Widget build(BuildContext context) {
+    if (_isAutoLoggingIn) {
+      return const Center(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            CircularProgressIndicator(),
+            SizedBox(height: 16),
+            Text('Logging in...'),
+          ],
+        ),
+      );
+    }
+
     return Form(
       key: _formKey,
       child: Column(
