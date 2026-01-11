@@ -1,10 +1,8 @@
 import 'dart:math' show min;
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:karasu/services/auth_service.dart';
 import 'package:karasu/widgets/shell_scaffold.dart';
-
-const usernameKey = "karasu:toshokan-username";
-const passwordKey = "karasu:toshokan-password";
 
 class LoginView extends StatelessWidget {
   final Function(String username, String password) credentialsCallback;
@@ -79,11 +77,11 @@ class LogInFormState extends State<LogInForm> {
             controller: usernameController,
             decoration: const InputDecoration(
               helperText: ' ',
-              labelText: 'Email',
+              labelText: 'Username',
             ),
             validator: (value) {
               if (value == null || value.isEmpty) {
-                return 'Email is missing';
+                return 'Username is missing';
               }
               return null;
             },

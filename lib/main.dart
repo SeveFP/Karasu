@@ -125,28 +125,31 @@ class _MyAppState extends State<MyApp> {
 
     return GraphQLProvider(
       client: graphqlService.client,
-      child: AppActions(
-        onThemeToggle: _toggleTheme,
-        currentThemeMode: _themeMode,
-        onLogout: _handleLogout,
-        child: MaterialApp(
-          title: config.appName,
-          theme: ThemeData(
-            colorScheme: ColorScheme.fromSeed(
-              seedColor: Color(config.colorScheme.primaryColor),
-              brightness: Brightness.light,
-            ),
+      child: MaterialApp(
+        title: config.appName,
+        theme: ThemeData(
+          colorScheme: ColorScheme.fromSeed(
+            seedColor: Color(config.colorScheme.primaryColor),
+            brightness: Brightness.light,
           ),
-          darkTheme: ThemeData(
-            colorScheme: ColorScheme.fromSeed(
-              seedColor: Color(config.colorScheme.primaryColor),
-              brightness: Brightness.dark,
-            ),
-          ),
-          themeMode: _themeMode,
-          home: body,
-          onGenerateRoute: AppRouter.onGenerateRoute,
         ),
+        darkTheme: ThemeData(
+          colorScheme: ColorScheme.fromSeed(
+            seedColor: Color(config.colorScheme.primaryColor),
+            brightness: Brightness.dark,
+          ),
+        ),
+        themeMode: _themeMode,
+        home: body,
+        onGenerateRoute: AppRouter.onGenerateRoute,
+        builder: (context, child) {
+          return AppActions(
+            onThemeToggle: _toggleTheme,
+            currentThemeMode: _themeMode,
+            onLogout: _handleLogout,
+            child: child ?? const SizedBox.shrink(),
+          );
+        },
       ),
     );
   }

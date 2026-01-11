@@ -47,8 +47,10 @@ class _SettingsSheet extends StatelessWidget {
             leading: const Icon(Icons.logout),
             title: const Text('Logout'),
             onTap: () {
-              Navigator.pop(context);
+              Navigator.pop(context); // Close the bottom sheet
               actions.onLogout();
+              // Navigate back to root, clearing the stack
+              Navigator.of(context).popUntil((route) => route.isFirst);
             },
           ),
           const SizedBox(height: 16),

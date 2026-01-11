@@ -1,7 +1,11 @@
 import 'dart:convert';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart' as http;
 import 'package:karasu/services/config_service.dart';
 import 'package:karasu/services/logger_service.dart';
+
+const usernameKey = "karasu:toshokan-username";
+const passwordKey = "karasu:toshokan-password";
 
 class AuthService {
   static final AuthService _instance = AuthService._internal();
@@ -83,10 +87,20 @@ class AuthService {
   }
 
   /// Clear all stored credentials and cache
+  /// In production mode, also clears secure storage
   void clearCredentials() {
     _username = '';
     _password = '';
     clearCache();
+
+    // Only clear secure storage in non-debug mode
+    if (!ConfigService().isDebugMode) {
+      const storage = FlutterSecureStorage();
+      storage.delete(key: usernameKey);
+      storage.delete(key: passwordKey);
+      _logger.i('Secure storage credentials cleared');
+    }
+
     _logger.i('Credentials cleared');
   }
 }
