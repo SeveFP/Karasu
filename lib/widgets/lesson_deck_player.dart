@@ -1,11 +1,14 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_markdown_plus/flutter_markdown_plus.dart';
 import 'package:karasu/api/lib/toshokan_api.dart' as api;
 import 'package:karasu/services/config_service.dart';
 import 'package:karasu/services/lesson_service.dart';
 import 'package:karasu/services/logger_service.dart';
+import 'package:karasu/widgets/markdown_builders.dart';
 import 'package:karasu/widgets/markdown_with_audio.dart';
+import 'package:markdown/markdown.dart' as md;
 
 /// Normalizes whitespace: trims and collapses multiple spaces to single.
 String _normalizeWhitespace(String input) {
@@ -330,21 +333,8 @@ class _AnswerDisplayState extends State<_AnswerDisplay> {
   }
 }
 
-/// Parsed segment of a fill-in-the-blanks title.
-sealed class _TitleSegment {}
-
-class _TextSegment extends _TitleSegment {
-  final String text;
-  _TextSegment(this.text);
-}
-
-class _InputSegment extends _TitleSegment {
-  final int index;
-  _InputSegment(this.index);
-}
-
 /// Fill-in-the-blanks card widget.
-/// Parses ![input](n) syntax and renders inline text inputs.
+/// Uses markdown rendering with custom ![input](n) syntax for inline inputs.
 class _FillInTheBlanksCard extends StatefulWidget {
   final api.Card card;
   final bool disabled;
@@ -365,7 +355,6 @@ class _FillInTheBlanksCard extends StatefulWidget {
 
 class _FillInTheBlanksCardState extends State<_FillInTheBlanksCard> {
   final _logger = LoggerService.instance;
-  late List<_TitleSegment> _segments;
   late List<String> _correctBlanks;
   late api.Answer _correctAnswer;
   late api.Answer _incorrectAnswer;
@@ -392,7 +381,6 @@ class _FillInTheBlanksCardState extends State<_FillInTheBlanksCard> {
       _hasError = true;
       _errorMessage = 'Card missing correct or incorrect answer';
       _logger.e(_errorMessage!);
-      _segments = [];
       _correctBlanks = [];
       _controllers = [];
       return;
@@ -404,11 +392,9 @@ class _FillInTheBlanksCardState extends State<_FillInTheBlanksCard> {
     // Parse correct blanks from semicolon-separated text
     _correctBlanks = _correctAnswer.text.split(';');
 
-    // Parse title for ![input](n) markers
-    _segments = _parseTitleSegments(widget.card.title);
-
-    // Count input segments
-    final inputCount = _segments.whereType<_InputSegment>().length;
+    // Count input markers in the title
+    final inputPattern = RegExp(r'!\[input\]\((\d+)\)');
+    final inputCount = inputPattern.allMatches(widget.card.title).length;
 
     // Validate counts match
     if (inputCount != _correctBlanks.length) {
@@ -430,30 +416,6 @@ class _FillInTheBlanksCardState extends State<_FillInTheBlanksCard> {
     for (final controller in _controllers) {
       controller.addListener(_onInputChanged);
     }
-  }
-
-  List<_TitleSegment> _parseTitleSegments(String title) {
-    final segments = <_TitleSegment>[];
-    final pattern = RegExp(r'!\[input\]\((\d+)\)');
-    int lastEnd = 0;
-
-    for (final match in pattern.allMatches(title)) {
-      // Add text before this match
-      if (match.start > lastEnd) {
-        segments.add(_TextSegment(title.substring(lastEnd, match.start)));
-      }
-      // Add input segment
-      final index = int.parse(match.group(1)!);
-      segments.add(_InputSegment(index));
-      lastEnd = match.end;
-    }
-
-    // Add remaining text after last match
-    if (lastEnd < title.length) {
-      segments.add(_TextSegment(title.substring(lastEnd)));
-    }
-
-    return segments;
   }
 
   void _onInputChanged() {
@@ -507,9 +469,6 @@ class _FillInTheBlanksCardState extends State<_FillInTheBlanksCard> {
       );
     }
 
-    final theme = Theme.of(context);
-    final textStyle = theme.textTheme.bodyLarge;
-
     return AnimatedOpacity(
       opacity: widget.disabled ? 0.5 : 1.0,
       duration: const Duration(milliseconds: 150),
@@ -518,10 +477,25 @@ class _FillInTheBlanksCardState extends State<_FillInTheBlanksCard> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Title with inline inputs
-            Wrap(
-              crossAxisAlignment: WrapCrossAlignment.center,
-              children: _buildTitleWidgets(textStyle),
+            // Render title as markdown with inline inputs
+            MarkdownBody(
+              data: widget.card.title,
+              builders: {
+                'audio': AudioBuilder(),
+                'input': InputBuilder(
+                  controllers: _controllers,
+                  expectedAnswers: _correctBlanks,
+                  disabled: widget.disabled,
+                ),
+              },
+              extensionSet: md.ExtensionSet(
+                md.ExtensionSet.gitHubFlavored.blockSyntaxes,
+                [
+                  ...md.ExtensionSet.gitHubFlavored.inlineSyntaxes,
+                  AudioSyntax(),
+                  InputSyntax(),
+                ],
+              ),
             ),
             const SizedBox(height: 16),
             // Submit button
@@ -538,87 +512,6 @@ class _FillInTheBlanksCardState extends State<_FillInTheBlanksCard> {
               ),
             ),
           ],
-        ),
-      ),
-    );
-  }
-
-  List<Widget> _buildTitleWidgets(TextStyle? textStyle) {
-    final widgets = <Widget>[];
-    int inputIndex = 0;
-
-    for (final segment in _segments) {
-      switch (segment) {
-        case _TextSegment(:final text):
-          widgets.add(Text(text, style: textStyle));
-        case _InputSegment(:final index):
-          // Ensure index is valid
-          if (index < _correctBlanks.length) {
-            final expectedAnswer = _correctBlanks[index];
-            widgets.add(
-              _BlankInput(
-                controller: _controllers[inputIndex],
-                expectedLength: expectedAnswer.length,
-                disabled: widget.disabled,
-              ),
-            );
-            inputIndex++;
-          }
-      }
-    }
-
-    return widgets;
-  }
-}
-
-/// Inline text input for fill-in-the-blanks.
-class _BlankInput extends StatelessWidget {
-  final TextEditingController controller;
-  final int expectedLength;
-  final bool disabled;
-
-  const _BlankInput({
-    required this.controller,
-    required this.expectedLength,
-    required this.disabled,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-
-    // Calculate width based on expected answer length
-    // Minimum 3 characters, add some padding
-    final charCount = expectedLength.clamp(3, 20);
-    final width = (charCount * 12.0) + 16;
-
-    return Container(
-      width: width,
-      margin: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
-      child: TextField(
-        controller: controller,
-        enabled: !disabled,
-        textAlign: TextAlign.center,
-        style: theme.textTheme.bodyLarge?.copyWith(fontWeight: FontWeight.w500),
-        decoration: InputDecoration(
-          isDense: true,
-          contentPadding: const EdgeInsets.symmetric(
-            horizontal: 8,
-            vertical: 8,
-          ),
-          border: const UnderlineInputBorder(),
-          enabledBorder: UnderlineInputBorder(
-            borderSide: BorderSide(color: theme.colorScheme.outline, width: 2),
-          ),
-          focusedBorder: UnderlineInputBorder(
-            borderSide: BorderSide(color: theme.colorScheme.primary, width: 2),
-          ),
-          disabledBorder: UnderlineInputBorder(
-            borderSide: BorderSide(
-              color: theme.colorScheme.outline.withValues(alpha: 0.5),
-              width: 2,
-            ),
-          ),
         ),
       ),
     );

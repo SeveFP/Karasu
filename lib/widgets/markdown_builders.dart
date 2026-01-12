@@ -189,3 +189,105 @@ class _ProxiedImageState extends State<ProxiedImage> {
     );
   }
 }
+
+// ============================================================================
+// Input Builder & Syntax (for fill-in-the-blanks cards)
+// ============================================================================
+
+/// Builder for inline input fields in fill-in-the-blanks cards.
+/// Renders ![input](n) as a text input field.
+class InputBuilder extends MarkdownElementBuilder {
+  final List<TextEditingController> controllers;
+  final List<String> expectedAnswers;
+  final bool disabled;
+
+  InputBuilder({
+    required this.controllers,
+    required this.expectedAnswers,
+    required this.disabled,
+  });
+
+  @override
+  Widget visitElementAfter(md.Element element, TextStyle? preferredStyle) {
+    final indexStr = element.textContent;
+    final index = int.tryParse(indexStr) ?? 0;
+
+    if (index >= controllers.length || index >= expectedAnswers.length) {
+      return const SizedBox.shrink();
+    }
+
+    final expectedLength = expectedAnswers[index].length;
+    return BlankInputWidget(
+      controller: controllers[index],
+      expectedLength: expectedLength,
+      disabled: disabled,
+    );
+  }
+}
+
+class InputSyntax extends md.InlineSyntax {
+  InputSyntax() : super(r'!\[input\]\((\d+)\)');
+
+  @override
+  bool onMatch(md.InlineParser parser, Match match) {
+    final index = match.group(1)!;
+    final el = md.Element('input', [md.Text(index)]);
+    parser.addNode(el);
+    return true;
+  }
+}
+
+/// Inline text input widget for fill-in-the-blanks.
+class BlankInputWidget extends StatelessWidget {
+  final TextEditingController controller;
+  final int expectedLength;
+  final bool disabled;
+
+  const BlankInputWidget({
+    super.key,
+    required this.controller,
+    required this.expectedLength,
+    required this.disabled,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
+    // Calculate width based on expected answer length
+    // Minimum 3 characters, add some padding
+    final charCount = expectedLength.clamp(3, 20);
+    final width = (charCount * 12.0) + 16;
+
+    return Container(
+      width: width,
+      margin: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
+      child: TextField(
+        controller: controller,
+        enabled: !disabled,
+        textAlign: TextAlign.center,
+        style: theme.textTheme.bodyLarge?.copyWith(fontWeight: FontWeight.w500),
+        decoration: InputDecoration(
+          isDense: true,
+          contentPadding: const EdgeInsets.symmetric(
+            horizontal: 8,
+            vertical: 8,
+          ),
+          border: const UnderlineInputBorder(),
+          enabledBorder: UnderlineInputBorder(
+            borderSide: BorderSide(color: theme.colorScheme.outline, width: 2),
+          ),
+          focusedBorder: UnderlineInputBorder(
+            borderSide: BorderSide(color: theme.colorScheme.primary, width: 2),
+          ),
+          disabledBorder: UnderlineInputBorder(
+            borderSide: BorderSide(
+              color: theme.colorScheme.outline.withValues(alpha: 0.5),
+              width: 2,
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
