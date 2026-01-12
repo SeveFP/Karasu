@@ -306,6 +306,7 @@ class _AnswerDisplay extends StatefulWidget {
 
 class _AnswerDisplayState extends State<_AnswerDisplay> {
   bool _locked = false;
+  bool _hovered = false;
 
   void _handleTap() {
     if (_locked || widget.disabled) return;
@@ -320,14 +321,38 @@ class _AnswerDisplayState extends State<_AnswerDisplay> {
   Widget build(BuildContext context) {
     final bool active = widget.active;
     final bool disabled = widget.disabled || _locked;
+    final theme = Theme.of(context);
 
-    return AnimatedOpacity(
-      opacity: !disabled ? 1.0 : 0.35,
-      duration: const Duration(milliseconds: 150),
-      child: ListTile(
-        onTap: _handleTap,
-        title: MarkdownWithAudio(data: widget.answer.text),
-        trailing: Icon(Icons.circle, color: active ? Colors.blue : Colors.grey),
+    // Use theme colors instead of hardcoded values
+    final activeColor = theme.colorScheme.primary;
+    final inactiveColor = theme.colorScheme.outline;
+    final hoverColor = theme.colorScheme.onSurfaceVariant;
+
+    // Determine icon color based on state priority: active > hover > inactive
+    final iconColor = active
+        ? activeColor
+        : (_hovered && !disabled)
+        ? hoverColor
+        : inactiveColor;
+
+    // Determine icon based on state
+    final IconData icon = active
+        ? Icons.check_circle
+        : (_hovered && !disabled)
+        ? Icons.radio_button_checked
+        : Icons.circle_outlined;
+
+    return MouseRegion(
+      onEnter: (_) => setState(() => _hovered = true),
+      onExit: (_) => setState(() => _hovered = false),
+      child: AnimatedOpacity(
+        opacity: !disabled ? 1.0 : 0.35,
+        duration: const Duration(milliseconds: 150),
+        child: ListTile(
+          onTap: _handleTap,
+          title: MarkdownWithAudio(data: widget.answer.text),
+          trailing: Icon(icon, color: iconColor),
+        ),
       ),
     );
   }
