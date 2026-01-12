@@ -124,10 +124,17 @@ class _LessonsViewState extends State<LessonsView> {
       itemCount: _lessons.length,
       itemBuilder: (context, index) {
         final lesson = _lessons[index];
+        var icon = lesson.isCurrent
+            ? Icons.menu_book_rounded
+            : Icons.lock;
+        if (lesson.isCompleted) {
+          icon = Icons.check_circle_rounded;
+        }
+
         return Card(
           margin: const EdgeInsets.only(bottom: 12),
           child: ListTile(
-            leading: CircleAvatar(child: Icon(Icons.article)),
+            leading: CircleAvatar(child: Icon(icon)),
             title: Text(lesson.title),
             subtitle: Text(lesson.description),
             trailing: const Icon(Icons.arrow_forward_ios, size: 16),
