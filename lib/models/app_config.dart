@@ -30,7 +30,7 @@ class AppConfig {
     this.themeMode = AppThemeMode.system,
     required this.defaultMaxCards,
     this.mode = AppMode.production,
-    this.lockLessons = true,
+    required this.lockLessons,
   });
 
   factory AppConfig.fromJson(Map<String, dynamic> json) {
@@ -67,7 +67,7 @@ class AppConfig {
       themeMode: modeFromJson(json['themeMode'] as String?),
       defaultMaxCards: json['defaultMaxCards'] ?? 10,
       mode: appModeFromJson(json['mode'] as String?),
-      lockLessons: json['lockLessons'] ?? true,
+      lockLessons: json['lockLessons'] == true,
     );
   }
 }

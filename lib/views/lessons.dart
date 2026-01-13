@@ -54,23 +54,19 @@ class _LessonsViewState extends State<LessonsView> {
   }
 
   void _selectLesson(api.LessonWithProgress lessonWithProgress) {
-    if (!lessonWithProgress.isCompleted && !lessonWithProgress.isCurrent) {
-      if (ConfigService().config.lockLessons) {
-        // The following solution works better than queuing snackbars everytime -
-        // the user taps a locked lesson, but it is not the right solution.
-        // Instead, there should be SnackBar types, and make the messenger not allow
-        // pushing the same type again if it is already showing.
-        ScaffoldMessenger.of(context).clearSnackBars();
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text(
-              'This lesson is locked. Please complete previous lessons first.',
-            ),
+    if (_getIsLocked(lessonWithProgress)) {
+      // The following solution works better than queuing snackbars everytime -
+      // the user taps a locked lesson, but it is not the right solution.
+      // Instead, there should be SnackBar types, and make the messenger not allow
+      // pushing the same type again if it is already showing.
+      ScaffoldMessenger.of(context).clearSnackBars();
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text(
+            'This lesson is locked. Please complete previous lessons first.',
           ),
-        );
-        return;
-      }
-      // Lesson is locked
+        ),
+      );
       return;
     }
 
@@ -79,6 +75,14 @@ class _LessonsViewState extends State<LessonsView> {
       AppRouter.lesson,
       arguments: {'lesson': lessonWithProgress},
     );
+  }
+
+  // Determine if a lesson should be locked based on progress and config
+  bool _getIsLocked(api.LessonWithProgress lesson) {
+    if (lesson.isCompleted || lesson.isCurrent) {
+      return false;
+    }
+    return ConfigService().config.lockLessons;
   }
 
   @override
@@ -145,9 +149,20 @@ class _LessonsViewState extends State<LessonsView> {
       itemCount: _lessons.length,
       itemBuilder: (context, index) {
         final lesson = _lessons[index];
-        var icon = lesson.isCurrent ? Icons.menu_book_rounded : Icons.lock;
+        final currentLessonIcon = Icons.menu_book_rounded;
+        final completedLessonIcon = Icons.check_circle_rounded;
+        final lockedLessonIcon = Icons.lock;
+        final availableLessonIcon = Icons.book_rounded;
+
+        IconData icon;
         if (lesson.isCompleted) {
-          icon = Icons.check_circle_rounded;
+          icon = completedLessonIcon;
+        } else if (lesson.isCurrent) {
+          icon = currentLessonIcon;
+        } else if (_getIsLocked(lesson)) {
+          icon = lockedLessonIcon;
+        } else {
+          icon = availableLessonIcon;
         }
 
         return Card(
