@@ -63,6 +63,7 @@ class ConfigService {
           themeMode: AppThemeMode.system,
           defaultMaxCards: 10,
           mode: AppMode.production,
+          lockLessons: true,
         );
       }
     }
@@ -79,6 +80,7 @@ class ConfigService {
       themeMode: baseConfig.themeMode,
       defaultMaxCards: baseConfig.defaultMaxCards,
       mode: baseConfig.mode,
+      lockLessons: baseConfig.lockLessons,
     );
 
     _logger.i('TOSHOKAN_URL: ${_config.toshokanURL}');
