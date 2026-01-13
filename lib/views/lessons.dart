@@ -54,6 +54,8 @@ class _LessonsViewState extends State<LessonsView> {
   }
 
   void _selectLesson(api.LessonWithProgress lessonWithProgress) {
+
+    // Lesson is locked
     if (!lessonWithProgress.isCompleted && !lessonWithProgress.isCurrent) {
       if (ConfigService().config.lockLessons) {
         // The following solution works better than queuing snackbars everytime -
@@ -70,8 +72,6 @@ class _LessonsViewState extends State<LessonsView> {
         );
         return;
       }
-      // Lesson is locked
-      return;
     }
 
     Navigator.pushNamed(
