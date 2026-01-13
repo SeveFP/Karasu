@@ -13,6 +13,8 @@ abstract class _$CardInputCWProxy {
 
   CardInput explanation(String? explanation);
 
+  CardInput kind(CardInputKindEnum kind);
+
   /// This function **does support** nullification of nullable fields. All `null` values passed to `non-nullable` fields will be ignored. You can also use `CardInput(...).copyWith.fieldName(...)` to override fields one at a time with nullification support.
   ///
   /// Usage
@@ -23,6 +25,7 @@ abstract class _$CardInputCWProxy {
     String title,
     List<AnswerInput> possibleAnswers,
     String? explanation,
+    CardInputKindEnum kind,
   });
 }
 
@@ -43,6 +46,9 @@ class _$CardInputCWProxyImpl implements _$CardInputCWProxy {
   CardInput explanation(String? explanation) => this(explanation: explanation);
 
   @override
+  CardInput kind(CardInputKindEnum kind) => this(kind: kind);
+
+  @override
   /// This function **does support** nullification of nullable fields. All `null` values passed to `non-nullable` fields will be ignored. You can also use `CardInput(...).copyWith.fieldName(...)` to override fields one at a time with nullification support.
   ///
   /// Usage
@@ -53,6 +59,7 @@ class _$CardInputCWProxyImpl implements _$CardInputCWProxy {
     Object? title = const $CopyWithPlaceholder(),
     Object? possibleAnswers = const $CopyWithPlaceholder(),
     Object? explanation = const $CopyWithPlaceholder(),
+    Object? kind = const $CopyWithPlaceholder(),
   }) {
     return CardInput(
       title: title == const $CopyWithPlaceholder()
@@ -67,6 +74,10 @@ class _$CardInputCWProxyImpl implements _$CardInputCWProxy {
           ? _value.explanation
           // ignore: cast_nullable_to_non_nullable
           : explanation as String?,
+      kind: kind == const $CopyWithPlaceholder()
+          ? _value.kind
+          // ignore: cast_nullable_to_non_nullable
+          : kind as CardInputKindEnum,
     );
   }
 }
@@ -81,24 +92,38 @@ extension $CardInputCopyWith on CardInput {
 // JsonSerializableGenerator
 // **************************************************************************
 
-CardInput _$CardInputFromJson(Map<String, dynamic> json) =>
-    $checkedCreate('CardInput', json, ($checkedConvert) {
-      $checkKeys(json, requiredKeys: const ['title', 'possible_answers']);
-      final val = CardInput(
-        title: $checkedConvert('title', (v) => v as String),
-        possibleAnswers: $checkedConvert(
-          'possible_answers',
-          (v) => (v as List<dynamic>)
-              .map((e) => AnswerInput.fromJson(e as Map<String, dynamic>))
-              .toList(),
-        ),
-        explanation: $checkedConvert('explanation', (v) => v as String?),
-      );
-      return val;
-    }, fieldKeyMap: const {'possibleAnswers': 'possible_answers'});
+CardInput _$CardInputFromJson(Map<String, dynamic> json) => $checkedCreate(
+  'CardInput',
+  json,
+  ($checkedConvert) {
+    $checkKeys(json, requiredKeys: const ['title', 'possible_answers', 'kind']);
+    final val = CardInput(
+      title: $checkedConvert('title', (v) => v as String),
+      possibleAnswers: $checkedConvert(
+        'possible_answers',
+        (v) => (v as List<dynamic>)
+            .map((e) => AnswerInput.fromJson(e as Map<String, dynamic>))
+            .toList(),
+      ),
+      explanation: $checkedConvert('explanation', (v) => v as String?),
+      kind: $checkedConvert(
+        'kind',
+        (v) => $enumDecode(_$CardInputKindEnumEnumMap, v),
+      ),
+    );
+    return val;
+  },
+  fieldKeyMap: const {'possibleAnswers': 'possible_answers'},
+);
 
 Map<String, dynamic> _$CardInputToJson(CardInput instance) => <String, dynamic>{
   'title': instance.title,
   'possible_answers': instance.possibleAnswers.map((e) => e.toJson()).toList(),
   'explanation': ?instance.explanation,
+  'kind': _$CardInputKindEnumEnumMap[instance.kind]!,
+};
+
+const _$CardInputKindEnumEnumMap = {
+  CardInputKindEnum.singleChoice: 'single_choice',
+  CardInputKindEnum.fillInTheBlanks: 'fill_in_the_blanks',
 };

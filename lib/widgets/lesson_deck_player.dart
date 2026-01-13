@@ -35,9 +35,13 @@ class LessonDeckPlayer extends StatefulWidget {
   /// Whether the deck was already completed. If true, shows completed state initially.
   final bool initiallyCompleted;
 
+ /// Callback when the deck is completed.
+  final void Function(String deckId) onCompleted;
+
   const LessonDeckPlayer({
     super.key,
     required this.deck,
+    required this.onCompleted,
     this.courseId,
     this.lessonId,
     this.initiallyCompleted = false,
@@ -119,6 +123,7 @@ class _LessonDeckPlayerState extends State<LessonDeckPlayer> {
           _current++;
           if (_current >= _cards.length) {
             _completed = true;
+            widget.onCompleted(widget.deck.id);
           }
         });
       }

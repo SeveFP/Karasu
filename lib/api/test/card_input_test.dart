@@ -25,5 +25,11 @@ void main() {
       // TODO
     });
 
+    // Card kind/type
+    // String kind
+    test('to test the property `kind`', () async {
+      // TODO
+    });
+
   });
 }

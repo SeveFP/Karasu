@@ -53,8 +53,14 @@ class DeckBuilder extends MarkdownElementBuilder {
   final String? courseId;
   final String? lessonId;
   final Map<String, bool>? deckStates;
+  final void Function(String deckId) onCompletedDeck;
 
-  DeckBuilder({this.courseId, this.lessonId, this.deckStates});
+  DeckBuilder({
+    required this.onCompletedDeck,
+    this.courseId,
+    this.lessonId,
+    this.deckStates,
+  });
 
   @override
   Widget? visitElementAfter(md.Element element, TextStyle? preferredStyle) {
@@ -119,6 +125,7 @@ class DeckBuilder extends MarkdownElementBuilder {
           final isCompleted = deckStates?[deck.id] ?? false;
           return LessonDeckPlayer(
             deck: deck,
+            onCompleted: onCompletedDeck,
             courseId: courseId,
             lessonId: lessonId,
             initiallyCompleted: isCompleted,

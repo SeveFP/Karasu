@@ -25,5 +25,14 @@ void main() {
       // TODO
     });
 
+    // Synchronize user progress state
+    //
+    // Synchronize the user's progress state for a specific course.
+    //
+    //Future syncState(String courseId) async
+    test('test syncState', () async {
+      // TODO
+    });
+
   });
 }

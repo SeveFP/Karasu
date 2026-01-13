@@ -7,6 +7,7 @@
     "debugPaintSizeEnabled": false,
     "mode": "production",
     "lockLessons": true,
+    "callSyncOnLessonCompletion": true,
     "colorScheme": {
         "primaryColor": 4281558681,
         "secondaryColor": 4283782485,

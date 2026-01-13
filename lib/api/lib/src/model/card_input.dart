@@ -26,6 +26,8 @@ class CardInput {
     required  this.possibleAnswers,
 
      this.explanation,
+
+    required  this.kind,
   });
 
       /// Question or prompt text
@@ -67,19 +69,34 @@ class CardInput {
 
 
 
+      /// Card kind/type
+  @JsonKey(
+    
+    name: r'kind',
+    required: true,
+    includeIfNull: false,
+  )
+
+
+  final CardInputKindEnum kind;
+
+
+
 
 
     @override
     bool operator ==(Object other) => identical(this, other) || other is CardInput &&
       other.title == title &&
       other.possibleAnswers == possibleAnswers &&
-      other.explanation == explanation;
+      other.explanation == explanation &&
+      other.kind == kind;
 
     @override
     int get hashCode =>
         title.hashCode +
         possibleAnswers.hashCode +
-        explanation.hashCode;
+        explanation.hashCode +
+        kind.hashCode;
 
   factory CardInput.fromJson(Map<String, dynamic> json) => _$CardInputFromJson(json);
 
@@ -91,4 +108,22 @@ class CardInput {
   }
 
 }
+
+/// Card kind/type
+enum CardInputKindEnum {
+    /// Card kind/type
+@JsonValue(r'single_choice')
+singleChoice(r'single_choice'),
+    /// Card kind/type
+@JsonValue(r'fill_in_the_blanks')
+fillInTheBlanks(r'fill_in_the_blanks');
+
+const CardInputKindEnum(this.value);
+
+final String value;
+
+@override
+String toString() => value;
+}
+
 

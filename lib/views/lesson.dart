@@ -1,8 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:karasu/services/lesson_service.dart';
+import 'package:karasu/services/logger_service.dart';
+import 'package:karasu/services/openapi_client.dart';
 import 'package:karasu/widgets/lesson_markdown.dart';
 import 'package:karasu/widgets/shell_scaffold.dart';
+import 'package:logging/logging.dart';
 import 'package:toshokan_api/toshokan_api.dart' as api;
+
+// Enum for the BottomNextPageBar button state
+// Completed, Complete and continue enabled, Complete and continue disabled
+enum BottomNextPageBarButtonState {
+  completedAndDisabled,
+  completeAndContinueEnabled,
+  completeAndContinueDisabled,
+}
 
 /// Individual lesson view displaying lesson content with embedded deck players.
 /// Renders the lesson body as markdown supporting:
@@ -18,14 +29,28 @@ class LessonView extends StatefulWidget {
 }
 
 class _LessonViewState extends State<LessonView> {
+  String? _error;
+  bool completedLessonInThisSession = false;
+  late BottomNextPageBarButtonState completeLessonButtonState;
+
   Map<String, bool>? _deckStates;
   bool _isLoading = true;
-  String? _error;
 
   @override
   void initState() {
     super.initState();
     _fetchLessonState();
+
+    switch(widget.lesson.isCompleted) {
+      case true:
+        completeLessonButtonState =
+            BottomNextPageBarButtonState.completedAndDisabled;
+        break;
+      case false:
+        completeLessonButtonState =
+            BottomNextPageBarButtonState.completeAndContinueDisabled;
+        break;
+    }
   }
 
   Future<void> _fetchLessonState() async {
@@ -46,12 +71,42 @@ class _LessonViewState extends State<LessonView> {
     } catch (e) {
       if (mounted) {
         setState(() {
-          _error = e.toString();
+          LoggerService.instance.e(
+            '_fetchLessonState: Failed to load lesson state',
+            error: e,
+          );
           _isLoading = false;
+          _error = e.toString();
           // Default to empty map so decks still work
           _deckStates = {};
         });
       }
+    }
+  }
+
+  void _onCompletedDeck(String deckId) async {
+    try {
+      final response = await OpenApiClient.instance.progress.getLessonState(
+        courseId: widget.lesson.courseId,
+        lessonId: widget.lesson.id,
+      );
+
+      final lessonNowCompleted = LessonService.instance.isLessonComplete(
+        response.data!,
+        widget.lesson.id,
+      );
+
+      if (lessonNowCompleted && !widget.lesson.isCompleted) {
+        setState(() {
+          completeLessonButtonState =
+              BottomNextPageBarButtonState.completeAndContinueEnabled;
+        });
+      }
+    } catch (e) {
+      LoggerService.instance.e(
+        '_onCompletedDeck: Failed to refresh lesson state',
+        error: e,
+      );
     }
   }
 
@@ -87,15 +142,83 @@ class _LessonViewState extends State<LessonView> {
                   ],
                   LessonMarkdown(
                     data: widget.lesson.body,
+                    onCompletedDeck: _onCompletedDeck,
                     courseId: widget.lesson.courseId,
                     lessonId: widget.lesson.id,
                     deckStates: _deckStates,
                     forceResponsive: false,
                     responsiveTableStyle: ResponsiveTableStyle.stacked,
                   ),
+                  // Bottom bar with a button on the right to back to the lessons list
+                  BottomNextPageBar(
+                    lesson: widget.lesson,
+                    buttonState: completeLessonButtonState,
+                    onButtonPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                  ),
                 ],
               ),
             ),
+    );
+  }
+}
+
+class BottomNextPageBar extends StatelessWidget {
+  final VoidCallback onButtonPressed;
+  final api.LessonWithProgress lesson;
+  final BottomNextPageBarButtonState buttonState;
+
+  const BottomNextPageBar({
+    super.key,
+    required this.onButtonPressed,
+    required this.lesson,
+    required this.buttonState,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    late ElevatedButton completeButton;
+
+    switch (buttonState) {
+      case BottomNextPageBarButtonState.completedAndDisabled:
+        completeButton = ElevatedButton.icon(
+          iconAlignment: IconAlignment.end,
+          onPressed: null,
+          icon: const Icon(Icons.thumb_up),
+          label: const Text("Lesson Completed!"),
+        );
+        break;
+      case BottomNextPageBarButtonState.completeAndContinueEnabled:
+        completeButton = ElevatedButton.icon(
+          iconAlignment: IconAlignment.end,
+          onPressed: onButtonPressed,
+          icon: const Icon(Icons.check),
+          label: const Text("Complete Lesson & Continue"),
+        );
+        break;
+      case BottomNextPageBarButtonState.completeAndContinueDisabled:
+        completeButton = ElevatedButton.icon(
+          iconAlignment: IconAlignment.end,
+          onPressed: null,
+          icon: const Icon(Icons.check),
+          label: const Text("Complete Lesson & Continue"),
+        );
+        break;
+    }
+
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 30),
+      decoration: BoxDecoration(
+        color: Theme.of(context).colorScheme.surface,
+        border: Border(
+          top: BorderSide(color: Theme.of(context).dividerColor, width: 1),
+        ),
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.end,
+        children: [completeButton, const SizedBox(width: 16)],
+      ),
     );
   }
 }
