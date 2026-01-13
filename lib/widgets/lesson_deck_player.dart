@@ -207,6 +207,26 @@ class _LessonDeckPlayerState extends State<LessonDeckPlayer> {
 
     final api.Card card = _cards[_current];
 
+    final colorScheme = Theme.of(context).colorScheme;
+    final Widget deckHeader = Card(
+      margin: const EdgeInsets.symmetric(vertical: 8),
+      color: colorScheme.primaryContainer,
+      child: ListTile(
+        tileColor: colorScheme.primaryContainer,
+        leading: Icon(Icons.library_books_rounded, color: colorScheme.onPrimaryContainer),
+        title: Text(
+          widget.deck.title,
+          style: Theme.of(context).textTheme.titleMedium
+              ?.copyWith(color: colorScheme.onPrimaryContainer),
+        ),
+        subtitle: Text(
+          widget.deck.description,
+          style: Theme.of(context).textTheme.bodySmall
+              ?.copyWith(color: colorScheme.onPrimaryContainer.withValues(alpha: 0.85)),
+        ),
+      ),
+    );
+
     // Build card header (shared between card types)
     Widget cardHeader = ListTile(
       leading: const Icon(Icons.contact_support_rounded),
@@ -242,48 +262,58 @@ class _LessonDeckPlayerState extends State<LessonDeckPlayer> {
 
     // Render fill-in-the-blanks card
     if (card.kind == api.CardKindEnum.fillInTheBlanks) {
-      return Card(
-        margin: const EdgeInsets.symmetric(vertical: 8),
-        child: Column(
-          children: [
-            cardHeader,
-            const Divider(height: 1),
-            _FillInTheBlanksCard(
-              key: ValueKey(card.id), // ensure state resets when card changes
-              card: card,
-              disabled: _answers.containsKey(card.id),
-              allowSkip: ConfigService().isDebugMode,
-              onSubmit: (answer) {
-                if (_answers.containsKey(card.id)) return;
-                _handleTap(card.id, answer);
-              },
+      return Column(
+        children: [
+          deckHeader,
+          Card(
+            margin: const EdgeInsets.symmetric(vertical: 8),
+            child: Column(
+              children: [
+                cardHeader,
+                const Divider(height: 1),
+                _FillInTheBlanksCard(
+                  key: ValueKey(card.id), // ensure state resets when card changes
+                  card: card,
+                  disabled: _answers.containsKey(card.id),
+                  allowSkip: ConfigService().isDebugMode,
+                  onSubmit: (answer) {
+                    if (_answers.containsKey(card.id)) return;
+                    _handleTap(card.id, answer);
+                  },
+                ),
+              ],
             ),
-          ],
-        ),
+          ),
+        ],
       );
     }
 
     // Render single-choice card (default)
-    return Card(
-      margin: const EdgeInsets.symmetric(vertical: 8),
-      child: Column(
-        children: [
-          cardHeader,
-          const Divider(height: 1),
-          ...card.possibleAnswers.map(
-            (a) => _AnswerDisplay(
-              answer: a,
-              disabled: _answers.containsKey(card.id),
-              active: _answers[card.id]?.id == a.id,
-              onChanged: (ans) {
-                // Allow choosing once per card
-                if (_answers.containsKey(card.id)) return;
-                _handleTap(card.id, ans);
-              },
-            ),
+    return Column(
+      children: [
+        deckHeader,
+        Card(
+          margin: const EdgeInsets.symmetric(vertical: 8),
+          child: Column(
+            children: [
+              cardHeader,
+              const Divider(height: 1),
+              ...card.possibleAnswers.map(
+                (a) => _AnswerDisplay(
+                  answer: a,
+                  disabled: _answers.containsKey(card.id),
+                  active: _answers[card.id]?.id == a.id,
+                  onChanged: (ans) {
+                    // Allow choosing once per card
+                    if (_answers.containsKey(card.id)) return;
+                    _handleTap(card.id, ans);
+                  },
+                ),
+              ),
+            ],
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 }
