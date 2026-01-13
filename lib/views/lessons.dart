@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:karasu/services/config_service.dart';
 import 'package:karasu/services/lesson_service.dart';
 import 'package:karasu/services/logger_service.dart';
 import 'package:karasu/router.dart';
@@ -53,6 +54,26 @@ class _LessonsViewState extends State<LessonsView> {
   }
 
   void _selectLesson(api.LessonWithProgress lessonWithProgress) {
+    if (!lessonWithProgress.isCompleted && !lessonWithProgress.isCurrent) {
+      if (ConfigService().config.lockLessons) {
+        // The following solution works better than queuing snackbars everytime -
+        // the user taps a locked lesson, but it is not the right solution.
+        // Instead, there should be SnackBar types, and make the messenger not allow
+        // pushing the same type again if it is already showing.
+        ScaffoldMessenger.of(context).clearSnackBars();
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text(
+              'This lesson is locked. Please complete previous lessons first.',
+            ),
+          ),
+        );
+        return;
+      }
+      // Lesson is locked
+      return;
+    }
+
     Navigator.pushNamed(
       context,
       AppRouter.lesson,
@@ -124,9 +145,7 @@ class _LessonsViewState extends State<LessonsView> {
       itemCount: _lessons.length,
       itemBuilder: (context, index) {
         final lesson = _lessons[index];
-        var icon = lesson.isCurrent
-            ? Icons.menu_book_rounded
-            : Icons.lock;
+        var icon = lesson.isCurrent ? Icons.menu_book_rounded : Icons.lock;
         if (lesson.isCompleted) {
           icon = Icons.check_circle_rounded;
         }

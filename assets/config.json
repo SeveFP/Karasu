@@ -6,6 +6,7 @@
     "logoBackgroundColor": 4294967295,
     "debugPaintSizeEnabled": false,
     "mode": "production",
+    "lockLessons": true,
     "colorScheme": {
         "primaryColor": 4294198259,
         "secondaryColor": 4285822833,
