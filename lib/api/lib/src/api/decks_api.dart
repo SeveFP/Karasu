@@ -11,10 +11,8 @@ import 'package:dio/dio.dart';
 
 import 'package:toshokan_api/src/model/deck.dart';
 import 'package:toshokan_api/src/model/deck_input.dart';
-import 'package:toshokan_api/src/model/error.dart';
 
 class DecksApi {
-
   final Dio _dio;
 
   const DecksApi(this._dio);
@@ -23,7 +21,7 @@ class DecksApi {
   /// Create a new flashcard deck
   ///
   /// Parameters:
-  /// * [deckInput] 
+  /// * [deckInput]
   /// * [cancelToken] - A [CancelToken] that can be used to cancel the operation
   /// * [headers] - Can be used to add additional headers to the request
   /// * [extras] - Can be used to add flags to the request
@@ -33,7 +31,7 @@ class DecksApi {
   ///
   /// Returns a [Future] containing a [Response] with a [Deck] as data
   /// Throws [DioException] if API call or serialization fails
-  Future<Response<Deck>> createDeck({ 
+  Future<Response<Deck>> createDeck({
     required DeckInput deckInput,
     CancelToken? cancelToken,
     Map<String, dynamic>? headers,
@@ -45,16 +43,10 @@ class DecksApi {
     final _path = r'/decks';
     final _options = Options(
       method: r'POST',
-      headers: <String, dynamic>{
-        ...?headers,
-      },
+      headers: <String, dynamic>{...?headers},
       extra: <String, dynamic>{
         'secure': <Map<String, String>>[
-          {
-            'type': 'http',
-            'scheme': 'bearer',
-            'name': 'BearerAuth',
-          },
+          {'type': 'http', 'scheme': 'bearer', 'name': 'BearerAuth'},
         ],
         ...?extra,
       },
@@ -65,13 +57,10 @@ class DecksApi {
     dynamic _bodyData;
 
     try {
-_bodyData=jsonEncode(deckInput);
-    } catch(error, stackTrace) {
+      _bodyData = jsonEncode(deckInput);
+    } catch (error, stackTrace) {
       throw DioException(
-         requestOptions: _options.compose(
-          _dio.options,
-          _path,
-        ),
+        requestOptions: _options.compose(_dio.options, _path),
         type: DioExceptionType.unknown,
         error: error,
         stackTrace: stackTrace,
@@ -90,9 +79,10 @@ _bodyData=jsonEncode(deckInput);
     Deck? _responseData;
 
     try {
-final rawData = _response.data;
-_responseData = rawData == null ? null : deserialize<Deck, Deck>(rawData, 'Deck', growable: true);
-
+      final rawData = _response.data;
+      _responseData = rawData == null
+          ? null
+          : deserialize<Deck, Deck>(rawData, 'Deck', growable: true);
     } catch (error, stackTrace) {
       throw DioException(
         requestOptions: _response.requestOptions,
@@ -129,7 +119,7 @@ _responseData = rawData == null ? null : deserialize<Deck, Deck>(rawData, 'Deck'
   ///
   /// Returns a [Future]
   /// Throws [DioException] if API call or serialization fails
-  Future<Response<void>> deleteDeck({ 
+  Future<Response<void>> deleteDeck({
     required String id,
     CancelToken? cancelToken,
     Map<String, dynamic>? headers,
@@ -138,19 +128,18 @@ _responseData = rawData == null ? null : deserialize<Deck, Deck>(rawData, 'Deck'
     ProgressCallback? onSendProgress,
     ProgressCallback? onReceiveProgress,
   }) async {
-    final _path = r'/decks/{id}'.replaceAll('{' r'id' '}', id.toString());
+    final _path = r'/decks/{id}'.replaceAll(
+      '{'
+      r'id'
+      '}',
+      id.toString(),
+    );
     final _options = Options(
       method: r'DELETE',
-      headers: <String, dynamic>{
-        ...?headers,
-      },
+      headers: <String, dynamic>{...?headers},
       extra: <String, dynamic>{
         'secure': <Map<String, String>>[
-          {
-            'type': 'http',
-            'scheme': 'bearer',
-            'name': 'BearerAuth',
-          },
+          {'type': 'http', 'scheme': 'bearer', 'name': 'BearerAuth'},
         ],
         ...?extra,
       },
@@ -182,7 +171,7 @@ _responseData = rawData == null ? null : deserialize<Deck, Deck>(rawData, 'Deck'
   ///
   /// Returns a [Future] containing a [Response] with a [Deck] as data
   /// Throws [DioException] if API call or serialization fails
-  Future<Response<Deck>> getDeck({ 
+  Future<Response<Deck>> getDeck({
     required String id,
     CancelToken? cancelToken,
     Map<String, dynamic>? headers,
@@ -191,19 +180,18 @@ _responseData = rawData == null ? null : deserialize<Deck, Deck>(rawData, 'Deck'
     ProgressCallback? onSendProgress,
     ProgressCallback? onReceiveProgress,
   }) async {
-    final _path = r'/decks/{id}'.replaceAll('{' r'id' '}', id.toString());
+    final _path = r'/decks/{id}'.replaceAll(
+      '{'
+      r'id'
+      '}',
+      id.toString(),
+    );
     final _options = Options(
       method: r'GET',
-      headers: <String, dynamic>{
-        ...?headers,
-      },
+      headers: <String, dynamic>{...?headers},
       extra: <String, dynamic>{
         'secure': <Map<String, String>>[
-          {
-            'type': 'http',
-            'scheme': 'bearer',
-            'name': 'BearerAuth',
-          },
+          {'type': 'http', 'scheme': 'bearer', 'name': 'BearerAuth'},
         ],
         ...?extra,
       },
@@ -221,9 +209,10 @@ _responseData = rawData == null ? null : deserialize<Deck, Deck>(rawData, 'Deck'
     Deck? _responseData;
 
     try {
-final rawData = _response.data;
-_responseData = rawData == null ? null : deserialize<Deck, Deck>(rawData, 'Deck', growable: true);
-
+      final rawData = _response.data;
+      _responseData = rawData == null
+          ? null
+          : deserialize<Deck, Deck>(rawData, 'Deck', growable: true);
     } catch (error, stackTrace) {
       throw DioException(
         requestOptions: _response.requestOptions,
@@ -245,5 +234,4 @@ _responseData = rawData == null ? null : deserialize<Deck, Deck>(rawData, 'Deck'
       extra: _response.extra,
     );
   }
-
 }

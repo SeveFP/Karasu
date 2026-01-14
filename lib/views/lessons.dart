@@ -4,6 +4,7 @@ import 'package:karasu/services/lesson_service.dart';
 import 'package:karasu/services/logger_service.dart';
 import 'package:karasu/router.dart';
 import 'package:karasu/widgets/shell_scaffold.dart';
+import 'package:karasu/l10n/app_localizations.dart';
 import 'package:toshokan_api/toshokan_api.dart' as api;
 
 /// Lessons view showing focused lessons for a course.
@@ -83,17 +84,9 @@ class _LessonsViewState extends State<LessonsView> with RouteAware {
 
   void _selectLesson(api.LessonWithProgress lessonWithProgress) {
     if (_getIsLocked(lessonWithProgress)) {
-      // The following solution works better than queuing snackbars everytime -
-      // the user taps a locked lesson, but it is not the right solution.
-      // Instead, there should be SnackBar types, and make the messenger not allow
-      // pushing the same type again if it is already showing.
       ScaffoldMessenger.of(context).clearSnackBars();
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text(
-            'This lesson is locked. Please complete previous lessons first.',
-          ),
-        ),
+        SnackBar(content: Text(AppLocalizations.of(context)!.lessonLocked)),
       );
       return;
     }
@@ -115,7 +108,10 @@ class _LessonsViewState extends State<LessonsView> with RouteAware {
 
   @override
   Widget build(BuildContext context) {
-    return ShellScaffold(title: 'Lessons', body: _buildBody());
+    return ShellScaffold(
+      title: AppLocalizations.of(context)!.lessonsTitle,
+      body: _buildBody(),
+    );
   }
 
   Widget _buildBody() {
@@ -134,11 +130,14 @@ class _LessonsViewState extends State<LessonsView> with RouteAware {
               color: Theme.of(context).colorScheme.error,
             ),
             const SizedBox(height: 16),
-            Text(_error!, textAlign: TextAlign.center),
+            Text(
+              AppLocalizations.of(context)!.failedToLoadLessons(_error ?? ''),
+              textAlign: TextAlign.center,
+            ),
             const SizedBox(height: 16),
             ElevatedButton(
               onPressed: _fetchFocusedLessons,
-              child: const Text('Retry'),
+              child: Text(AppLocalizations.of(context)!.retry),
             ),
           ],
         ),
@@ -153,18 +152,16 @@ class _LessonsViewState extends State<LessonsView> with RouteAware {
             Icon(
               Icons.description_outlined,
               size: 64,
-              color: Theme.of(
-                context,
-              ).colorScheme.onSurface.withValues(alpha: 0.38),
+              color: Theme.of(context).colorScheme.onSurface.withAlpha(97),
             ),
             const SizedBox(height: 24),
             Text(
-              'No lessons',
+              AppLocalizations.of(context)!.noLessons,
               style: Theme.of(context).textTheme.headlineSmall,
             ),
             const SizedBox(height: 8),
             Text(
-              'This course has no lessons yet',
+              AppLocalizations.of(context)!.noLessonsDescription,
               style: Theme.of(context).textTheme.bodyMedium,
             ),
           ],

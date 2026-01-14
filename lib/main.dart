@@ -1,3 +1,5 @@
+import 'package:karasu/l10n/app_localizations.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
@@ -108,7 +110,9 @@ class _MyAppState extends State<MyApp> {
 
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('Login failed: $e'),
+          content: Text(
+            AppLocalizations.of(context)!.loginFailed(e.toString()),
+          ),
           backgroundColor: Theme.of(context).colorScheme.error,
         ),
       );
@@ -129,6 +133,8 @@ class _MyAppState extends State<MyApp> {
       body = const CoursesView();
     }
 
+    // Use config.language if set, otherwise default to 'en'
+    final forcedLocale = Locale(config.language ?? 'en');
     return GraphQLProvider(
       client: graphqlService.client,
       child: MaterialApp(
@@ -149,6 +155,14 @@ class _MyAppState extends State<MyApp> {
         home: body,
         onGenerateRoute: AppRouter.onGenerateRoute,
         navigatorObservers: [AppRouter.routeObserver],
+        locale: forcedLocale,
+        localizationsDelegates: const [
+          AppLocalizations.delegate,
+          GlobalMaterialLocalizations.delegate,
+          GlobalWidgetsLocalizations.delegate,
+          GlobalCupertinoLocalizations.delegate,
+        ],
+        supportedLocales: const [Locale('en'), Locale('ca')],
         builder: (context, child) {
           return AppActions(
             onThemeToggle: _toggleTheme,

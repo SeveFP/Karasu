@@ -9,13 +9,11 @@ import 'dart:convert';
 import 'package:toshokan_api/src/deserialize.dart';
 import 'package:dio/dio.dart';
 
-import 'package:toshokan_api/src/model/error.dart';
 import 'package:toshokan_api/src/model/log_in_request.dart';
 import 'package:toshokan_api/src/model/sign_up_request.dart';
 import 'package:toshokan_api/src/model/token_response.dart';
 
 class AuthenticationApi {
-
   final Dio _dio;
 
   const AuthenticationApi(this._dio);
@@ -24,7 +22,7 @@ class AuthenticationApi {
   /// Authenticate with username and password to receive a token
   ///
   /// Parameters:
-  /// * [logInRequest] 
+  /// * [logInRequest]
   /// * [cancelToken] - A [CancelToken] that can be used to cancel the operation
   /// * [headers] - Can be used to add additional headers to the request
   /// * [extras] - Can be used to add flags to the request
@@ -34,7 +32,7 @@ class AuthenticationApi {
   ///
   /// Returns a [Future] containing a [Response] with a [TokenResponse] as data
   /// Throws [DioException] if API call or serialization fails
-  Future<Response<TokenResponse>> logIn({ 
+  Future<Response<TokenResponse>> logIn({
     required LogInRequest logInRequest,
     CancelToken? cancelToken,
     Map<String, dynamic>? headers,
@@ -46,13 +44,8 @@ class AuthenticationApi {
     final _path = r'/login';
     final _options = Options(
       method: r'POST',
-      headers: <String, dynamic>{
-        ...?headers,
-      },
-      extra: <String, dynamic>{
-        'secure': <Map<String, String>>[],
-        ...?extra,
-      },
+      headers: <String, dynamic>{...?headers},
+      extra: <String, dynamic>{'secure': <Map<String, String>>[], ...?extra},
       contentType: 'application/json',
       validateStatus: validateStatus,
     );
@@ -60,13 +53,10 @@ class AuthenticationApi {
     dynamic _bodyData;
 
     try {
-_bodyData=jsonEncode(logInRequest);
-    } catch(error, stackTrace) {
+      _bodyData = jsonEncode(logInRequest);
+    } catch (error, stackTrace) {
       throw DioException(
-         requestOptions: _options.compose(
-          _dio.options,
-          _path,
-        ),
+        requestOptions: _options.compose(_dio.options, _path),
         type: DioExceptionType.unknown,
         error: error,
         stackTrace: stackTrace,
@@ -85,9 +75,14 @@ _bodyData=jsonEncode(logInRequest);
     TokenResponse? _responseData;
 
     try {
-final rawData = _response.data;
-_responseData = rawData == null ? null : deserialize<TokenResponse, TokenResponse>(rawData, 'TokenResponse', growable: true);
-
+      final rawData = _response.data;
+      _responseData = rawData == null
+          ? null
+          : deserialize<TokenResponse, TokenResponse>(
+              rawData,
+              'TokenResponse',
+              growable: true,
+            );
     } catch (error, stackTrace) {
       throw DioException(
         requestOptions: _response.requestOptions,
@@ -114,7 +109,7 @@ _responseData = rawData == null ? null : deserialize<TokenResponse, TokenRespons
   /// Create a new user account and receive an authentication token
   ///
   /// Parameters:
-  /// * [signUpRequest] 
+  /// * [signUpRequest]
   /// * [cancelToken] - A [CancelToken] that can be used to cancel the operation
   /// * [headers] - Can be used to add additional headers to the request
   /// * [extras] - Can be used to add flags to the request
@@ -124,7 +119,7 @@ _responseData = rawData == null ? null : deserialize<TokenResponse, TokenRespons
   ///
   /// Returns a [Future] containing a [Response] with a [TokenResponse] as data
   /// Throws [DioException] if API call or serialization fails
-  Future<Response<TokenResponse>> signUp({ 
+  Future<Response<TokenResponse>> signUp({
     required SignUpRequest signUpRequest,
     CancelToken? cancelToken,
     Map<String, dynamic>? headers,
@@ -136,13 +131,8 @@ _responseData = rawData == null ? null : deserialize<TokenResponse, TokenRespons
     final _path = r'/signup';
     final _options = Options(
       method: r'POST',
-      headers: <String, dynamic>{
-        ...?headers,
-      },
-      extra: <String, dynamic>{
-        'secure': <Map<String, String>>[],
-        ...?extra,
-      },
+      headers: <String, dynamic>{...?headers},
+      extra: <String, dynamic>{'secure': <Map<String, String>>[], ...?extra},
       contentType: 'application/json',
       validateStatus: validateStatus,
     );
@@ -150,13 +140,10 @@ _responseData = rawData == null ? null : deserialize<TokenResponse, TokenRespons
     dynamic _bodyData;
 
     try {
-_bodyData=jsonEncode(signUpRequest);
-    } catch(error, stackTrace) {
+      _bodyData = jsonEncode(signUpRequest);
+    } catch (error, stackTrace) {
       throw DioException(
-         requestOptions: _options.compose(
-          _dio.options,
-          _path,
-        ),
+        requestOptions: _options.compose(_dio.options, _path),
         type: DioExceptionType.unknown,
         error: error,
         stackTrace: stackTrace,
@@ -175,9 +162,14 @@ _bodyData=jsonEncode(signUpRequest);
     TokenResponse? _responseData;
 
     try {
-final rawData = _response.data;
-_responseData = rawData == null ? null : deserialize<TokenResponse, TokenResponse>(rawData, 'TokenResponse', growable: true);
-
+      final rawData = _response.data;
+      _responseData = rawData == null
+          ? null
+          : deserialize<TokenResponse, TokenResponse>(
+              rawData,
+              'TokenResponse',
+              growable: true,
+            );
     } catch (error, stackTrace) {
       throw DioException(
         requestOptions: _response.requestOptions,
@@ -199,5 +191,4 @@ _responseData = rawData == null ? null : deserialize<TokenResponse, TokenRespons
       extra: _response.extra,
     );
   }
-
 }

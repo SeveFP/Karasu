@@ -10,13 +10,11 @@ import 'package:toshokan_api/src/deserialize.dart';
 import 'package:dio/dio.dart';
 
 import 'package:toshokan_api/src/model/create_lesson_request.dart';
-import 'package:toshokan_api/src/model/error.dart';
 import 'package:toshokan_api/src/model/lesson.dart';
 import 'package:toshokan_api/src/model/lessons_connection_response.dart';
 import 'package:toshokan_api/src/model/lessons_with_progress_connection_response.dart';
 
 class LessonsApi {
-
   final Dio _dio;
 
   const LessonsApi(this._dio);
@@ -26,7 +24,7 @@ class LessonsApi {
   ///
   /// Parameters:
   /// * [courseId] - Course UUID
-  /// * [createLessonRequest] 
+  /// * [createLessonRequest]
   /// * [cancelToken] - A [CancelToken] that can be used to cancel the operation
   /// * [headers] - Can be used to add additional headers to the request
   /// * [extras] - Can be used to add flags to the request
@@ -36,7 +34,7 @@ class LessonsApi {
   ///
   /// Returns a [Future] containing a [Response] with a [Lesson] as data
   /// Throws [DioException] if API call or serialization fails
-  Future<Response<Lesson>> createLesson({ 
+  Future<Response<Lesson>> createLesson({
     required String courseId,
     required CreateLessonRequest createLessonRequest,
     CancelToken? cancelToken,
@@ -46,19 +44,18 @@ class LessonsApi {
     ProgressCallback? onSendProgress,
     ProgressCallback? onReceiveProgress,
   }) async {
-    final _path = r'/courses/{courseId}/lessons'.replaceAll('{' r'courseId' '}', courseId.toString());
+    final _path = r'/courses/{courseId}/lessons'.replaceAll(
+      '{'
+      r'courseId'
+      '}',
+      courseId.toString(),
+    );
     final _options = Options(
       method: r'POST',
-      headers: <String, dynamic>{
-        ...?headers,
-      },
+      headers: <String, dynamic>{...?headers},
       extra: <String, dynamic>{
         'secure': <Map<String, String>>[
-          {
-            'type': 'http',
-            'scheme': 'bearer',
-            'name': 'BearerAuth',
-          },
+          {'type': 'http', 'scheme': 'bearer', 'name': 'BearerAuth'},
         ],
         ...?extra,
       },
@@ -69,13 +66,10 @@ class LessonsApi {
     dynamic _bodyData;
 
     try {
-_bodyData=jsonEncode(createLessonRequest);
-    } catch(error, stackTrace) {
+      _bodyData = jsonEncode(createLessonRequest);
+    } catch (error, stackTrace) {
       throw DioException(
-         requestOptions: _options.compose(
-          _dio.options,
-          _path,
-        ),
+        requestOptions: _options.compose(_dio.options, _path),
         type: DioExceptionType.unknown,
         error: error,
         stackTrace: stackTrace,
@@ -94,9 +88,10 @@ _bodyData=jsonEncode(createLessonRequest);
     Lesson? _responseData;
 
     try {
-final rawData = _response.data;
-_responseData = rawData == null ? null : deserialize<Lesson, Lesson>(rawData, 'Lesson', growable: true);
-
+      final rawData = _response.data;
+      _responseData = rawData == null
+          ? null
+          : deserialize<Lesson, Lesson>(rawData, 'Lesson', growable: true);
     } catch (error, stackTrace) {
       throw DioException(
         requestOptions: _response.requestOptions,
@@ -133,7 +128,7 @@ _responseData = rawData == null ? null : deserialize<Lesson, Lesson>(rawData, 'L
   ///
   /// Returns a [Future] containing a [Response] with a [LessonsWithProgressConnectionResponse] as data
   /// Throws [DioException] if API call or serialization fails
-  Future<Response<LessonsWithProgressConnectionResponse>> getFocusedLessons({ 
+  Future<Response<LessonsWithProgressConnectionResponse>> getFocusedLessons({
     required String courseId,
     CancelToken? cancelToken,
     Map<String, dynamic>? headers,
@@ -142,19 +137,18 @@ _responseData = rawData == null ? null : deserialize<Lesson, Lesson>(rawData, 'L
     ProgressCallback? onSendProgress,
     ProgressCallback? onReceiveProgress,
   }) async {
-    final _path = r'/courses/{courseId}/lessons/focused'.replaceAll('{' r'courseId' '}', courseId.toString());
+    final _path = r'/courses/{courseId}/lessons/focused'.replaceAll(
+      '{'
+      r'courseId'
+      '}',
+      courseId.toString(),
+    );
     final _options = Options(
       method: r'GET',
-      headers: <String, dynamic>{
-        ...?headers,
-      },
+      headers: <String, dynamic>{...?headers},
       extra: <String, dynamic>{
         'secure': <Map<String, String>>[
-          {
-            'type': 'http',
-            'scheme': 'bearer',
-            'name': 'BearerAuth',
-          },
+          {'type': 'http', 'scheme': 'bearer', 'name': 'BearerAuth'},
         ],
         ...?extra,
       },
@@ -172,9 +166,13 @@ _responseData = rawData == null ? null : deserialize<Lesson, Lesson>(rawData, 'L
     LessonsWithProgressConnectionResponse? _responseData;
 
     try {
-final rawData = _response.data;
-_responseData = rawData == null ? null : deserialize<LessonsWithProgressConnectionResponse, LessonsWithProgressConnectionResponse>(rawData, 'LessonsWithProgressConnectionResponse', growable: true);
-
+      final rawData = _response.data;
+      _responseData = rawData == null
+          ? null
+          : deserialize<
+              LessonsWithProgressConnectionResponse,
+              LessonsWithProgressConnectionResponse
+            >(rawData, 'LessonsWithProgressConnectionResponse', growable: true);
     } catch (error, stackTrace) {
       throw DioException(
         requestOptions: _response.requestOptions,
@@ -215,7 +213,7 @@ _responseData = rawData == null ? null : deserialize<LessonsWithProgressConnecti
   ///
   /// Returns a [Future] containing a [Response] with a [LessonsConnectionResponse] as data
   /// Throws [DioException] if API call or serialization fails
-  Future<Response<LessonsConnectionResponse>> getLessons({ 
+  Future<Response<LessonsConnectionResponse>> getLessons({
     required String courseId,
     String? after,
     String? before,
@@ -228,19 +226,18 @@ _responseData = rawData == null ? null : deserialize<LessonsWithProgressConnecti
     ProgressCallback? onSendProgress,
     ProgressCallback? onReceiveProgress,
   }) async {
-    final _path = r'/courses/{courseId}/lessons'.replaceAll('{' r'courseId' '}', courseId.toString());
+    final _path = r'/courses/{courseId}/lessons'.replaceAll(
+      '{'
+      r'courseId'
+      '}',
+      courseId.toString(),
+    );
     final _options = Options(
       method: r'GET',
-      headers: <String, dynamic>{
-        ...?headers,
-      },
+      headers: <String, dynamic>{...?headers},
       extra: <String, dynamic>{
         'secure': <Map<String, String>>[
-          {
-            'type': 'http',
-            'scheme': 'bearer',
-            'name': 'BearerAuth',
-          },
+          {'type': 'http', 'scheme': 'bearer', 'name': 'BearerAuth'},
         ],
         ...?extra,
       },
@@ -266,9 +263,14 @@ _responseData = rawData == null ? null : deserialize<LessonsWithProgressConnecti
     LessonsConnectionResponse? _responseData;
 
     try {
-final rawData = _response.data;
-_responseData = rawData == null ? null : deserialize<LessonsConnectionResponse, LessonsConnectionResponse>(rawData, 'LessonsConnectionResponse', growable: true);
-
+      final rawData = _response.data;
+      _responseData = rawData == null
+          ? null
+          : deserialize<LessonsConnectionResponse, LessonsConnectionResponse>(
+              rawData,
+              'LessonsConnectionResponse',
+              growable: true,
+            );
     } catch (error, stackTrace) {
       throw DioException(
         requestOptions: _response.requestOptions,
@@ -290,5 +292,4 @@ _responseData = rawData == null ? null : deserialize<LessonsConnectionResponse, 
       extra: _response.extra,
     );
   }
-
 }

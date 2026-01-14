@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:karasu/models/deck.dart';
+import 'package:karasu/l10n/app_localizations.dart';
 import 'package:karasu/models/create_card.dart';
 
 class CreateCard extends StatefulWidget {
@@ -105,7 +106,7 @@ class _CreateCardState extends State<CreateCard> {
       showDialog(
         context: context,
         builder: (context) => AlertDialog(
-          title: const Text('Error'),
+          title: Text(AppLocalizations.of(context)!.errorTitle),
           content: Text(e.toString()),
         ),
       );
@@ -148,7 +149,7 @@ class _CreateCardState extends State<CreateCard> {
               onPressed: () {
                 submitAndRestartForm();
               },
-              child: const Text('Submit'),
+              child: Text(AppLocalizations.of(context)!.submitButton),
             ),
           ].insertBetween(const SizedBox(height: 10.0)),
         ),
@@ -238,7 +239,7 @@ class _DeckIDDropDownState extends State<DeckIDDropDown> {
     return DropdownMenu<String>(
       enableFilter: true,
       leadingIcon: const Icon(Icons.search),
-      label: const Text('Deck'),
+      label: Text(AppLocalizations.of(context)!.deckLabel),
       width: 300, // TODO: Use a sane default
       dropdownMenuEntries: _deckOptions,
       inputDecorationTheme: const InputDecorationTheme(

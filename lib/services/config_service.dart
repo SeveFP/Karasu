@@ -81,6 +81,7 @@ class ConfigService {
       defaultMaxCards: baseConfig.defaultMaxCards,
       mode: baseConfig.mode,
       lockLessons: baseConfig.lockLessons,
+      language: baseConfig.language,
     );
 
     _logger.i('TOSHOKAN_URL: ${_config.toshokanURL}');

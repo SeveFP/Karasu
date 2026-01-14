@@ -1,4 +1,5 @@
 {
+    "language": "ca",
     "appName": "Karasu",
     "toshokanURL": "localhost:8000",
     "protocol": "http://",

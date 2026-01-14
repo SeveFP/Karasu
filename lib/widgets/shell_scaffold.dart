@@ -1,3 +1,4 @@
+import 'package:karasu/l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:karasu/models/app_config.dart';
 import 'package:karasu/services/config_service.dart';
@@ -34,7 +35,7 @@ class ShellScaffold extends StatelessWidget {
           IconButton(
             icon: const Icon(Icons.settings),
             onPressed: () => showSettingsSheet(context),
-            tooltip: 'Settings',
+            tooltip: AppLocalizations.of(context)!.settingsTooltip,
           ),
         ],
       ),

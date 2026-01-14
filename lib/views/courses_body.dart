@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:karasu/services/lesson_service.dart';
 import 'package:karasu/services/logger_service.dart';
 import 'package:karasu/router.dart';
+import 'package:karasu/l10n/app_localizations.dart';
 import 'package:toshokan_api/toshokan_api.dart' as api;
 
 class CoursesBody extends StatefulWidget {
@@ -71,7 +72,7 @@ class _CoursesBodyState extends State<CoursesBody> {
             const SizedBox(height: 16),
             ElevatedButton(
               onPressed: _fetchCourses,
-              child: const Text('Retry'),
+              child: Text(AppLocalizations.of(context)!.retry),
             ),
           ],
         ),

@@ -6,6 +6,7 @@ import 'package:karasu/services/lesson_service.dart';
 import 'package:karasu/services/signed_url_service.dart';
 import 'package:karasu/widgets/audio_player_widget.dart';
 import 'package:karasu/widgets/lesson_deck_player.dart';
+import 'package:karasu/l10n/app_localizations.dart';
 
 /// Shared markdown builders and syntax extensions for audio, images, and decks.
 
@@ -189,8 +190,9 @@ class _ProxiedImageState extends State<ProxiedImage> {
         final url = snapshot.data ?? widget.uri.toString();
         return Image.network(
           url,
-          errorBuilder: (context, error, stackTrace) =>
-              Text(widget.alt ?? 'Image failed to load'),
+          errorBuilder: (context, error, stackTrace) => Text(
+            widget.alt ?? AppLocalizations.of(context)!.imageFailedToLoad,
+          ),
         );
       },
     );
