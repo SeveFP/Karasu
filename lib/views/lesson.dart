@@ -41,7 +41,7 @@ class _LessonViewState extends State<LessonView> {
     super.initState();
     _fetchLessonState();
 
-    switch(widget.lesson.isCompleted) {
+    switch (widget.lesson.isCompleted) {
       case true:
         completeLessonButtonState =
             BottomNextPageBarButtonState.completedAndDisabled;
@@ -153,9 +153,6 @@ class _LessonViewState extends State<LessonView> {
                   BottomNextPageBar(
                     lesson: widget.lesson,
                     buttonState: completeLessonButtonState,
-                    onButtonPressed: () {
-                      Navigator.of(context).pop();
-                    },
                   ),
                 ],
               ),
@@ -164,23 +161,47 @@ class _LessonViewState extends State<LessonView> {
   }
 }
 
-class BottomNextPageBar extends StatelessWidget {
-  final VoidCallback onButtonPressed;
+class BottomNextPageBar extends StatefulWidget {
   final api.LessonWithProgress lesson;
   final BottomNextPageBarButtonState buttonState;
 
   const BottomNextPageBar({
     super.key,
-    required this.onButtonPressed,
     required this.lesson,
     required this.buttonState,
   });
 
   @override
+  State<BottomNextPageBar> createState() => _BottomNextPageBarState();
+}
+
+class _BottomNextPageBarState extends State<BottomNextPageBar> {
+  bool _loading = false;
+
+  // sync lesson state when completing the lesson
+  void _syncState() async {
+    setState(() => _loading = true);
+    try {
+      await OpenApiClient.instance.progress.syncState(
+        courseId: widget.lesson.courseId,
+      );
+    } catch (e) {
+      LoggerService.instance.e(
+        '_syncState: syncing state',
+        error: e,
+      );
+    } finally {
+      if (mounted) {
+        Navigator.of(context).pop();
+      }
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
     late ElevatedButton completeButton;
 
-    switch (buttonState) {
+    switch (widget.buttonState) {
       case BottomNextPageBarButtonState.completedAndDisabled:
         completeButton = ElevatedButton.icon(
           iconAlignment: IconAlignment.end,
@@ -192,8 +213,14 @@ class BottomNextPageBar extends StatelessWidget {
       case BottomNextPageBarButtonState.completeAndContinueEnabled:
         completeButton = ElevatedButton.icon(
           iconAlignment: IconAlignment.end,
-          onPressed: onButtonPressed,
-          icon: const Icon(Icons.check),
+          onPressed: _loading ? null : _syncState,
+          icon: _loading
+              ? const SizedBox(
+                  width: 20,
+                  height: 20,
+                  child: CircularProgressIndicator(strokeWidth: 2),
+                )
+              : const Icon(Icons.check),
           label: const Text("Complete Lesson & Continue"),
         );
         break;
@@ -217,7 +244,15 @@ class BottomNextPageBar extends StatelessWidget {
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.end,
-        children: [completeButton, const SizedBox(width: 16)],
+        children: [
+          _loading
+              ? const SizedBox(
+                  width: 20,
+                  height: 20,
+                  child: CircularProgressIndicator(strokeWidth: 2),
+                )
+              : completeButton,
+        ],
       ),
     );
   }
