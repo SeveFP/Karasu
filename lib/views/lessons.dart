@@ -16,7 +16,7 @@ class LessonsView extends StatefulWidget {
   State<LessonsView> createState() => _LessonsViewState();
 }
 
-class _LessonsViewState extends State<LessonsView> {
+class _LessonsViewState extends State<LessonsView> with RouteAware {
   final _logger = LoggerService.instance;
   final _service = LessonService.instance;
   final List<api.LessonWithProgress> _lessons = [];
@@ -29,7 +29,29 @@ class _LessonsViewState extends State<LessonsView> {
     _fetchFocusedLessons();
   }
 
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final route = ModalRoute.of(context);
+    if (route != null) {
+      AppRouter.routeObserver.subscribe(this, route);
+    }
+  }
+
+  @override
+  void dispose() {
+    AppRouter.routeObserver.unsubscribe(this);
+    super.dispose();
+  }
+
+  @override
+  void didPopNext() {
+    _fetchFocusedLessons();
+  }
+
   Future<void> _fetchFocusedLessons() async {
+    if (!mounted) return;
+
     setState(() {
       _isLoading = true;
       _error = null;
@@ -40,12 +62,18 @@ class _LessonsViewState extends State<LessonsView> {
       final lessonEdges = response.edges;
       final lessons = lessonEdges.map((edge) => edge.node).toList();
 
+      if (!mounted) return;
+
       setState(() {
+        // TODO: Consider appropiate strategy once pagination is supported
+        _lessons.clear();
         _lessons.addAll(lessons);
         _isLoading = false;
       });
     } catch (e) {
       _logger.e('Fetch lessons failed', error: e);
+
+      if (!mounted) return;
       setState(() {
         _error = 'Failed to load lessons: $e';
         _isLoading = false;
