@@ -36,7 +36,9 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  bool _hasLoggedIn = false;  bool _loginFailed = false;  late ThemeMode _themeMode;
+  bool _hasLoggedIn = false;
+  bool _loginFailed = false;
+  late ThemeMode _themeMode;
 
   @override
   void initState() {
@@ -146,6 +148,7 @@ class _MyAppState extends State<MyApp> {
         themeMode: _themeMode,
         home: body,
         onGenerateRoute: AppRouter.onGenerateRoute,
+        navigatorObservers: [AppRouter.routeObserver],
         builder: (context, child) {
           return AppActions(
             onThemeToggle: _toggleTheme,

@@ -11,6 +11,7 @@ Method | HTTP request | Description
 ------------- | ------------- | -------------
 [**answerCards**](ProgressApi.md#answercards) | **POST** /courses/{courseId}/lessons/{lessonId}/decks/{deckId}/answer | Submit answers for cards
 [**getLessonState**](ProgressApi.md#getlessonstate) | **GET** /courses/{courseId}/lessons/{lessonId}/state | Get lesson state
+[**syncState**](ProgressApi.md#syncstate) | **POST** /courses/{courseId}/sync | Synchronize user progress state
 
 
 # **answerCards**
@@ -95,6 +96,48 @@ Name | Type | Description  | Notes
 ### Return type
 
 [**GetLessonStateResponse**](GetLessonStateResponse.md)
+
+### Authorization
+
+[BearerAuth](../README.md#BearerAuth)
+
+### HTTP request headers
+
+ - **Content-Type**: Not defined
+ - **Accept**: application/json
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+
+# **syncState**
+> syncState(courseId)
+
+Synchronize user progress state
+
+Synchronize the user's progress state for a specific course.
+
+### Example
+```dart
+import 'package:toshokan_api/api.dart';
+
+final api = ToshokanApi().getProgressApi();
+final String courseId = courseId_example; // String | Course UUID
+
+try {
+    api.syncState(courseId);
+} on DioException catch (e) {
+    print('Exception when calling ProgressApi->syncState: $e\n');
+}
+```
+
+### Parameters
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+ **courseId** | **String**| Course UUID | 
+
+### Return type
+
+void (empty response body)
 
 ### Authorization
 

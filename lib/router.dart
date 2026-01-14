@@ -6,6 +6,8 @@ import 'package:toshokan_api/toshokan_api.dart' as api;
 /// Centralized app routing configuration.
 /// Defines all app routes and handles route generation with argument validation.
 class AppRouter {
+  static final RouteObserver<ModalRoute<void>> routeObserver =
+      RouteObserver<ModalRoute<void>>();
   // Route names
   static const String lessons = '/lessons';
   static const String lesson = '/lesson';

@@ -36,9 +36,14 @@ class LessonMarkdown extends StatelessWidget {
   /// Useful for testing different styles on desktop.
   final bool forceResponsive;
 
+  /// Callback called when a deck is completed.
+  /// The deck ID is passed as a parameter.
+  final void Function(String deckId) onCompletedDeck;
+
   const LessonMarkdown({
     super.key,
     required this.data,
+    required this.onCompletedDeck,
     this.courseId,
     this.lessonId,
     this.deckStates,
@@ -67,6 +72,7 @@ class LessonMarkdown extends StatelessWidget {
       builders: {
         'audio': AudioBuilder(),
         'deck': DeckBuilder(
+          onCompletedDeck: onCompletedDeck,
           courseId: courseId,
           lessonId: lessonId,
           deckStates: deckStates,

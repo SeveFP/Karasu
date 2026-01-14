@@ -113,6 +113,7 @@ Class | Method | HTTP request | Description
 [*LessonsApi*](doc/LessonsApi.md) | [**getLessons**](doc/LessonsApi.md#getlessons) | **GET** /courses/{courseId}/lessons | Get lessons for a course
 [*ProgressApi*](doc/ProgressApi.md) | [**answerCards**](doc/ProgressApi.md#answercards) | **POST** /courses/{courseId}/lessons/{lessonId}/decks/{deckId}/answer | Submit answers for cards
 [*ProgressApi*](doc/ProgressApi.md) | [**getLessonState**](doc/ProgressApi.md#getlessonstate) | **GET** /courses/{courseId}/lessons/{lessonId}/state | Get lesson state
+[*ProgressApi*](doc/ProgressApi.md) | [**syncState**](doc/ProgressApi.md#syncstate) | **POST** /courses/{courseId}/sync | Synchronize user progress state
 
 
 ## Documentation For Models
