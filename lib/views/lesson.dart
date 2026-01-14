@@ -4,7 +4,7 @@ import 'package:karasu/services/logger_service.dart';
 import 'package:karasu/services/openapi_client.dart';
 import 'package:karasu/widgets/lesson_markdown.dart';
 import 'package:karasu/widgets/shell_scaffold.dart';
-import 'package:logging/logging.dart';
+import 'package:karasu/l10n/app_localizations.dart';
 import 'package:toshokan_api/toshokan_api.dart' as api;
 
 // Enum for the BottomNextPageBar button state
@@ -21,7 +21,6 @@ enum BottomNextPageBarButtonState {
 /// - ![deck](uuid) for interactive deck rounds
 class LessonView extends StatefulWidget {
   final api.LessonWithProgress lesson;
-
   const LessonView({super.key, required this.lesson});
 
   @override
@@ -32,8 +31,9 @@ class _LessonViewState extends State<LessonView> {
   String? _error;
   bool completedLessonInThisSession = false;
   late BottomNextPageBarButtonState completeLessonButtonState;
+  Map<String, bool>? _deckStates = {};
 
-  Map<String, bool>? _deckStates;
+  // Removed misplaced code
   bool _isLoading = true;
 
   @override
@@ -105,7 +105,7 @@ class _LessonViewState extends State<LessonView> {
     } catch (e) {
       LoggerService.instance.e(
         '_onCompletedDeck: Failed to refresh lesson state',
-        error: e,
+        // Removed misplaced code
       );
     }
   }
@@ -113,7 +113,7 @@ class _LessonViewState extends State<LessonView> {
   @override
   Widget build(BuildContext context) {
     return ShellScaffold(
-      title: widget.lesson.title,
+      title: AppLocalizations.of(context)!.lessonsTitle,
       body: _isLoading
           ? const Center(child: CircularProgressIndicator())
           : SingleChildScrollView(
@@ -125,7 +125,9 @@ class _LessonViewState extends State<LessonView> {
                     Padding(
                       padding: const EdgeInsets.only(bottom: 16),
                       child: Text(
-                        'Could not load progress: $_error',
+                        AppLocalizations.of(
+                          context,
+                        )!.couldNotLoadProgress(_error ?? ''),
                         style: TextStyle(
                           color: Theme.of(context).colorScheme.error,
                         ),
@@ -186,10 +188,7 @@ class _BottomNextPageBarState extends State<BottomNextPageBar> {
         courseId: widget.lesson.courseId,
       );
     } catch (e) {
-      LoggerService.instance.e(
-        '_syncState: syncing state',
-        error: e,
-      );
+      LoggerService.instance.e('_syncState: syncing state', error: e);
     } finally {
       if (mounted) {
         Navigator.of(context).pop();
@@ -207,7 +206,7 @@ class _BottomNextPageBarState extends State<BottomNextPageBar> {
           iconAlignment: IconAlignment.end,
           onPressed: null,
           icon: const Icon(Icons.thumb_up),
-          label: const Text("Lesson Completed!"),
+          label: Text(AppLocalizations.of(context)!.lessonCompleted),
         );
         break;
       case BottomNextPageBarButtonState.completeAndContinueEnabled:
@@ -221,7 +220,7 @@ class _BottomNextPageBarState extends State<BottomNextPageBar> {
                   child: CircularProgressIndicator(strokeWidth: 2),
                 )
               : const Icon(Icons.check),
-          label: const Text("Complete Lesson & Continue"),
+          label: Text(AppLocalizations.of(context)!.completeLessonContinue),
         );
         break;
       case BottomNextPageBarButtonState.completeAndContinueDisabled:
@@ -229,7 +228,7 @@ class _BottomNextPageBarState extends State<BottomNextPageBar> {
           iconAlignment: IconAlignment.end,
           onPressed: null,
           icon: const Icon(Icons.check),
-          label: const Text("Complete Lesson & Continue"),
+          label: Text(AppLocalizations.of(context)!.completeLessonContinue),
         );
         break;
     }

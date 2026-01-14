@@ -1,3 +1,4 @@
+import 'package:karasu/l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 
 class LoadingWidget extends StatelessWidget {
@@ -11,12 +12,10 @@ class LoadingWidget extends StatelessWidget {
         padding: const EdgeInsets.symmetric(vertical: 20),
         child: Column(
           mainAxisSize: MainAxisSize.min,
-          children: const [
-            CircularProgressIndicator(),
-            SizedBox(
-              height: 15,
-            ),
-            Text('Loading...'),
+          children: [
+            const CircularProgressIndicator(),
+            const SizedBox(height: 15),
+            Text(AppLocalizations.of(context)!.loggingIn),
           ],
         ),
       ),

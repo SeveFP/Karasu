@@ -6,6 +6,7 @@ import 'package:karasu/api/lib/toshokan_api.dart' as api;
 import 'package:karasu/services/config_service.dart';
 import 'package:karasu/services/lesson_service.dart';
 import 'package:karasu/services/logger_service.dart';
+import 'package:karasu/l10n/app_localizations.dart';
 import 'package:karasu/widgets/markdown_builders.dart';
 import 'package:karasu/widgets/markdown_with_audio.dart';
 import 'package:markdown/markdown.dart' as md;
@@ -35,7 +36,7 @@ class LessonDeckPlayer extends StatefulWidget {
   /// Whether the deck was already completed. If true, shows completed state initially.
   final bool initiallyCompleted;
 
- /// Callback when the deck is completed.
+  /// Callback when the deck is completed.
   final void Function(String deckId) onCompleted;
 
   const LessonDeckPlayer({
@@ -141,7 +142,7 @@ class _LessonDeckPlayerState extends State<LessonDeckPlayer> {
   @override
   Widget build(BuildContext context) {
     if (_cards.isEmpty) {
-      return const Text('No cards available');
+      return Text(AppLocalizations.of(context)!.noCardsAvailable);
     }
 
     if (_completed) {
@@ -176,7 +177,7 @@ class _LessonDeckPlayerState extends State<LessonDeckPlayer> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'Correct answers: $correctCount',
+                    AppLocalizations.of(context)!.correctAnswers(correctCount),
                     style: TextStyle(
                       color: successColor,
                       fontWeight: FontWeight.bold,
@@ -184,7 +185,9 @@ class _LessonDeckPlayerState extends State<LessonDeckPlayer> {
                   ),
                   const SizedBox(height: 4),
                   Text(
-                    'Incorrect answers: $incorrectCount',
+                    AppLocalizations.of(
+                      context,
+                    )!.incorrectAnswers(incorrectCount),
                     style: TextStyle(
                       color: errorColor,
                       fontWeight: FontWeight.bold,
@@ -201,7 +204,7 @@ class _LessonDeckPlayerState extends State<LessonDeckPlayer> {
                 child: ElevatedButton.icon(
                   onPressed: _restart,
                   icon: const Icon(Icons.refresh),
-                  label: const Text('Restart'),
+                  label: Text(AppLocalizations.of(context)!.restartButton),
                 ),
               ),
             ),
@@ -218,16 +221,21 @@ class _LessonDeckPlayerState extends State<LessonDeckPlayer> {
       color: colorScheme.primaryContainer,
       child: ListTile(
         tileColor: colorScheme.primaryContainer,
-        leading: Icon(Icons.library_books_rounded, color: colorScheme.onPrimaryContainer),
+        leading: Icon(
+          Icons.library_books_rounded,
+          color: colorScheme.onPrimaryContainer,
+        ),
         title: Text(
           widget.deck.title,
-          style: Theme.of(context).textTheme.titleMedium
-              ?.copyWith(color: colorScheme.onPrimaryContainer),
+          style: Theme.of(context).textTheme.titleMedium?.copyWith(
+            color: colorScheme.onPrimaryContainer,
+          ),
         ),
         subtitle: Text(
           widget.deck.description,
-          style: Theme.of(context).textTheme.bodySmall
-              ?.copyWith(color: colorScheme.onPrimaryContainer.withValues(alpha: 0.85)),
+          style: Theme.of(context).textTheme.bodySmall?.copyWith(
+            color: colorScheme.onPrimaryContainer.withValues(alpha: 0.85),
+          ),
         ),
       ),
     );
@@ -277,7 +285,9 @@ class _LessonDeckPlayerState extends State<LessonDeckPlayer> {
                 cardHeader,
                 const Divider(height: 1),
                 _FillInTheBlanksCard(
-                  key: ValueKey(card.id), // ensure state resets when card changes
+                  key: ValueKey(
+                    card.id,
+                  ), // ensure state resets when card changes
                   card: card,
                   disabled: _answers.containsKey(card.id),
                   allowSkip: ConfigService().isDebugMode,
@@ -439,7 +449,7 @@ class _FillInTheBlanksCardState extends State<_FillInTheBlanksCard> {
 
     if (correctAnswers.isEmpty || incorrectAnswers.isEmpty) {
       _hasError = true;
-      _errorMessage = 'Card missing correct or incorrect answer';
+      _errorMessage = AppLocalizations.of(context)!.errorParsingCard;
       _logger.e(_errorMessage!);
       _correctBlanks = [];
       _controllers = [];
@@ -460,7 +470,7 @@ class _FillInTheBlanksCardState extends State<_FillInTheBlanksCard> {
     if (inputCount != _correctBlanks.length) {
       _hasError = true;
       _errorMessage =
-          'Input count ($inputCount) does not match blanks count (${_correctBlanks.length})';
+          "Input count mismatch: $inputCount vs ${_correctBlanks.length}";
       _logger.e(_errorMessage!);
       _controllers = [];
       return;
@@ -523,7 +533,7 @@ class _FillInTheBlanksCardState extends State<_FillInTheBlanksCard> {
       return Padding(
         padding: const EdgeInsets.all(16),
         child: Text(
-          _errorMessage ?? 'Error parsing card',
+          _errorMessage ?? AppLocalizations.of(context)!.errorParsingCard,
           style: TextStyle(color: Theme.of(context).colorScheme.error),
         ),
       );
@@ -567,7 +577,7 @@ class _FillInTheBlanksCardState extends State<_FillInTheBlanksCard> {
                   onPressed: _canSubmit && !widget.disabled
                       ? _handleSubmit
                       : null,
-                  child: const Text('Submit'),
+                  child: Text(AppLocalizations.of(context)!.submitButton),
                 ),
               ),
             ),

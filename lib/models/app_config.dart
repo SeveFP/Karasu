@@ -18,6 +18,7 @@ class AppConfig {
   final AppMode mode;
   final bool lockLessons;
 
+  final String? language;
   AppConfig({
     required this.appName,
     required this.toshokanURL,
@@ -31,6 +32,7 @@ class AppConfig {
     required this.defaultMaxCards,
     this.mode = AppMode.production,
     required this.lockLessons,
+    this.language,
   });
 
   factory AppConfig.fromJson(Map<String, dynamic> json) {
@@ -68,6 +70,7 @@ class AppConfig {
       defaultMaxCards: json['defaultMaxCards'] ?? 10,
       mode: appModeFromJson(json['mode'] as String?),
       lockLessons: json['lockLessons'] == true,
+      language: json['language'] as String?,
     );
   }
 }

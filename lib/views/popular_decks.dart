@@ -1,3 +1,4 @@
+import 'package:karasu/l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:karasu/models/deck.dart';
@@ -16,28 +17,31 @@ class DeckDisplay extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Center(
-        child: InkWell(
-      splashColor: Colors.amber,
-      onTap: () {
-        Navigator.of(context).push(
-          MaterialPageRoute(builder: (context) {
-            return RoundView(deck: deck, maxCards: maxCards);
-          }),
-        );
-      },
-      child: Card(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: <Widget>[
-            ListTile(
-              leading: const Icon(Icons.book),
-              title: Text(deck.title),
-              subtitle: Text(deck.description),
+      child: InkWell(
+        splashColor: Colors.amber,
+        onTap: () {
+          Navigator.of(context).push(
+            MaterialPageRoute(
+              builder: (context) {
+                return RoundView(deck: deck, maxCards: maxCards);
+              },
             ),
-          ],
+          );
+        },
+        child: Card(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              ListTile(
+                leading: const Icon(Icons.book),
+                title: Text(deck.title),
+                subtitle: Text(deck.description),
+              ),
+            ],
+          ),
         ),
       ),
-    ));
+    );
   }
 }
 
@@ -86,43 +90,43 @@ class _PopularDecksDisplayState extends State<PopularDecksDisplay> {
     return Query(
       options: QueryOptions(
         document: gql(widget.query),
-        variables: const {
-          'first': 50,
-        },
+        variables: const {'first': 50},
       ),
-      builder: (QueryResult result,
-          {VoidCallback? refetch, FetchMore? fetchMore}) {
-        if (result.hasException) {
-          return Text(result.exception.toString());
-        }
+      builder:
+          (QueryResult result, {VoidCallback? refetch, FetchMore? fetchMore}) {
+            if (result.hasException) {
+              return Text(AppLocalizations.of(context)!.errorParsingCard);
+            }
 
-        if (result.isLoading) {
-          return const LoadingWidget();
-        }
+            if (result.isLoading) {
+              return const LoadingWidget();
+            }
 
-        List? edges = result.data?['popularDecks']?['edges'];
+            List? edges = result.data?['popularDecks']?['edges'];
 
-        if (edges == null) {
-          return const Text('No decks');
-        }
+            if (edges == null) {
+              return Text(AppLocalizations.of(context)!.noDecks);
+            }
 
-        List<DeckModel> decks = [];
+            List<DeckModel> decks = [];
 
-        for (var e in edges) {
-          decks.add(DeckModel.fromJson(e['node']));
-        }
+            for (var e in edges) {
+              decks.add(DeckModel.fromJson(e['node']));
+            }
 
-        // Store popular decks locally for offline usage
-        KStore().addDecks(decks);
+            // Store popular decks locally for offline usage
+            KStore().addDecks(decks);
 
-        return ListView.builder(
-            itemCount: decks.length,
-            itemBuilder: (context, index) {
-              return DeckDisplay(
+            return ListView.builder(
+              itemCount: decks.length,
+              itemBuilder: (context, index) {
+                return DeckDisplay(
                   deck: decks[index],
-                  maxCards: ConfigService().config.defaultMaxCards);
-            });
-      },
+                  maxCards: ConfigService().config.defaultMaxCards,
+                );
+              },
+            );
+          },
     );
   }
 }

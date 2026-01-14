@@ -1,15 +1,16 @@
 import 'dart:math' show min;
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:karasu/l10n/app_localizations.dart';
 import 'package:karasu/services/auth_service.dart';
 import 'package:karasu/widgets/shell_scaffold.dart';
 
 class LoginView extends StatelessWidget {
   final Function(String username, String password) credentialsCallback;
   final bool loginFailed;
-  
+
   const LoginView({
-    super.key, 
+    super.key,
     required this.credentialsCallback,
     this.loginFailed = false,
   });
@@ -24,7 +25,7 @@ class LoginView extends StatelessWidget {
     );
 
     return ShellScaffold(
-      title: '',
+      title: AppLocalizations.of(context)!.loginTitle,
       showAppBranding: true,
       body: Center(
         child: SizedBox(
@@ -47,9 +48,9 @@ class LoginView extends StatelessWidget {
 class LogInForm extends StatefulWidget {
   final Function(String username, String password) credentialsCallback;
   final bool loginFailed;
-  
+
   const LogInForm({
-    super.key, 
+    super.key,
     required this.credentialsCallback,
     this.loginFailed = false,
   });
@@ -104,13 +105,13 @@ class LogInFormState extends State<LogInForm> {
   @override
   Widget build(BuildContext context) {
     if (_isAutoLoggingIn) {
-      return const Center(
+      return Center(
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            CircularProgressIndicator(),
-            SizedBox(height: 16),
-            Text('Logging in...'),
+            const CircularProgressIndicator(),
+            const SizedBox(height: 16),
+            Text(AppLocalizations.of(context)!.loggingIn),
           ],
         ),
       );
@@ -123,13 +124,13 @@ class LogInFormState extends State<LogInForm> {
         children: [
           TextFormField(
             controller: usernameController,
-            decoration: const InputDecoration(
+            decoration: InputDecoration(
               helperText: ' ',
-              labelText: 'Username',
+              labelText: AppLocalizations.of(context)!.usernameLabel,
             ),
             validator: (value) {
               if (value == null || value.isEmpty) {
-                return 'Username is missing';
+                return AppLocalizations.of(context)!.usernameMissing;
               }
               return null;
             },
@@ -137,13 +138,13 @@ class LogInFormState extends State<LogInForm> {
           TextFormField(
             obscureText: true,
             controller: passwordController,
-            decoration: const InputDecoration(
+            decoration: InputDecoration(
               helperText: ' ',
-              labelText: 'Password',
+              labelText: AppLocalizations.of(context)!.passwordLabel,
             ),
             validator: (value) {
               if (value == null || value.isEmpty) {
-                return 'Password is missing';
+                return AppLocalizations.of(context)!.passwordMissing;
               }
               return null;
             },
@@ -169,7 +170,7 @@ class LogInFormState extends State<LogInForm> {
                     );
                   }
                 },
-                child: const Text('Log in'),
+                child: Text(AppLocalizations.of(context)!.loginButton),
               ),
             ),
           ),

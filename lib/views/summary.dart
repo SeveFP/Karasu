@@ -1,3 +1,4 @@
+import 'package:karasu/l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_markdown_plus/flutter_markdown_plus.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
@@ -71,7 +72,7 @@ class _SummaryState extends State<Summary> {
       showDialog(
         context: context,
         builder: (context) => AlertDialog(
-          title: const Text('Error'),
+          title: Text(AppLocalizations.of(context)!.errorTitle),
           content: Text(e.toString()),
         ),
       );
@@ -105,7 +106,7 @@ class ScoreSummary extends StatelessWidget {
   Widget build(BuildContext context) {
     return Center(
       child: Text(
-        '$totalCorrect / $totalCards',
+        AppLocalizations.of(context)!.scoreSummary(totalCorrect, totalCards),
         style: const TextStyle(fontWeight: FontWeight.w900, fontSize: 40),
       ),
     );
