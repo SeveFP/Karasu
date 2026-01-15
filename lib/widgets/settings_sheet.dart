@@ -16,6 +16,24 @@ class _SettingsSheet extends StatelessWidget {
   final AppActions actions;
   const _SettingsSheet({required this.actions});
 
+  ThemeMode _currentThemeMode(BuildContext context, ThemeMode mode) {
+    if (mode == ThemeMode.system) {
+      if (MediaQuery.platformBrightnessOf(context) == Brightness.light) {
+        return ThemeMode.light;
+      }
+      return ThemeMode.dark;
+    }
+
+    return mode;
+  }
+
+  Icon _themeIcon(BuildContext context, ThemeMode mode) {
+    final currentMode = _currentThemeMode(context, mode);
+    return Icon(
+      currentMode == ThemeMode.light ? Icons.dark_mode : Icons.light_mode,
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -32,11 +50,7 @@ class _SettingsSheet extends StatelessWidget {
           ),
           const SizedBox(height: 8),
           ListTile(
-            leading: Icon(
-              actions.currentThemeMode == ThemeMode.light
-                  ? Icons.dark_mode
-                  : Icons.light_mode,
-            ),
+            leading: _themeIcon(context, actions.currentThemeMode),
             title: Text(AppLocalizations.of(context)!.toggleTheme),
             onTap: () {
               actions.onThemeToggle();

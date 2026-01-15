@@ -73,11 +73,20 @@ class _MyAppState extends State<MyApp> {
     }
   }
 
+  ThemeMode _getOppositeTheme(ThemeMode mode) {
+    if (mode == ThemeMode.system) {
+      if (MediaQuery.platformBrightnessOf(context) == Brightness.light) {
+        return ThemeMode.dark;
+      }
+      return ThemeMode.light;
+    }
+
+    return mode == ThemeMode.light ? ThemeMode.dark : ThemeMode.light;
+  }
+
   void _toggleTheme() {
     setState(() {
-      _themeMode = _themeMode == ThemeMode.light
-          ? ThemeMode.dark
-          : ThemeMode.light;
+      _themeMode = _getOppositeTheme(_themeMode);
     });
   }
 
