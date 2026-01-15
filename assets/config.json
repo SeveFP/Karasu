@@ -15,14 +15,14 @@
         "tertiaryColor": 4285887861
     },
     "statusColors": {
-        "successColorLight": 4283215696,
-        "successColorDark": 4285746432,
-        "successContainerLight": 4292144384,
-        "successContainerDark": 4280424448,
-        "errorColorLight": 4294924066,
-        "errorColorDark": 4292471808,
-        "errorContainerLight": 4294957284,
-        "errorContainerDark": 4290803712
+        "successColorLight": 4281558322,
+        "successColorDark": 4285771626,
+        "successContainerLight": 4291356361,
+        "successContainerDark": 4279918112,
+        "errorColorLight": 4291176488,
+        "errorColorDark": 4293874000,
+        "errorContainerLight": 4294960850,
+        "errorContainerDark": 4284481536
     },
     "themeMode": "system",
     "defaultMaxCards": 30
