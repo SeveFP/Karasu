@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 import 'package:karasu/services/audio_service.dart';
+import 'package:karasu/services/logger_service.dart';
 
 /// Audio player widget using shared AudioService.
 /// Multiple widgets can exist, but only one audio plays at a time.
@@ -85,9 +86,9 @@ class _AudioPlayerWidgetState extends State<AudioPlayerWidget> {
     } catch (e) {
       if (mounted) {
         setState(() => _isLoading = false);
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text('Failed to load audio: $e')));
+        // Log error but don't show snackbar - some errors are browser-specific
+        // and not actionable by the user
+        LoggerService.instance.w('Audio error: $e');
       }
     }
   }
@@ -97,20 +98,12 @@ class _AudioPlayerWidgetState extends State<AudioPlayerWidget> {
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
-        if (_isLoading)
-          const SizedBox(
-            width: 48,
-            height: 48,
-            child: Padding(
-              padding: EdgeInsets.all(12),
-              child: CircularProgressIndicator(strokeWidth: 2),
-            ),
-          )
-        else
-          IconButton(
-            icon: Icon(_isPlaying ? Icons.pause : Icons.play_arrow),
-            onPressed: _toggle,
-          ),
+        // For a better UX, given that loading is short, the pause icon is shown
+        // even while loading.
+        IconButton(
+          icon: Icon(_isLoading || _isPlaying ? Icons.pause : Icons.play_arrow),
+          onPressed: _toggle,
+        ),
         Text(_format(_pos)),
       ],
     );
