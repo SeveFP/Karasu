@@ -6,6 +6,7 @@ import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:karasu/models/store.dart';
 import 'package:karasu/models/app_config.dart';
 import 'package:karasu/services/auth_service.dart';
+import 'package:karasu/services/audio_service.dart';
 import 'package:karasu/services/config_service.dart';
 import 'package:karasu/services/graphql_service.dart';
 import 'package:karasu/services/openapi_client.dart';
@@ -26,6 +27,9 @@ void main() async {
 
   await GraphQLService().initialize();
   await OpenApiClient.instance.initialize();
+
+  // Pre-initialize audio player here to avoid UI freeze on first play
+  AudioService.instance.initialize();
 
   runApp(const MyApp());
 }
