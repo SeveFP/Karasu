@@ -12,22 +12,22 @@ class AppLocalizationsCa extends AppLocalizations {
   String get appTitle => 'Karasu';
 
   @override
-  String get login => 'Inicia sessió';
+  String get login => 'Entra';
 
   @override
-  String get logout => 'Tanca sessió';
+  String get logout => 'Surt';
 
   @override
-  String get retry => 'Reintenta';
+  String get retry => 'Torna-ho a provar';
 
   @override
   String get coursesViewTitle => 'Els meus cursos';
 
   @override
-  String get noLessons => 'Sense lliçons';
+  String get noLessons => 'Cap lliçó';
 
   @override
-  String get noLessonsDescription => 'Aquest curs encara no té lliçons';
+  String get noLessonsDescription => 'Aquest curs encara no té cap lliçó';
 
   @override
   String get lessonsTitle => 'Lliçons';
@@ -39,7 +39,7 @@ class AppLocalizationsCa extends AppLocalizations {
   String get completeLessonContinue => 'Completa la lliçó i continua';
 
   @override
-  String get lessonLocked => 'Aquesta lliçó està bloquejada. Si us plau, completa les lliçons anteriors primer.';
+  String get lessonLocked => 'Lliçó blocada. Cal completar les lliçons anteriors.';
 
   @override
   String failedToLoadLessons(Object error) {
@@ -53,32 +53,32 @@ class AppLocalizationsCa extends AppLocalizations {
 
   @override
   String loginFailed(Object error) {
-    return 'Error d\'inici de sessió: $error';
+    return 'No s\'ha pogut entrar: $error';
   }
 
   @override
   String get ok => 'D\'acord';
 
   @override
-  String get loginTitle => 'Inicia sessió';
+  String get loginTitle => 'Entrada';
 
   @override
-  String get loggingIn => 'Iniciant sessió...';
+  String get loggingIn => 'Entrant...';
 
   @override
   String get usernameLabel => 'Nom d\'usuari';
 
   @override
-  String get usernameMissing => 'Falta el nom d\'usuari';
+  String get usernameMissing => 'Cal indicar el nom d\'usuari';
 
   @override
   String get passwordLabel => 'Contrasenya';
 
   @override
-  String get passwordMissing => 'Falta la contrasenya';
+  String get passwordMissing => 'Cal indicar la contrasenya';
 
   @override
-  String get loginButton => 'Inicia sessió';
+  String get loginButton => 'Entra';
 
   @override
   String get errorTitle => 'Error';
@@ -95,7 +95,7 @@ class AppLocalizationsCa extends AppLocalizations {
   }
 
   @override
-  String get noCardsAvailable => 'No hi ha cartes disponibles';
+  String get noCardsAvailable => 'No hi ha cap carta disponible';
 
   @override
   String correctAnswers(Object count) {
@@ -108,10 +108,10 @@ class AppLocalizationsCa extends AppLocalizations {
   }
 
   @override
-  String get restartButton => 'Reinicia';
+  String get restartButton => 'Torna a començar';
 
   @override
-  String get errorParsingCard => 'Error en analitzar la carta';
+  String get errorParsingCard => 'Error en processar la carta';
 
   @override
   String get imageFailedToLoad => 'No s\'ha pogut carregar la imatge';
@@ -126,8 +126,8 @@ class AppLocalizationsCa extends AppLocalizations {
   String get toggleTheme => 'Canvia el tema';
 
   @override
-  String get logoutButton => 'Tanca sessió';
+  String get logoutButton => 'Surt';
 
   @override
-  String get noDecks => 'No hi ha baralles';
+  String get noDecks => 'Cap baralla';
 }
