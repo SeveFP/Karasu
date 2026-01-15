@@ -18,19 +18,8 @@ class AudioBuilder extends MarkdownElementBuilder {
   @override
   Widget visitElementAfter(md.Element element, TextStyle? preferredStyle) {
     final originalUrl = element.textContent;
-    return FutureBuilder<String>(
-      future: SignedUrlService.instance.resolve(originalUrl),
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return const SizedBox(
-            height: 60,
-            child: Center(child: CircularProgressIndicator()),
-          );
-        }
-        final resolved = snapshot.data ?? originalUrl;
-        return AudioPlayerWidget(url: resolved);
-      },
-    );
+    // Pass the original URL - AudioPlayerWidget handles lazy URL resolution
+    return AudioPlayerWidget(url: originalUrl);
   }
 }
 
