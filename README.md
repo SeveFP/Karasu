@@ -46,3 +46,8 @@ cd ../..
 flutter pub get
 ```
 
+
+## Regenerate localizations
+```bash
+flutter gen-l10n
+```
