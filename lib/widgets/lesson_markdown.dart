@@ -1,5 +1,7 @@
+import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_markdown_plus/flutter_markdown_plus.dart';
+import 'package:karasu/services/settings_service.dart';
 import 'package:markdown/markdown.dart' as md;
 import 'package:karasu/widgets/markdown_builders.dart';
 import 'package:karasu/widgets/responsive_table_builder.dart';
@@ -40,7 +42,17 @@ class LessonMarkdown extends StatelessWidget {
   /// The deck ID is passed as a parameter.
   final void Function(String deckId) onCompletedDeck;
 
-  const LessonMarkdown({
+  // Audio player for playing correct/incorrect sounds
+  final AudioPlayer _audioPlayer = AudioPlayer();
+
+  Future<void> _playResultSound(bool isCorrect) async {
+    if (!SettingsService.soundEnabled) return;
+
+    final asset = isCorrect ? 'correct.mp3' : 'incorrect.mp3';
+    await _audioPlayer.play(AssetSource(asset));
+  }
+
+  LessonMarkdown({
     super.key,
     required this.data,
     required this.onCompletedDeck,
@@ -77,6 +89,7 @@ class LessonMarkdown extends StatelessWidget {
           courseId: courseId,
           lessonId: lessonId,
           deckStates: deckStates,
+          playResultSound: _playResultSound,
         ),
       },
       extensionSet:

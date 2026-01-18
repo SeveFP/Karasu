@@ -57,6 +57,14 @@ class _SettingsSheet extends StatelessWidget {
               Navigator.pop(context);
             },
           ),
+          SwitchListTile(
+            title: Text(AppLocalizations.of(context)!.toggleSound),
+            value: actions.soundEnabled,
+            onChanged: (val) {
+              actions.onToggleSound();
+              Navigator.pop(context);
+            },
+          ),
           const Divider(height: 16),
           ListTile(
             leading: const Icon(Icons.logout),

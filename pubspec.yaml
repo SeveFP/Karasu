@@ -77,6 +77,8 @@ flutter:
     - assets/config.json
     - assets/config.dev.json
     - assets/logo.png
+    - assets/correct.mp3
+    - assets/incorrect.mp3
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.

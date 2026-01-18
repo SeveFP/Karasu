@@ -126,6 +126,9 @@ class AppLocalizationsCa extends AppLocalizations {
   String get toggleTheme => 'Canvia el tema';
 
   @override
+  String get toggleSound => 'Activa/Desactiva el so';
+
+  @override
   String get logoutButton => 'Surt';
 
   @override

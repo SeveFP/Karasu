@@ -126,6 +126,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get toggleTheme => 'Toggle Theme';
 
   @override
+  String get toggleSound => 'Toggle Sound';
+
+  @override
   String get logoutButton => 'Logout';
 
   @override
