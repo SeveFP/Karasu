@@ -35,6 +35,7 @@
     "settingsTooltip": "Configuració",
     "settingsTitle": "Configuració",
     "toggleTheme": "Canvia el tema",
+    "toggleSound": "Activa/Desactiva el so",
     "logoutButton": "Surt",
     "noDecks": "Cap baralla"
 }

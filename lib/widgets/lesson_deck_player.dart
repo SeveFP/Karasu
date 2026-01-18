@@ -39,6 +39,8 @@ class LessonDeckPlayer extends StatefulWidget {
   /// Callback when the deck is completed.
   final void Function(String deckId) onCompleted;
 
+  final void Function(bool isCorrect) playResultSound;
+
   const LessonDeckPlayer({
     super.key,
     required this.deck,
@@ -46,6 +48,7 @@ class LessonDeckPlayer extends StatefulWidget {
     this.courseId,
     this.lessonId,
     this.initiallyCompleted = false,
+    required this.playResultSound,
   });
 
   @override
@@ -116,6 +119,9 @@ class _LessonDeckPlayerState extends State<LessonDeckPlayer> {
 
     // Submit answer to backend (fire and forget)
     _submitAnswer(cardID, answer);
+
+    // Play correct/incorrect sound
+    widget.playResultSound(answer.isCorrect == true);
 
     // Move to next card after a short delay
     Future.delayed(const Duration(milliseconds: 300), () {
@@ -382,7 +388,7 @@ class _AnswerDisplayState extends State<_AnswerDisplay> {
 
     // Determine icon based on state
     final IconData icon = active
-        ? Icons.check_circle
+        ? (widget.answer.isCorrect == true ? Icons.check_circle : Icons.cancel)
         : (_hovered && !disabled)
         ? Icons.radio_button_checked
         : Icons.circle_outlined;

@@ -35,6 +35,7 @@
     "settingsTooltip": "Settings",
     "settingsTitle": "Settings",
     "toggleTheme": "Toggle Theme",
+    "toggleSound": "Toggle Sound",
     "logoutButton": "Logout",
     "noDecks": "No decks"
 }

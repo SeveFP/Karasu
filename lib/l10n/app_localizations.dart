@@ -305,6 +305,12 @@ abstract class AppLocalizations {
   /// **'Toggle Theme'**
   String get toggleTheme;
 
+  /// No description provided for @toggleSound.
+  ///
+  /// In en, this message translates to:
+  /// **'Toggle Sound'**
+  String get toggleSound;
+
   /// No description provided for @logoutButton.
   ///
   /// In en, this message translates to:

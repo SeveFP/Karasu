@@ -11,6 +11,7 @@ import 'package:karasu/services/config_service.dart';
 import 'package:karasu/services/graphql_service.dart';
 import 'package:karasu/services/openapi_client.dart';
 import 'package:karasu/services/logger_service.dart';
+import 'package:karasu/services/settings_service.dart';
 import 'package:karasu/views/login.dart';
 import 'package:karasu/views/courses.dart';
 // import 'package:karasu/views/popularDecks.dart';
@@ -30,6 +31,8 @@ void main() async {
 
   // Pre-initialize audio player here to avoid UI freeze on first play
   AudioService.instance.initialize();
+
+  await SettingsService.load();
 
   runApp(const MyApp());
 }
@@ -82,6 +85,12 @@ class _MyAppState extends State<MyApp> {
     }
 
     return mode == ThemeMode.light ? ThemeMode.dark : ThemeMode.light;
+  }
+
+  void _toggleSound() {
+    setState(() {
+      SettingsService.setSoundEnabled(!SettingsService.soundEnabled);
+    });
   }
 
   void _toggleTheme() {
@@ -180,6 +189,8 @@ class _MyAppState extends State<MyApp> {
           return AppActions(
             onThemeToggle: _toggleTheme,
             currentThemeMode: _themeMode,
+            soundEnabled: SettingsService.soundEnabled,
+            onToggleSound: _toggleSound,
             onLogout: _handleLogout,
             child: child ?? const SizedBox.shrink(),
           );

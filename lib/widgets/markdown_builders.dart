@@ -44,12 +44,14 @@ class DeckBuilder extends MarkdownElementBuilder {
   final String? lessonId;
   final Map<String, bool>? deckStates;
   final void Function(String deckId) onCompletedDeck;
+  final void Function(bool isCorrect) playResultSound;
 
   DeckBuilder({
     required this.onCompletedDeck,
     this.courseId,
     this.lessonId,
     this.deckStates,
+    required this.playResultSound,
   });
 
   @override
@@ -119,6 +121,7 @@ class DeckBuilder extends MarkdownElementBuilder {
             courseId: courseId,
             lessonId: lessonId,
             initiallyCompleted: isCompleted,
+            playResultSound: playResultSound,
           );
         }
         return const SizedBox.shrink();
