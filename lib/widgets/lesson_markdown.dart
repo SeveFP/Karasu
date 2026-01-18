@@ -57,15 +57,16 @@ class LessonMarkdown extends StatelessWidget {
     if (enableResponsiveTables) {
       return ResponsiveMarkdownWrapper(
         markdownData: data,
-        markdownBuilder: _buildMarkdown,
+        markdownBuilder: (mdContent) => _buildMarkdown(context, mdContent),
         tableStyle: responsiveTableStyle,
         forceResponsive: forceResponsive,
       );
     }
-    return _buildMarkdown(data);
+    return _buildMarkdown(context, data);
   }
 
-  Widget _buildMarkdown(String markdownContent) {
+  Widget _buildMarkdown(BuildContext context, String markdownContent) {
+    final theme = Theme.of(context);
     return MarkdownBody(
       data: markdownContent,
       imageBuilder: (uri, title, alt) => ProxiedImage(uri: uri, alt: alt),
@@ -84,6 +85,9 @@ class LessonMarkdown extends StatelessWidget {
             AudioSyntax(),
             DeckSyntax(),
           ]),
+      styleSheet: MarkdownStyleSheet.fromTheme(
+        theme,
+      ).copyWith(pPadding: const EdgeInsets.only(bottom: 12)),
     );
   }
 }
