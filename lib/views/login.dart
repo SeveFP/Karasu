@@ -66,11 +66,14 @@ class LogInFormState extends State<LogInForm> {
   final usernameController = TextEditingController();
   final passwordController = TextEditingController();
   bool _isAutoLoggingIn = false;
+  bool _showPassword = false;
+  bool _formInError = false;
 
   @override
   void initState() {
     super.initState();
     _tryAutoLogin();
+    _formInError = widget.loginFailed;
   }
 
   @override
@@ -80,6 +83,22 @@ class LogInFormState extends State<LogInForm> {
     if (widget.loginFailed && _isAutoLoggingIn) {
       setState(() {
         _isAutoLoggingIn = false;
+      });
+    }
+
+    if (widget.loginFailed) {
+      setState(() {
+        _formInError = true;
+
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          ScaffoldMessenger.of(context).clearSnackBars();
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(AppLocalizations.of(context)!.loginFailed('')),
+              backgroundColor: Theme.of(context).colorScheme.error,
+            ),
+          );
+        });
       });
     }
   }
@@ -123,10 +142,19 @@ class LogInFormState extends State<LogInForm> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           TextFormField(
+            onChanged: (_) {
+              if (_formInError) {
+                setState(() {
+                  _formInError = false;
+                });
+              }
+            },
             controller: usernameController,
             decoration: InputDecoration(
               helperText: ' ',
               labelText: AppLocalizations.of(context)!.usernameLabel,
+              border: const OutlineInputBorder(),
+              errorText: _formInError ? '' : null,
             ),
             validator: (value) {
               if (value == null || value.isEmpty) {
@@ -136,11 +164,26 @@ class LogInFormState extends State<LogInForm> {
             },
           ),
           TextFormField(
-            obscureText: true,
+            onChanged: (_) {
+              if (_formInError) {
+                setState(() {
+                  _formInError = false;
+                });
+              }
+            },
+            obscureText: !_showPassword,
             controller: passwordController,
             decoration: InputDecoration(
               helperText: ' ',
               labelText: AppLocalizations.of(context)!.passwordLabel,
+              border: const OutlineInputBorder(),
+              errorText: _formInError ? '' : null,
+              suffixIcon: IconButton(
+                icon: Icon(
+                  _showPassword ? Icons.visibility_off : Icons.visibility,
+                ),
+                onPressed: () => setState(() => _showPassword = !_showPassword),
+              ),
             ),
             validator: (value) {
               if (value == null || value.isEmpty) {
@@ -152,6 +195,9 @@ class LogInFormState extends State<LogInForm> {
           LayoutBuilder(
             builder: (context, constraints) => Center(
               child: ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  minimumSize: Size(constraints.maxWidth / 2, 48),
+                ),
                 onPressed: () {
                   if (_formKey.currentState!.validate()) {
                     const storage = FlutterSecureStorage();
@@ -168,6 +214,10 @@ class LogInFormState extends State<LogInForm> {
                       usernameController.text,
                       passwordController.text,
                     );
+
+                    setState(() {
+                      _formInError = false;
+                    });
                   }
                 },
                 child: Text(AppLocalizations.of(context)!.loginButton),

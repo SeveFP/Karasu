@@ -129,15 +129,6 @@ class _MyAppState extends State<MyApp> {
         _hasLoggedIn = false;
         _loginFailed = true;
       });
-
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(
-            AppLocalizations.of(context)!.loginFailed(e.toString()),
-          ),
-          backgroundColor: Theme.of(context).colorScheme.error,
-        ),
-      );
     }
   }
 
