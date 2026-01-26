@@ -172,7 +172,7 @@ class _LessonDeckPlayerState extends State<LessonDeckPlayer> {
                 widget.deck.title,
                 style: Theme.of(context).textTheme.titleMedium,
               ),
-              subtitle: Text(widget.deck.description),
+              subtitle: MarkdownWithAudio(data: widget.deck.description),
               leading: incorrectCount > 0
                   ? Icon(Icons.error, color: errorColor)
                   : Icon(Icons.check_circle, color: successColor),
@@ -237,12 +237,7 @@ class _LessonDeckPlayerState extends State<LessonDeckPlayer> {
             color: colorScheme.onPrimaryContainer,
           ),
         ),
-        subtitle: Text(
-          widget.deck.description,
-          style: Theme.of(context).textTheme.bodySmall?.copyWith(
-            color: colorScheme.onPrimaryContainer.withValues(alpha: 0.85),
-          ),
-        ),
+        subtitle: MarkdownWithAudio(data: widget.deck.description),
       ),
     );
 

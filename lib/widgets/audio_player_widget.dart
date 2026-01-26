@@ -67,6 +67,9 @@ class _AudioPlayerWidgetState extends State<AudioPlayerWidget> {
   void dispose() {
     _posSub?.cancel();
     _stateSub?.cancel();
+
+    AudioService.instance.stop();
+
     super.dispose();
   }
 
