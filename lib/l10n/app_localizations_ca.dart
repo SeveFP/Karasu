@@ -115,13 +115,7 @@ class AppLocalizationsCa extends AppLocalizations {
   String get loginButton => 'Entra';
 
   @override
-  String get errorTitle => 'Error';
-
-  @override
   String get submitButton => 'Envia';
-
-  @override
-  String get deckLabel => 'Baralla';
 
   @override
   String scoreSummary(Object correct, Object total) {
@@ -164,7 +158,4 @@ class AppLocalizationsCa extends AppLocalizations {
 
   @override
   String get logoutButton => 'Surt';
-
-  @override
-  String get noDecks => 'Cap baralla';
 }

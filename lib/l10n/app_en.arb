@@ -32,9 +32,7 @@
     "passwordLabel": "Password",
     "passwordMissing": "Password is missing",
     "loginButton": "Log in",
-    "errorTitle": "Error",
     "submitButton": "Submit",
-    "deckLabel": "Deck",
     "scoreSummary": "{correct} / {total}",
     "noCardsAvailable": "No cards available",
     "correctAnswers": "Correct answers: {count}",
@@ -46,6 +44,5 @@
     "settingsTitle": "Settings",
     "toggleTheme": "Toggle Theme",
     "toggleSound": "Toggle Sound",
-    "logoutButton": "Logout",
-    "noDecks": "No decks"
+    "logoutButton": "Logout"
 }
