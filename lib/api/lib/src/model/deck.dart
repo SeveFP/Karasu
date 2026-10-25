@@ -9,7 +9,6 @@ import 'package:json_annotation/json_annotation.dart';
 
 part 'deck.g.dart';
 
-
 @CopyWith()
 @JsonSerializable(
   checked: true,
@@ -20,100 +19,54 @@ part 'deck.g.dart';
 class Deck {
   /// Returns a new [Deck] instance.
   Deck({
+    required this.id,
 
-    required  this.id,
+    required this.authorId,
 
-    required  this.authorId,
+    required this.title,
 
-    required  this.title,
+    required this.description,
 
-    required  this.description,
-
-    required  this.cards,
+    required this.cards,
   });
 
-      /// Deck UUID
-  @JsonKey(
-    
-    name: r'id',
-    required: true,
-    includeIfNull: false,
-  )
-
-
+  /// Deck UUID
+  @JsonKey(name: r'id', required: true, includeIfNull: false)
   final String id;
 
-
-
-      /// Author user UUID
-  @JsonKey(
-    
-    name: r'author_id',
-    required: true,
-    includeIfNull: false,
-  )
-
-
+  /// Author user UUID
+  @JsonKey(name: r'author_id', required: true, includeIfNull: false)
   final String authorId;
 
-
-
-      /// Deck title
-  @JsonKey(
-    
-    name: r'title',
-    required: true,
-    includeIfNull: false,
-  )
-
-
+  /// Deck title
+  @JsonKey(name: r'title', required: true, includeIfNull: false)
   final String title;
 
-
-
-      /// Deck description
-  @JsonKey(
-    
-    name: r'description',
-    required: true,
-    includeIfNull: false,
-  )
-
-
+  /// Deck description
+  @JsonKey(name: r'description', required: true, includeIfNull: false)
   final String description;
 
-
-
-      /// Cards in this deck
-  @JsonKey(
-    
-    name: r'cards',
-    required: true,
-    includeIfNull: false,
-  )
-
-
+  /// Cards in this deck
+  @JsonKey(name: r'cards', required: true, includeIfNull: false)
   final List<Card> cards;
 
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is Deck &&
+          other.id == id &&
+          other.authorId == authorId &&
+          other.title == title &&
+          other.description == description &&
+          other.cards == cards;
 
-
-
-
-    @override
-    bool operator ==(Object other) => identical(this, other) || other is Deck &&
-      other.id == id &&
-      other.authorId == authorId &&
-      other.title == title &&
-      other.description == description &&
-      other.cards == cards;
-
-    @override
-    int get hashCode =>
-        id.hashCode +
-        authorId.hashCode +
-        title.hashCode +
-        description.hashCode +
-        cards.hashCode;
+  @override
+  int get hashCode =>
+      id.hashCode +
+      authorId.hashCode +
+      title.hashCode +
+      description.hashCode +
+      cards.hashCode;
 
   factory Deck.fromJson(Map<String, dynamic> json) => _$DeckFromJson(json);
 
@@ -123,6 +76,4 @@ class Deck {
   String toString() {
     return toJson().toString();
   }
-
 }
-

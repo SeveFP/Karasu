@@ -9,6 +9,8 @@ part of 'card.dart';
 abstract class _$CardCWProxy {
   Card id(String id);
 
+  Card deckId(String? deckId);
+
   Card title(String title);
 
   Card possibleAnswers(List<Answer> possibleAnswers);
@@ -25,6 +27,7 @@ abstract class _$CardCWProxy {
   /// ````
   Card call({
     String id,
+    String? deckId,
     String title,
     List<Answer> possibleAnswers,
     String? explanation,
@@ -40,6 +43,9 @@ class _$CardCWProxyImpl implements _$CardCWProxy {
 
   @override
   Card id(String id) => this(id: id);
+
+  @override
+  Card deckId(String? deckId) => this(deckId: deckId);
 
   @override
   Card title(String title) => this(title: title);
@@ -63,6 +69,7 @@ class _$CardCWProxyImpl implements _$CardCWProxy {
   /// ````
   Card call({
     Object? id = const $CopyWithPlaceholder(),
+    Object? deckId = const $CopyWithPlaceholder(),
     Object? title = const $CopyWithPlaceholder(),
     Object? possibleAnswers = const $CopyWithPlaceholder(),
     Object? explanation = const $CopyWithPlaceholder(),
@@ -73,6 +80,10 @@ class _$CardCWProxyImpl implements _$CardCWProxy {
           ? _value.id
           // ignore: cast_nullable_to_non_nullable
           : id as String,
+      deckId: deckId == const $CopyWithPlaceholder()
+          ? _value.deckId
+          // ignore: cast_nullable_to_non_nullable
+          : deckId as String?,
       title: title == const $CopyWithPlaceholder()
           ? _value.title
           // ignore: cast_nullable_to_non_nullable
@@ -103,30 +114,41 @@ extension $CardCopyWith on Card {
 // JsonSerializableGenerator
 // **************************************************************************
 
-Card _$CardFromJson(Map<String, dynamic> json) => $checkedCreate('Card', json, (
-  $checkedConvert,
-) {
-  $checkKeys(
-    json,
-    requiredKeys: const ['id', 'title', 'possible_answers', 'kind'],
-  );
-  final val = Card(
-    id: $checkedConvert('id', (v) => v as String),
-    title: $checkedConvert('title', (v) => v as String),
-    possibleAnswers: $checkedConvert(
-      'possible_answers',
-      (v) => (v as List<dynamic>)
-          .map((e) => Answer.fromJson(e as Map<String, dynamic>))
-          .toList(),
-    ),
-    explanation: $checkedConvert('explanation', (v) => v as String?),
-    kind: $checkedConvert('kind', (v) => $enumDecode(_$CardKindEnumEnumMap, v)),
-  );
-  return val;
-}, fieldKeyMap: const {'possibleAnswers': 'possible_answers'});
+Card _$CardFromJson(Map<String, dynamic> json) => $checkedCreate(
+  'Card',
+  json,
+  ($checkedConvert) {
+    $checkKeys(
+      json,
+      requiredKeys: const ['id', 'title', 'possible_answers', 'kind'],
+    );
+    final val = Card(
+      id: $checkedConvert('id', (v) => v as String),
+      deckId: $checkedConvert('deck_id', (v) => v as String?),
+      title: $checkedConvert('title', (v) => v as String),
+      possibleAnswers: $checkedConvert(
+        'possible_answers',
+        (v) => (v as List<dynamic>)
+            .map((e) => Answer.fromJson(e as Map<String, dynamic>))
+            .toList(),
+      ),
+      explanation: $checkedConvert('explanation', (v) => v as String?),
+      kind: $checkedConvert(
+        'kind',
+        (v) => $enumDecode(_$CardKindEnumEnumMap, v),
+      ),
+    );
+    return val;
+  },
+  fieldKeyMap: const {
+    'deckId': 'deck_id',
+    'possibleAnswers': 'possible_answers',
+  },
+);
 
 Map<String, dynamic> _$CardToJson(Card instance) => <String, dynamic>{
   'id': instance.id,
+  'deck_id': ?instance.deckId,
   'title': instance.title,
   'possible_answers': instance.possibleAnswers.map((e) => e.toJson()).toList(),
   'explanation': ?instance.explanation,

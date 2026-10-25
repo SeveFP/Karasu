@@ -1,0 +1,29 @@
+{
+    "language": "en",
+    "appName": "Karasu",
+    "toshokanURL": "toshokan.test",
+    "protocol": "http://",
+    "logoPath": "assets/logo.png",
+    "logoBackgroundColor": 4294967295,
+    "debugPaintSizeEnabled": false,
+    "mode": "production",
+    "lockLessons": false,
+    "callSyncOnLessonCompletion": true,
+    "colorScheme": {
+        "primaryColor": 4281558681,
+        "secondaryColor": 4283782485,
+        "tertiaryColor": 4285887861
+    },
+    "statusColors": {
+        "successColorLight": 4281558322,
+        "successColorDark": 4285771626,
+        "successContainerLight": 4291356361,
+        "successContainerDark": 4279918112,
+        "errorColorLight": 4291176488,
+        "errorColorDark": 4293874000,
+        "errorContainerLight": 4294960850,
+        "errorContainerDark": 4284481536
+    },
+    "themeMode": "system",
+    "defaultMaxCards": 30
+}

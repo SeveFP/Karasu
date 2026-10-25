@@ -15,7 +15,7 @@ abstract class _$CourseCWProxy {
 
   Course createdAt(DateTime createdAt);
 
-  Course editedAt(DateTime? editedAt);
+  Course updatedAt(DateTime? updatedAt);
 
   Course deletedAt(DateTime? deletedAt);
 
@@ -30,7 +30,7 @@ abstract class _$CourseCWProxy {
     String title,
     String description,
     DateTime createdAt,
-    DateTime? editedAt,
+    DateTime? updatedAt,
     DateTime? deletedAt,
   });
 }
@@ -54,7 +54,7 @@ class _$CourseCWProxyImpl implements _$CourseCWProxy {
   Course createdAt(DateTime createdAt) => this(createdAt: createdAt);
 
   @override
-  Course editedAt(DateTime? editedAt) => this(editedAt: editedAt);
+  Course updatedAt(DateTime? updatedAt) => this(updatedAt: updatedAt);
 
   @override
   Course deletedAt(DateTime? deletedAt) => this(deletedAt: deletedAt);
@@ -71,7 +71,7 @@ class _$CourseCWProxyImpl implements _$CourseCWProxy {
     Object? title = const $CopyWithPlaceholder(),
     Object? description = const $CopyWithPlaceholder(),
     Object? createdAt = const $CopyWithPlaceholder(),
-    Object? editedAt = const $CopyWithPlaceholder(),
+    Object? updatedAt = const $CopyWithPlaceholder(),
     Object? deletedAt = const $CopyWithPlaceholder(),
   }) {
     return Course(
@@ -91,10 +91,10 @@ class _$CourseCWProxyImpl implements _$CourseCWProxy {
           ? _value.createdAt
           // ignore: cast_nullable_to_non_nullable
           : createdAt as DateTime,
-      editedAt: editedAt == const $CopyWithPlaceholder()
-          ? _value.editedAt
+      updatedAt: updatedAt == const $CopyWithPlaceholder()
+          ? _value.updatedAt
           // ignore: cast_nullable_to_non_nullable
-          : editedAt as DateTime?,
+          : updatedAt as DateTime?,
       deletedAt: deletedAt == const $CopyWithPlaceholder()
           ? _value.deletedAt
           // ignore: cast_nullable_to_non_nullable
@@ -129,8 +129,8 @@ Course _$CourseFromJson(Map<String, dynamic> json) => $checkedCreate(
         'created_at',
         (v) => DateTime.parse(v as String),
       ),
-      editedAt: $checkedConvert(
-        'edited_at',
+      updatedAt: $checkedConvert(
+        'updated_at',
         (v) => v == null ? null : DateTime.parse(v as String),
       ),
       deletedAt: $checkedConvert(
@@ -142,7 +142,7 @@ Course _$CourseFromJson(Map<String, dynamic> json) => $checkedCreate(
   },
   fieldKeyMap: const {
     'createdAt': 'created_at',
-    'editedAt': 'edited_at',
+    'updatedAt': 'updated_at',
     'deletedAt': 'deleted_at',
   },
 );
@@ -152,6 +152,6 @@ Map<String, dynamic> _$CourseToJson(Course instance) => <String, dynamic>{
   'title': instance.title,
   'description': instance.description,
   'created_at': instance.createdAt.toIso8601String(),
-  'edited_at': ?instance.editedAt?.toIso8601String(),
+  'updated_at': ?instance.updatedAt?.toIso8601String(),
   'deleted_at': ?instance.deletedAt?.toIso8601String(),
 };

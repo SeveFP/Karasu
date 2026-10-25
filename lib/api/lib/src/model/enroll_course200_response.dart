@@ -8,7 +8,6 @@ import 'package:json_annotation/json_annotation.dart';
 
 part 'enroll_course200_response.g.dart';
 
-
 @CopyWith()
 @JsonSerializable(
   checked: true,
@@ -18,34 +17,21 @@ part 'enroll_course200_response.g.dart';
 )
 class EnrollCourse200Response {
   /// Returns a new [EnrollCourse200Response] instance.
-  EnrollCourse200Response({
+  EnrollCourse200Response({this.success});
 
-     this.success,
-  });
-
-  @JsonKey(
-    
-    name: r'success',
-    required: false,
-    includeIfNull: false,
-  )
-
-
+  @JsonKey(name: r'success', required: false, includeIfNull: false)
   final bool? success;
 
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is EnrollCourse200Response && other.success == success;
 
+  @override
+  int get hashCode => success.hashCode;
 
-
-
-    @override
-    bool operator ==(Object other) => identical(this, other) || other is EnrollCourse200Response &&
-      other.success == success;
-
-    @override
-    int get hashCode =>
-        success.hashCode;
-
-  factory EnrollCourse200Response.fromJson(Map<String, dynamic> json) => _$EnrollCourse200ResponseFromJson(json);
+  factory EnrollCourse200Response.fromJson(Map<String, dynamic> json) =>
+      _$EnrollCourse200ResponseFromJson(json);
 
   Map<String, dynamic> toJson() => _$EnrollCourse200ResponseToJson(this);
 
@@ -53,6 +39,4 @@ class EnrollCourse200Response {
   String toString() {
     return toJson().toString();
   }
-
 }
-

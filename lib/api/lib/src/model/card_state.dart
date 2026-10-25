@@ -8,7 +8,6 @@ import 'package:json_annotation/json_annotation.dart';
 
 part 'card_state.g.dart';
 
-
 @CopyWith()
 @JsonSerializable(
   checked: true,
@@ -19,85 +18,49 @@ part 'card_state.g.dart';
 class CardState {
   /// Returns a new [CardState] instance.
   CardState({
+    required this.correctAnswers,
 
-    required  this.correctAnswers,
+    required this.incorrectAnswers,
 
-    required  this.incorrectAnswers,
+    required this.isCompleted,
 
-    required  this.isCompleted,
-
-     this.completedAt,
+    this.completedAt,
   });
 
-      /// Number of correct answers for this card
-  @JsonKey(
-    
-    name: r'correct_answers',
-    required: true,
-    includeIfNull: false,
-  )
-
-
+  /// Number of correct answers for this card
+  @JsonKey(name: r'correct_answers', required: true, includeIfNull: false)
   final int correctAnswers;
 
-
-
-      /// Number of incorrect answers for this card
-  @JsonKey(
-    
-    name: r'incorrect_answers',
-    required: true,
-    includeIfNull: false,
-  )
-
-
+  /// Number of incorrect answers for this card
+  @JsonKey(name: r'incorrect_answers', required: true, includeIfNull: false)
   final int incorrectAnswers;
 
-
-
-      /// Whether the card is completed (answered correctly at least once)
-  @JsonKey(
-    
-    name: r'is_completed',
-    required: true,
-    includeIfNull: false,
-  )
-
-
+  /// Whether the card is completed (answered correctly at least once)
+  @JsonKey(name: r'is_completed', required: true, includeIfNull: false)
   final bool isCompleted;
 
-
-
-      /// Timestamp when the card was completed
-  @JsonKey(
-    
-    name: r'completed_at',
-    required: false,
-    includeIfNull: false,
-  )
-
-
+  /// Timestamp when the card was completed
+  @JsonKey(name: r'completed_at', required: false, includeIfNull: false)
   final DateTime? completedAt;
 
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is CardState &&
+          other.correctAnswers == correctAnswers &&
+          other.incorrectAnswers == incorrectAnswers &&
+          other.isCompleted == isCompleted &&
+          other.completedAt == completedAt;
 
+  @override
+  int get hashCode =>
+      correctAnswers.hashCode +
+      incorrectAnswers.hashCode +
+      isCompleted.hashCode +
+      completedAt.hashCode;
 
-
-
-    @override
-    bool operator ==(Object other) => identical(this, other) || other is CardState &&
-      other.correctAnswers == correctAnswers &&
-      other.incorrectAnswers == incorrectAnswers &&
-      other.isCompleted == isCompleted &&
-      other.completedAt == completedAt;
-
-    @override
-    int get hashCode =>
-        correctAnswers.hashCode +
-        incorrectAnswers.hashCode +
-        isCompleted.hashCode +
-        completedAt.hashCode;
-
-  factory CardState.fromJson(Map<String, dynamic> json) => _$CardStateFromJson(json);
+  factory CardState.fromJson(Map<String, dynamic> json) =>
+      _$CardStateFromJson(json);
 
   Map<String, dynamic> toJson() => _$CardStateToJson(this);
 
@@ -105,6 +68,4 @@ class CardState {
   String toString() {
     return toJson().toString();
   }
-
 }
-

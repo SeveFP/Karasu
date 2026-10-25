@@ -9,6 +9,8 @@ part of 'answer.dart';
 abstract class _$AnswerCWProxy {
   Answer id(String id);
 
+  Answer cardId(String? cardId);
+
   Answer text(String text);
 
   Answer isCorrect(bool? isCorrect);
@@ -19,7 +21,7 @@ abstract class _$AnswerCWProxy {
   /// ```dart
   /// Answer(...).copyWith(id: 12, name: "My name")
   /// ````
-  Answer call({String id, String text, bool? isCorrect});
+  Answer call({String id, String? cardId, String text, bool? isCorrect});
 }
 
 /// Proxy class for `copyWith` functionality. This is a callable class and can be used as follows: `instanceOfAnswer.copyWith(...)`. Additionally contains functions for specific fields e.g. `instanceOfAnswer.copyWith.fieldName(...)`
@@ -30,6 +32,9 @@ class _$AnswerCWProxyImpl implements _$AnswerCWProxy {
 
   @override
   Answer id(String id) => this(id: id);
+
+  @override
+  Answer cardId(String? cardId) => this(cardId: cardId);
 
   @override
   Answer text(String text) => this(text: text);
@@ -46,6 +51,7 @@ class _$AnswerCWProxyImpl implements _$AnswerCWProxy {
   /// ````
   Answer call({
     Object? id = const $CopyWithPlaceholder(),
+    Object? cardId = const $CopyWithPlaceholder(),
     Object? text = const $CopyWithPlaceholder(),
     Object? isCorrect = const $CopyWithPlaceholder(),
   }) {
@@ -54,6 +60,10 @@ class _$AnswerCWProxyImpl implements _$AnswerCWProxy {
           ? _value.id
           // ignore: cast_nullable_to_non_nullable
           : id as String,
+      cardId: cardId == const $CopyWithPlaceholder()
+          ? _value.cardId
+          // ignore: cast_nullable_to_non_nullable
+          : cardId as String?,
       text: text == const $CopyWithPlaceholder()
           ? _value.text
           // ignore: cast_nullable_to_non_nullable
@@ -81,14 +91,16 @@ Answer _$AnswerFromJson(Map<String, dynamic> json) =>
       $checkKeys(json, requiredKeys: const ['id', 'text']);
       final val = Answer(
         id: $checkedConvert('id', (v) => v as String),
+        cardId: $checkedConvert('card_id', (v) => v as String?),
         text: $checkedConvert('text', (v) => v as String),
         isCorrect: $checkedConvert('is_correct', (v) => v as bool?),
       );
       return val;
-    }, fieldKeyMap: const {'isCorrect': 'is_correct'});
+    }, fieldKeyMap: const {'cardId': 'card_id', 'isCorrect': 'is_correct'});
 
 Map<String, dynamic> _$AnswerToJson(Answer instance) => <String, dynamic>{
   'id': instance.id,
+  'card_id': ?instance.cardId,
   'text': instance.text,
   'is_correct': ?instance.isCorrect,
 };

@@ -12,6 +12,7 @@
     "completeLessonContinue": "Complete Lesson & Continue",
     "lessonLocked": "This lesson is locked. Please complete previous lessons first.",
     "failedToLoadLessons": "Failed to load lessons: {error}",
+    "failedToLoadLesson": "Failed to load lesson: {error}",
     "couldNotLoadProgress": "Could not load progress: {error}",
     "loginFailed": "Login failed: {error}",
     "ok": "OK",

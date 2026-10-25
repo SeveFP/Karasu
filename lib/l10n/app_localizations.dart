@@ -167,6 +167,12 @@ abstract class AppLocalizations {
   /// **'Failed to load lessons: {error}'**
   String failedToLoadLessons(Object error);
 
+  /// No description provided for @failedToLoadLesson.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to load lesson: {error}'**
+  String failedToLoadLesson(Object error);
+
   /// No description provided for @couldNotLoadProgress.
   ///
   /// In en, this message translates to:

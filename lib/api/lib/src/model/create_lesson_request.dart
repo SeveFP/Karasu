@@ -8,7 +8,6 @@ import 'package:json_annotation/json_annotation.dart';
 
 part 'create_lesson_request.g.dart';
 
-
 @CopyWith()
 @JsonSerializable(
   checked: true,
@@ -19,85 +18,46 @@ part 'create_lesson_request.g.dart';
 class CreateLessonRequest {
   /// Returns a new [CreateLessonRequest] instance.
   CreateLessonRequest({
+    required this.order,
 
-    required  this.order,
+    required this.title,
 
-    required  this.title,
+    required this.description,
 
-    required  this.description,
-
-    required  this.body,
+    required this.body,
   });
 
-      /// Lesson order within course
-  @JsonKey(
-    
-    name: r'order',
-    required: true,
-    includeIfNull: false,
-  )
-
-
+  /// Lesson order within course
+  @JsonKey(name: r'order', required: true, includeIfNull: false)
   final int order;
 
-
-
-      /// Lesson title
-  @JsonKey(
-    
-    name: r'title',
-    required: true,
-    includeIfNull: false,
-  )
-
-
+  /// Lesson title
+  @JsonKey(name: r'title', required: true, includeIfNull: false)
   final String title;
 
-
-
-      /// Lesson description
-  @JsonKey(
-    
-    name: r'description',
-    required: true,
-    includeIfNull: false,
-  )
-
-
+  /// Lesson description
+  @JsonKey(name: r'description', required: true, includeIfNull: false)
   final String description;
 
-
-
-      /// Lesson content body; must embed at least one deck reference in the markdown form `![deck](uuid)`
-  @JsonKey(
-    
-    name: r'body',
-    required: true,
-    includeIfNull: false,
-  )
-
-
+  /// Lesson content body; must embed at least one deck reference in the markdown form `![deck](uuid)`
+  @JsonKey(name: r'body', required: true, includeIfNull: false)
   final String body;
 
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is CreateLessonRequest &&
+          other.order == order &&
+          other.title == title &&
+          other.description == description &&
+          other.body == body;
 
+  @override
+  int get hashCode =>
+      order.hashCode + title.hashCode + description.hashCode + body.hashCode;
 
-
-
-    @override
-    bool operator ==(Object other) => identical(this, other) || other is CreateLessonRequest &&
-      other.order == order &&
-      other.title == title &&
-      other.description == description &&
-      other.body == body;
-
-    @override
-    int get hashCode =>
-        order.hashCode +
-        title.hashCode +
-        description.hashCode +
-        body.hashCode;
-
-  factory CreateLessonRequest.fromJson(Map<String, dynamic> json) => _$CreateLessonRequestFromJson(json);
+  factory CreateLessonRequest.fromJson(Map<String, dynamic> json) =>
+      _$CreateLessonRequestFromJson(json);
 
   Map<String, dynamic> toJson() => _$CreateLessonRequestToJson(this);
 
@@ -105,6 +65,4 @@ class CreateLessonRequest {
   String toString() {
     return toJson().toString();
   }
-
 }
-

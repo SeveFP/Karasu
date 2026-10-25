@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:karasu/services/lesson_loader.dart';
 import 'package:karasu/views/lessons.dart';
 import 'package:karasu/views/lesson.dart';
 import 'package:toshokan_api/toshokan_api.dart' as api;
@@ -27,10 +28,11 @@ class AppRouter {
 
       case lesson:
         final args = settings.arguments as Map<String, dynamic>?;
-        final lessonData = args?['lesson'] as api.LessonWithProgress?;
+        final lessonData = args?['lesson'] as api.BodylessLessonWithProgress?;
         if (lessonData == null) return null;
+        final preloaded = args?['preloaded'] as Future<LoadedLesson>?;
         return MaterialPageRoute(
-          builder: (_) => LessonView(lesson: lessonData),
+          builder: (_) => LessonView(lesson: lessonData, preloaded: preloaded),
           settings: settings,
         );
 

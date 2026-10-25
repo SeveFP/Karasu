@@ -8,7 +8,6 @@ import 'package:json_annotation/json_annotation.dart';
 
 part 'error.g.dart';
 
-
 @CopyWith()
 @JsonSerializable(
   checked: true,
@@ -18,33 +17,18 @@ part 'error.g.dart';
 )
 class Error {
   /// Returns a new [Error] instance.
-  Error({
+  Error({required this.error});
 
-    required  this.error,
-  });
-
-      /// Error message
-  @JsonKey(
-    
-    name: r'error',
-    required: true,
-    includeIfNull: false,
-  )
-
-
+  /// Error message
+  @JsonKey(name: r'error', required: true, includeIfNull: false)
   final String error;
 
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) || other is Error && other.error == error;
 
-
-
-
-    @override
-    bool operator ==(Object other) => identical(this, other) || other is Error &&
-      other.error == error;
-
-    @override
-    int get hashCode =>
-        error.hashCode;
+  @override
+  int get hashCode => error.hashCode;
 
   factory Error.fromJson(Map<String, dynamic> json) => _$ErrorFromJson(json);
 
@@ -54,6 +38,4 @@ class Error {
   String toString() {
     return toJson().toString();
   }
-
 }
-

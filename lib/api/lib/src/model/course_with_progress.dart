@@ -8,7 +8,6 @@ import 'package:json_annotation/json_annotation.dart';
 
 part 'course_with_progress.g.dart';
 
-
 @CopyWith()
 @JsonSerializable(
   checked: true,
@@ -19,136 +18,73 @@ part 'course_with_progress.g.dart';
 class CourseWithProgress {
   /// Returns a new [CourseWithProgress] instance.
   CourseWithProgress({
+    required this.id,
 
-    required  this.id,
+    required this.title,
 
-    required  this.title,
+    required this.description,
 
-    required  this.description,
+    required this.createdAt,
 
-    required  this.createdAt,
+    this.updatedAt,
 
-     this.editedAt,
+    this.deletedAt,
 
-     this.deletedAt,
-
-    required  this.currentLessonId,
+    required this.currentLessonId,
   });
 
-      /// Course UUID
-  @JsonKey(
-    
-    name: r'id',
-    required: true,
-    includeIfNull: false,
-  )
-
-
+  /// Course UUID
+  @JsonKey(name: r'id', required: true, includeIfNull: false)
   final String id;
 
-
-
-      /// Course title
-  @JsonKey(
-    
-    name: r'title',
-    required: true,
-    includeIfNull: false,
-  )
-
-
+  /// Course title
+  @JsonKey(name: r'title', required: true, includeIfNull: false)
   final String title;
 
-
-
-      /// Course description
-  @JsonKey(
-    
-    name: r'description',
-    required: true,
-    includeIfNull: false,
-  )
-
-
+  /// Course description
+  @JsonKey(name: r'description', required: true, includeIfNull: false)
   final String description;
 
-
-
-      /// Creation timestamp
-  @JsonKey(
-    
-    name: r'created_at',
-    required: true,
-    includeIfNull: false,
-  )
-
-
+  /// Creation timestamp
+  @JsonKey(name: r'created_at', required: true, includeIfNull: false)
   final DateTime createdAt;
 
+  /// Last edit timestamp
+  @JsonKey(name: r'updated_at', required: false, includeIfNull: false)
+  final DateTime? updatedAt;
 
-
-      /// Last edit timestamp
-  @JsonKey(
-    
-    name: r'edited_at',
-    required: false,
-    includeIfNull: false,
-  )
-
-
-  final DateTime? editedAt;
-
-
-
-      /// Deletion timestamp
-  @JsonKey(
-    
-    name: r'deleted_at',
-    required: false,
-    includeIfNull: false,
-  )
-
-
+  /// Deletion timestamp
+  @JsonKey(name: r'deleted_at', required: false, includeIfNull: false)
   final DateTime? deletedAt;
 
-
-
-      /// UUID of the user's current lesson in this course
-  @JsonKey(
-    
-    name: r'current_lesson_id',
-    required: true,
-    includeIfNull: false,
-  )
-
-
+  /// UUID of the user's current lesson in this course
+  @JsonKey(name: r'current_lesson_id', required: true, includeIfNull: false)
   final String currentLessonId;
 
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is CourseWithProgress &&
+          other.id == id &&
+          other.title == title &&
+          other.description == description &&
+          other.createdAt == createdAt &&
+          other.updatedAt == updatedAt &&
+          other.deletedAt == deletedAt &&
+          other.currentLessonId == currentLessonId;
 
+  @override
+  int get hashCode =>
+      id.hashCode +
+      title.hashCode +
+      description.hashCode +
+      createdAt.hashCode +
+      updatedAt.hashCode +
+      deletedAt.hashCode +
+      currentLessonId.hashCode;
 
-
-
-    @override
-    bool operator ==(Object other) => identical(this, other) || other is CourseWithProgress &&
-      other.id == id &&
-      other.title == title &&
-      other.description == description &&
-      other.createdAt == createdAt &&
-      other.editedAt == editedAt &&
-      other.deletedAt == deletedAt &&
-      other.currentLessonId == currentLessonId;
-
-    @override
-    int get hashCode =>
-        id.hashCode +
-        title.hashCode +
-        description.hashCode +
-        createdAt.hashCode +
-        editedAt.hashCode +
-        deletedAt.hashCode +
-        currentLessonId.hashCode;
-
-  factory CourseWithProgress.fromJson(Map<String, dynamic> json) => _$CourseWithProgressFromJson(json);
+  factory CourseWithProgress.fromJson(Map<String, dynamic> json) =>
+      _$CourseWithProgressFromJson(json);
 
   Map<String, dynamic> toJson() => _$CourseWithProgressToJson(this);
 
@@ -156,6 +92,4 @@ class CourseWithProgress {
   String toString() {
     return toJson().toString();
   }
-
 }
-

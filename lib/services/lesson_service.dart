@@ -6,7 +6,7 @@ import 'package:karasu/services/logger_service.dart';
 ///
 /// Provides high-level methods for:
 /// - Course operations (create, get, enroll)
-/// - Lesson operations (create, list, get focused)
+/// - Lesson operations (create, list, get one)
 /// - Progress tracking (get state, submit answers)
 /// - Deck operations (create, get, delete)
 class LessonService {
@@ -101,10 +101,10 @@ class LessonService {
     }
   }
 
-  /// Get paginated list of lessons for a course.
-  /// Use [after]/[first] for forward pagination.
+  /// Get a page of the course's lessons with the user's progress, without
+  /// their body. Use [after]/[first] for forward pagination.
   /// Use [before]/[last] for backward pagination.
-  Future<LessonsConnectionResponse> getLessons(
+  Future<BodylessLessonsWithProgressConnectionResponse> getLessons(
     String courseId, {
     String? after,
     String? before,
@@ -112,6 +112,8 @@ class LessonService {
     int? last,
   }) async {
     try {
+      // Pass first and last even when null: the generated client defaults both
+      // to 20, and gate pages backwards whenever last is set.
       final res = await _client.lessons.getLessons(
         courseId: courseId,
         after: after,
@@ -119,6 +121,7 @@ class LessonService {
         first: first,
         last: last,
       );
+      _logger.d('Lessons: ${res.data?.edges.length ?? 0} edges');
       return res.data!;
     } catch (e) {
       _logger.e('Get lessons failed', error: e);
@@ -126,17 +129,16 @@ class LessonService {
     }
   }
 
-  /// Get focused lessons with progress around the user's current lesson.
-  /// Returns lessons with completion status and is_current flag.
-  Future<LessonsWithProgressConnectionResponse> getFocusedLessons(
-    String courseId,
-  ) async {
+  /// Get one lesson of the course, with its body.
+  Future<Lesson> getLesson(String courseId, String lessonId) async {
     try {
-      final res = await _client.lessons.getFocusedLessons(courseId: courseId);
-      _logger.d('Focused lessons: ${res.data?.edges.length ?? 0} edges');
+      final res = await _client.lessons.getLesson(
+        courseId: courseId,
+        lessonId: lessonId,
+      );
       return res.data!;
     } catch (e) {
-      _logger.e('Get focused lessons failed', error: e);
+      _logger.e('Get lesson failed', error: e);
       rethrow;
     }
   }
@@ -203,7 +205,7 @@ class LessonService {
   /// Get deck details including all cards.
   Future<Deck> getDeck(String deckId) async {
     try {
-      final res = await _client.decks.getDeck(id: deckId);
+      final res = await _client.decks.getDeck(deckId: deckId);
       return res.data!;
     } catch (e) {
       _logger.e('Get deck failed', error: e);
@@ -237,7 +239,7 @@ class LessonService {
   /// Delete a deck.
   Future<void> deleteDeck(String deckId) async {
     try {
-      await _client.decks.deleteDeck(id: deckId);
+      await _client.decks.deleteDeck(deckId: deckId);
       _logger.i('Deck deleted: $deckId');
     } catch (e) {
       _logger.e('Delete deck failed', error: e);

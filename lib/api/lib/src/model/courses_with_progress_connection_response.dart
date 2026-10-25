@@ -10,7 +10,6 @@ import 'package:json_annotation/json_annotation.dart';
 
 part 'courses_with_progress_connection_response.g.dart';
 
-
 @CopyWith()
 @JsonSerializable(
   checked: true,
@@ -21,56 +20,36 @@ part 'courses_with_progress_connection_response.g.dart';
 class CoursesWithProgressConnectionResponse {
   /// Returns a new [CoursesWithProgressConnectionResponse] instance.
   CoursesWithProgressConnectionResponse({
+    required this.edges,
 
-    required  this.edges,
-
-    required  this.pageInfo,
+    required this.pageInfo,
   });
 
-  @JsonKey(
-    
-    name: r'edges',
-    required: true,
-    includeIfNull: false,
-  )
-
-
+  @JsonKey(name: r'edges', required: true, includeIfNull: false)
   final List<CourseWithProgressEdge> edges;
 
-
-
-  @JsonKey(
-    
-    name: r'page_info',
-    required: true,
-    includeIfNull: false,
-  )
-
-
+  @JsonKey(name: r'page_info', required: true, includeIfNull: false)
   final PageInfo pageInfo;
 
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is CoursesWithProgressConnectionResponse &&
+          other.edges == edges &&
+          other.pageInfo == pageInfo;
 
+  @override
+  int get hashCode => edges.hashCode + pageInfo.hashCode;
 
+  factory CoursesWithProgressConnectionResponse.fromJson(
+    Map<String, dynamic> json,
+  ) => _$CoursesWithProgressConnectionResponseFromJson(json);
 
-
-    @override
-    bool operator ==(Object other) => identical(this, other) || other is CoursesWithProgressConnectionResponse &&
-      other.edges == edges &&
-      other.pageInfo == pageInfo;
-
-    @override
-    int get hashCode =>
-        edges.hashCode +
-        pageInfo.hashCode;
-
-  factory CoursesWithProgressConnectionResponse.fromJson(Map<String, dynamic> json) => _$CoursesWithProgressConnectionResponseFromJson(json);
-
-  Map<String, dynamic> toJson() => _$CoursesWithProgressConnectionResponseToJson(this);
+  Map<String, dynamic> toJson() =>
+      _$CoursesWithProgressConnectionResponseToJson(this);
 
   @override
   String toString() {
     return toJson().toString();
   }
-
 }
-

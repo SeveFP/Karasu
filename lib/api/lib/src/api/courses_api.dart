@@ -13,6 +13,8 @@ import 'package:toshokan_api/src/model/course.dart';
 import 'package:toshokan_api/src/model/courses_with_progress_connection_response.dart';
 import 'package:toshokan_api/src/model/create_course_request.dart';
 import 'package:toshokan_api/src/model/enroll_course200_response.dart';
+import 'package:toshokan_api/src/model/error.dart';
+import 'package:toshokan_api/src/model/update_course_request.dart';
 
 class CoursesApi {
   final Dio _dio;
@@ -20,7 +22,7 @@ class CoursesApi {
   const CoursesApi(this._dio);
 
   /// Create a new course
-  /// Create a new course with title and description
+  /// Create a new course with title and description.  **Note:** This endpoint may require admin access (&#x60;X-Admin-Token&#x60; header) depending on server configuration.
   ///
   /// Parameters:
   /// * [createCourseRequest]
@@ -108,7 +110,7 @@ class CoursesApi {
   }
 
   /// Enroll in a course
-  /// Enroll the authenticated user in a course
+  /// Enroll the authenticated user in a course.  **Note:** This endpoint may require admin access (&#x60;X-Admin-Token&#x60; header) depending on server configuration.
   ///
   /// Parameters:
   /// * [courseId] - Course UUID
@@ -346,6 +348,101 @@ class CoursesApi {
     }
 
     return Response<CoursesWithProgressConnectionResponse>(
+      data: _responseData,
+      headers: _response.headers,
+      isRedirect: _response.isRedirect,
+      requestOptions: _response.requestOptions,
+      redirects: _response.redirects,
+      statusCode: _response.statusCode,
+      statusMessage: _response.statusMessage,
+      extra: _response.extra,
+    );
+  }
+
+  /// Update a course
+  /// Update one or more fields of an existing course.  **Note:** This endpoint may require admin access (&#x60;X-Admin-Token&#x60; header) depending on server configuration. When &#x60;ADMIN_ONLY_UPDATE_COURSE&#x3D;true&#x60;, only requests with a valid admin token will be accepted.  At least one field must be provided. Returns 400 if no fields are provided.
+  ///
+  /// Parameters:
+  /// * [courseId] - Course UUID
+  /// * [updateCourseRequest]
+  /// * [cancelToken] - A [CancelToken] that can be used to cancel the operation
+  /// * [headers] - Can be used to add additional headers to the request
+  /// * [extras] - Can be used to add flags to the request
+  /// * [validateStatus] - A [ValidateStatus] callback that can be used to determine request success based on the HTTP status of the response
+  /// * [onSendProgress] - A [ProgressCallback] that can be used to get the send progress
+  /// * [onReceiveProgress] - A [ProgressCallback] that can be used to get the receive progress
+  ///
+  /// Returns a [Future] containing a [Response] with a [Course] as data
+  /// Throws [DioException] if API call or serialization fails
+  Future<Response<Course>> updateCourse({
+    required String courseId,
+    required UpdateCourseRequest updateCourseRequest,
+    CancelToken? cancelToken,
+    Map<String, dynamic>? headers,
+    Map<String, dynamic>? extra,
+    ValidateStatus? validateStatus,
+    ProgressCallback? onSendProgress,
+    ProgressCallback? onReceiveProgress,
+  }) async {
+    final _path = r'/courses/{courseId}'.replaceAll(
+      '{'
+      r'courseId'
+      '}',
+      courseId.toString(),
+    );
+    final _options = Options(
+      method: r'PATCH',
+      headers: <String, dynamic>{...?headers},
+      extra: <String, dynamic>{
+        'secure': <Map<String, String>>[
+          {'type': 'http', 'scheme': 'bearer', 'name': 'BearerAuth'},
+        ],
+        ...?extra,
+      },
+      contentType: 'application/json',
+      validateStatus: validateStatus,
+    );
+
+    dynamic _bodyData;
+
+    try {
+      _bodyData = jsonEncode(updateCourseRequest);
+    } catch (error, stackTrace) {
+      throw DioException(
+        requestOptions: _options.compose(_dio.options, _path),
+        type: DioExceptionType.unknown,
+        error: error,
+        stackTrace: stackTrace,
+      );
+    }
+
+    final _response = await _dio.request<Object>(
+      _path,
+      data: _bodyData,
+      options: _options,
+      cancelToken: cancelToken,
+      onSendProgress: onSendProgress,
+      onReceiveProgress: onReceiveProgress,
+    );
+
+    Course? _responseData;
+
+    try {
+      final rawData = _response.data;
+      _responseData = rawData == null
+          ? null
+          : deserialize<Course, Course>(rawData, 'Course', growable: true);
+    } catch (error, stackTrace) {
+      throw DioException(
+        requestOptions: _response.requestOptions,
+        response: _response,
+        type: DioExceptionType.unknown,
+        error: error,
+        stackTrace: stackTrace,
+      );
+    }
+
+    return Response<Course>(
       data: _responseData,
       headers: _response.headers,
       isRedirect: _response.isRedirect,
