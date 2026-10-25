@@ -52,6 +52,35 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String get reviewTitle => 'Review';
+
+  @override
+  String get reviewAll => 'Review all';
+
+  @override
+  String get reviewCourse => 'Review course';
+
+  @override
+  String get reviewLesson => 'Review lesson';
+
+  @override
+  String get reviewDeck => 'Review';
+
+  @override
+  String get nothingToReview => 'Nothing to review yet';
+
+  @override
+  String get nothingToReviewDescription => 'Cards show up here once you\'ve answered them in lessons.';
+
+  @override
+  String failedToLoadReview(Object error) {
+    return 'Failed to load review: $error';
+  }
+
+  @override
+  String get reviewAgain => 'Review again';
+
+  @override
   String couldNotLoadProgress(Object error) {
     return 'Could not load progress: $error';
   }

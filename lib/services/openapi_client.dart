@@ -66,6 +66,7 @@ class OpenApiClient {
   DecksApi get decks => api.getDecksApi();
   LessonsApi get lessons => api.getLessonsApi();
   ProgressApi get progress => api.getProgressApi();
+  ReviewApi get review => api.getReviewApi();
 
   /// Set Bearer token for all secured endpoints.
   /// Pass the raw JWT (without the 'Bearer ' prefix).

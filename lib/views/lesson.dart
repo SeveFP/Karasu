@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:karasu/router.dart';
 import 'package:karasu/services/lesson_loader.dart';
 import 'package:karasu/services/lesson_service.dart';
 import 'package:karasu/services/logger_service.dart';
@@ -47,6 +48,7 @@ class _LessonViewState extends State<LessonView> {
   late BottomNextPageBarButtonState completeLessonButtonState;
   Map<String, bool>? _deckStates = {};
   Map<String, api.Deck> _decks = {};
+  bool _hasAnsweredCard = false;
 
   bool _isLoading = true;
 
@@ -89,6 +91,7 @@ class _LessonViewState extends State<LessonView> {
         _deckStates = loaded.deckStates;
         _error = loaded.stateError?.toString();
         _decks = loaded.decks;
+        _hasAnsweredCard = loaded.hasAnsweredCard;
         _isLoading = false;
       });
     } catch (e) {
@@ -102,6 +105,8 @@ class _LessonViewState extends State<LessonView> {
   }
 
   void _onCompletedDeck(String deckId) async {
+    setState(() => _hasAnsweredCard = true);
+
     try {
       final response = await OpenApiClient.instance.progress.getLessonState(
         courseId: widget.lesson.courseId,
@@ -130,6 +135,18 @@ class _LessonViewState extends State<LessonView> {
   Widget build(BuildContext context) {
     return ShellScaffold(
       title: AppLocalizations.of(context)!.lessonsTitle,
+      actions: [
+        if (_hasAnsweredCard)
+          IconButton(
+            icon: const Icon(Icons.style_rounded),
+            tooltip: AppLocalizations.of(context)!.reviewLesson,
+            onPressed: () => Navigator.pushNamed(
+              context,
+              AppRouter.review,
+              arguments: {'lessonId': widget.lesson.id},
+            ),
+          ),
+      ],
       body: _isLoading
           ? const Center(child: CircularProgressIndicator())
           : _bodyError != null

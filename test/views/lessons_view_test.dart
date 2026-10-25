@@ -666,4 +666,41 @@ void main() {
     expect(service.getLessonCalls, ['lesson-2']);
     expect(service.getDeckCalls, [deckId]);
   });
+
+  testWidgets('review course opens review for the course', (tester) async {
+    final pushed = <RouteSettings>[];
+    final service = FakeLessonService(
+      lessonsResponses: [
+        api.BodylessLessonsWithProgressConnectionResponse(
+          edges: [lesson1],
+          pageInfo: api.PageInfo(
+            hasPreviousPage: false,
+            hasNextPage: false,
+            startCursor: 'c1',
+            endCursor: 'c1',
+          ),
+        ),
+      ],
+    );
+
+    await tester.pumpWidget(
+      MaterialApp(
+        localizationsDelegates: AppLocalizations.localizationsDelegates,
+        supportedLocales: AppLocalizations.supportedLocales,
+        navigatorObservers: [AppRouter.routeObserver],
+        onGenerateRoute: (settings) {
+          pushed.add(settings);
+          return MaterialPageRoute(builder: (_) => const SizedBox());
+        },
+        home: LessonsView(courseId: courseId, service: service),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.byTooltip('Review course'));
+    await tester.pumpAndSettle();
+
+    expect(pushed.single.name, '/review');
+    expect(pushed.single.arguments, {'courseId': courseId});
+  });
 }

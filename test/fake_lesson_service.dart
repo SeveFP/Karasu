@@ -3,6 +3,36 @@ import 'dart:async';
 import 'package:karasu/services/lesson_service.dart';
 import 'package:toshokan_api/toshokan_api.dart' as api;
 
+/// A recorded call to [FakeLessonService.getReview].
+class GetReviewCall {
+  final int maxCards;
+  final String? deckId;
+  final String? lessonId;
+  final String? courseId;
+
+  const GetReviewCall(
+    this.maxCards, {
+    this.deckId,
+    this.lessonId,
+    this.courseId,
+  });
+
+  @override
+  bool operator ==(Object other) =>
+      other is GetReviewCall &&
+      other.maxCards == maxCards &&
+      other.deckId == deckId &&
+      other.lessonId == lessonId &&
+      other.courseId == courseId;
+
+  @override
+  int get hashCode => Object.hash(maxCards, deckId, lessonId, courseId);
+
+  @override
+  String toString() =>
+      'GetReviewCall($maxCards, deckId: $deckId, lessonId: $lessonId, courseId: $courseId)';
+}
+
 /// A recorded call to [FakeLessonService.getLessons].
 class GetLessonsCall {
   final String courseId;
@@ -40,14 +70,22 @@ class GetLessonsCall {
 /// waiting for it when it's a [Future] and throwing it when it's an
 /// [Exception]. The lesson state is empty, fails when
 /// [lessonStateError] is set, and waits for [lessonStateGate] when set.
-/// Decks come from [decks] by ID; a missing one fails.
+/// Decks come from [decks] by ID; a missing one fails. [lessonState], when
+/// set, is returned as the lesson state. Review rounds answer with the next
+/// preset in [reviewResponses], like [lessonsResponses]; submitted review
+/// answers fail when [submitReviewError] is set.
 class FakeLessonService implements LessonService {
   final List<Object> lessonsResponses;
   final List<Object> lessonResponses;
   final Exception? lessonStateError;
   final Completer<void>? lessonStateGate;
   final Map<String, api.Deck> decks;
+  final api.GetLessonStateResponse? lessonState;
+  final List<Object> reviewResponses;
+  final Exception? submitReviewError;
   final List<GetLessonsCall> getLessonsCalls = [];
+  final List<GetReviewCall> getReviewCalls = [];
+  final List<List<String>> submitReviewAnswersCalls = [];
   final List<String> getLessonCalls = [];
   final List<String> getDeckCalls = [];
 
@@ -57,6 +95,9 @@ class FakeLessonService implements LessonService {
     this.lessonStateError,
     this.lessonStateGate,
     this.decks = const {},
+    this.lessonState,
+    this.reviewResponses = const [],
+    this.submitReviewError,
   });
 
   @override
@@ -97,7 +138,7 @@ class FakeLessonService implements LessonService {
   ) async {
     await lessonStateGate?.future;
     if (lessonStateError != null) throw lessonStateError!;
-    return api.GetLessonStateResponse(lessonState: {});
+    return lessonState ?? api.GetLessonStateResponse(lessonState: {});
   }
 
   @override
@@ -106,6 +147,32 @@ class FakeLessonService implements LessonService {
     final deck = decks[deckId];
     if (deck == null) throw Exception('deck $deckId not found');
     return deck;
+  }
+
+  @override
+  Future<List<api.Card>> getReview({
+    required int maxCards,
+    String? deckId,
+    String? lessonId,
+    String? courseId,
+  }) async {
+    getReviewCalls.add(
+      GetReviewCall(
+        maxCards,
+        deckId: deckId,
+        lessonId: lessonId,
+        courseId: courseId,
+      ),
+    );
+    final response = reviewResponses[getReviewCalls.length - 1];
+    if (response is Exception) throw response;
+    return response as List<api.Card>;
+  }
+
+  @override
+  Future<void> submitReviewAnswers(List<String> answerIds) async {
+    submitReviewAnswersCalls.add(answerIds);
+    if (submitReviewError != null) throw submitReviewError!;
   }
 
   @override
@@ -118,7 +185,7 @@ class FakeLessonService implements LessonService {
     api.GetLessonStateResponse response,
     String lessonId,
   ) {
-    return {};
+    return LessonService.instance.extractDeckStates(response, lessonId);
   }
 
   @override
