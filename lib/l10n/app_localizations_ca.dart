@@ -47,6 +47,11 @@ class AppLocalizationsCa extends AppLocalizations {
   }
 
   @override
+  String failedToLoadLesson(Object error) {
+    return 'No s\'ha pogut carregar la lliçó: $error';
+  }
+
+  @override
   String couldNotLoadProgress(Object error) {
     return 'No s\'ha pogut carregar el progrés: $error';
   }

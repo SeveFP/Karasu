@@ -47,6 +47,11 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String failedToLoadLesson(Object error) {
+    return 'Failed to load lesson: $error';
+  }
+
+  @override
   String couldNotLoadProgress(Object error) {
     return 'Could not load progress: $error';
   }

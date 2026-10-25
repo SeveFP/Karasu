@@ -8,7 +8,6 @@ import 'package:json_annotation/json_annotation.dart';
 
 part 'course.g.dart';
 
-
 @CopyWith()
 @JsonSerializable(
   checked: true,
@@ -19,117 +18,62 @@ part 'course.g.dart';
 class Course {
   /// Returns a new [Course] instance.
   Course({
+    required this.id,
 
-    required  this.id,
+    required this.title,
 
-    required  this.title,
+    required this.description,
 
-    required  this.description,
+    required this.createdAt,
 
-    required  this.createdAt,
+    this.updatedAt,
 
-     this.editedAt,
-
-     this.deletedAt,
+    this.deletedAt,
   });
 
-      /// Course UUID
-  @JsonKey(
-    
-    name: r'id',
-    required: true,
-    includeIfNull: false,
-  )
-
-
+  /// Course UUID
+  @JsonKey(name: r'id', required: true, includeIfNull: false)
   final String id;
 
-
-
-      /// Course title
-  @JsonKey(
-    
-    name: r'title',
-    required: true,
-    includeIfNull: false,
-  )
-
-
+  /// Course title
+  @JsonKey(name: r'title', required: true, includeIfNull: false)
   final String title;
 
-
-
-      /// Course description
-  @JsonKey(
-    
-    name: r'description',
-    required: true,
-    includeIfNull: false,
-  )
-
-
+  /// Course description
+  @JsonKey(name: r'description', required: true, includeIfNull: false)
   final String description;
 
-
-
-      /// Creation timestamp
-  @JsonKey(
-    
-    name: r'created_at',
-    required: true,
-    includeIfNull: false,
-  )
-
-
+  /// Creation timestamp
+  @JsonKey(name: r'created_at', required: true, includeIfNull: false)
   final DateTime createdAt;
 
+  /// Last edit timestamp
+  @JsonKey(name: r'updated_at', required: false, includeIfNull: false)
+  final DateTime? updatedAt;
 
-
-      /// Last edit timestamp
-  @JsonKey(
-    
-    name: r'edited_at',
-    required: false,
-    includeIfNull: false,
-  )
-
-
-  final DateTime? editedAt;
-
-
-
-      /// Deletion timestamp
-  @JsonKey(
-    
-    name: r'deleted_at',
-    required: false,
-    includeIfNull: false,
-  )
-
-
+  /// Deletion timestamp
+  @JsonKey(name: r'deleted_at', required: false, includeIfNull: false)
   final DateTime? deletedAt;
 
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is Course &&
+          other.id == id &&
+          other.title == title &&
+          other.description == description &&
+          other.createdAt == createdAt &&
+          other.updatedAt == updatedAt &&
+          other.deletedAt == deletedAt;
 
-
-
-
-    @override
-    bool operator ==(Object other) => identical(this, other) || other is Course &&
-      other.id == id &&
-      other.title == title &&
-      other.description == description &&
-      other.createdAt == createdAt &&
-      other.editedAt == editedAt &&
-      other.deletedAt == deletedAt;
-
-    @override
-    int get hashCode =>
-        id.hashCode +
-        title.hashCode +
-        description.hashCode +
-        createdAt.hashCode +
-        editedAt.hashCode +
-        deletedAt.hashCode;
+  @override
+  int get hashCode =>
+      id.hashCode +
+      title.hashCode +
+      description.hashCode +
+      createdAt.hashCode +
+      updatedAt.hashCode +
+      deletedAt.hashCode;
 
   factory Course.fromJson(Map<String, dynamic> json) => _$CourseFromJson(json);
 
@@ -139,6 +83,4 @@ class Course {
   String toString() {
     return toJson().toString();
   }
-
 }
-

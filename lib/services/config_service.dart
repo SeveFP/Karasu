@@ -18,12 +18,14 @@ class ConfigService {
 
   bool get isDebugMode => _config.mode == AppMode.debug;
 
-  Future<void> loadConfig() async {
+  /// Loads the config from [bundle], or from the app's assets by default.
+  Future<void> loadConfig({AssetBundle? bundle}) async {
+    final assets = bundle ?? rootBundle;
     AppConfig baseConfig;
 
     // Try to load dev config first
     try {
-      final jsonString = await rootBundle.loadString('assets/config.dev.json');
+      final jsonString = await assets.loadString('assets/config.dev.json');
       final jsonMap = jsonDecode(jsonString) as Map<String, dynamic>;
       baseConfig = AppConfig.fromJson(jsonMap);
       _logger.i('Loaded development config');
@@ -31,7 +33,7 @@ class ConfigService {
       _logger.w('No development config found, loading default config');
       // Fallback to default config
       try {
-        final jsonString = await rootBundle.loadString('assets/config.json');
+        final jsonString = await assets.loadString('assets/config.json');
         final jsonMap = jsonDecode(jsonString) as Map<String, dynamic>;
         baseConfig = AppConfig.fromJson(jsonMap);
         _logger.i('Loaded default config');

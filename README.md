@@ -23,13 +23,14 @@ The Dart API client in `lib/api` is auto-generated from the OpenAPI spec. To reg
 # 1. Delete old API directory
 rm -rf lib/api
 
-# 2. Generate the Dart client with json_serializable
+# 2. Generate the Dart client with json_serializable, without docs or placeholder tests
 cd ..
 
 docker run --user $(id -u) --rm -v "$PWD:/work" -w /work openapitools/openapi-generator-cli:latest generate \
   -i toshokan/api/openapi.yaml \
   -g dart-dio \
   -o karasu/lib/api \
+  --global-property apiDocs=false,modelDocs=false,apiTests=false,modelTests=false \
   --additional-properties=pubName=toshokan_api,nullable=true,serializationLibrary=json_serializable
 
 # 3. Update SDK version requirement to match Dart 3.8+
@@ -42,7 +43,10 @@ flutter pub get
 dart run build_runner build --delete-conflicting-outputs
 cd ../..
 
-# 5. Get main app dependencies
+# 5. Format the generated client
+dart format lib/api
+
+# 6. Get main app dependencies
 flutter pub get
 ```
 

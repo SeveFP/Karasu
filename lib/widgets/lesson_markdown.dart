@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_markdown_plus/flutter_markdown_plus.dart';
 import 'package:karasu/services/settings_service.dart';
 import 'package:markdown/markdown.dart' as md;
+import 'package:toshokan_api/toshokan_api.dart' as api;
 import 'package:karasu/widgets/markdown_builders.dart';
 import 'package:karasu/widgets/responsive_table_builder.dart';
 
@@ -25,6 +26,9 @@ class LessonMarkdown extends StatelessWidget {
 
   /// Map of deck ID to completion state. Used to show decks as already completed.
   final Map<String, bool>? deckStates;
+
+  /// Decks already loaded, shown without fetching them again.
+  final Map<String, api.Deck> decks;
 
   /// When true, tables transform on narrow screens.
   /// When false, uses standard MarkdownBody rendering.
@@ -59,6 +63,7 @@ class LessonMarkdown extends StatelessWidget {
     this.courseId,
     this.lessonId,
     this.deckStates,
+    this.decks = const {},
     this.enableResponsiveTables = true,
     this.responsiveTableStyle = ResponsiveTableStyle.stacked,
     this.forceResponsive = false,
@@ -89,6 +94,7 @@ class LessonMarkdown extends StatelessWidget {
           courseId: courseId,
           lessonId: lessonId,
           deckStates: deckStates,
+          decks: decks,
           playResultSound: _playResultSound,
         ),
       },

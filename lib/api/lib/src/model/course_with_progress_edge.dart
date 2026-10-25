@@ -9,7 +9,6 @@ import 'package:json_annotation/json_annotation.dart';
 
 part 'course_with_progress_edge.g.dart';
 
-
 @CopyWith()
 @JsonSerializable(
   checked: true,
@@ -19,51 +18,27 @@ part 'course_with_progress_edge.g.dart';
 )
 class CourseWithProgressEdge {
   /// Returns a new [CourseWithProgressEdge] instance.
-  CourseWithProgressEdge({
+  CourseWithProgressEdge({required this.node, required this.cursor});
 
-    required  this.node,
-
-    required  this.cursor,
-  });
-
-  @JsonKey(
-    
-    name: r'node',
-    required: true,
-    includeIfNull: false,
-  )
-
-
+  @JsonKey(name: r'node', required: true, includeIfNull: false)
   final CourseWithProgress node;
 
-
-
-      /// Pagination cursor for this edge
-  @JsonKey(
-    
-    name: r'cursor',
-    required: true,
-    includeIfNull: false,
-  )
-
-
+  /// Pagination cursor for this edge
+  @JsonKey(name: r'cursor', required: true, includeIfNull: false)
   final String cursor;
 
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is CourseWithProgressEdge &&
+          other.node == node &&
+          other.cursor == cursor;
 
+  @override
+  int get hashCode => node.hashCode + cursor.hashCode;
 
-
-
-    @override
-    bool operator ==(Object other) => identical(this, other) || other is CourseWithProgressEdge &&
-      other.node == node &&
-      other.cursor == cursor;
-
-    @override
-    int get hashCode =>
-        node.hashCode +
-        cursor.hashCode;
-
-  factory CourseWithProgressEdge.fromJson(Map<String, dynamic> json) => _$CourseWithProgressEdgeFromJson(json);
+  factory CourseWithProgressEdge.fromJson(Map<String, dynamic> json) =>
+      _$CourseWithProgressEdgeFromJson(json);
 
   Map<String, dynamic> toJson() => _$CourseWithProgressEdgeToJson(this);
 
@@ -71,6 +46,4 @@ class CourseWithProgressEdge {
   String toString() {
     return toJson().toString();
   }
-
 }
-

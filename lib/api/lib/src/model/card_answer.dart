@@ -8,7 +8,6 @@ import 'package:json_annotation/json_annotation.dart';
 
 part 'card_answer.g.dart';
 
-
 @CopyWith()
 @JsonSerializable(
   checked: true,
@@ -18,52 +17,28 @@ part 'card_answer.g.dart';
 )
 class CardAnswer {
   /// Returns a new [CardAnswer] instance.
-  CardAnswer({
+  CardAnswer({required this.cardId, required this.answerId});
 
-    required  this.cardId,
-
-    required  this.answerId,
-  });
-
-      /// Card UUID being answered
-  @JsonKey(
-    
-    name: r'card_id',
-    required: true,
-    includeIfNull: false,
-  )
-
-
+  /// Card UUID being answered
+  @JsonKey(name: r'card_id', required: true, includeIfNull: false)
   final String cardId;
 
-
-
-      /// Selected answer UUID
-  @JsonKey(
-    
-    name: r'answer_id',
-    required: true,
-    includeIfNull: false,
-  )
-
-
+  /// Selected answer UUID
+  @JsonKey(name: r'answer_id', required: true, includeIfNull: false)
   final String answerId;
 
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is CardAnswer &&
+          other.cardId == cardId &&
+          other.answerId == answerId;
 
+  @override
+  int get hashCode => cardId.hashCode + answerId.hashCode;
 
-
-
-    @override
-    bool operator ==(Object other) => identical(this, other) || other is CardAnswer &&
-      other.cardId == cardId &&
-      other.answerId == answerId;
-
-    @override
-    int get hashCode =>
-        cardId.hashCode +
-        answerId.hashCode;
-
-  factory CardAnswer.fromJson(Map<String, dynamic> json) => _$CardAnswerFromJson(json);
+  factory CardAnswer.fromJson(Map<String, dynamic> json) =>
+      _$CardAnswerFromJson(json);
 
   Map<String, dynamic> toJson() => _$CardAnswerToJson(this);
 
@@ -71,6 +46,4 @@ class CardAnswer {
   String toString() {
     return toJson().toString();
   }
-
 }
-

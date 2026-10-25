@@ -9,6 +9,7 @@ import 'dart:convert';
 import 'package:toshokan_api/src/deserialize.dart';
 import 'package:dio/dio.dart';
 
+import 'package:toshokan_api/src/model/error.dart';
 import 'package:toshokan_api/src/model/log_in_request.dart';
 import 'package:toshokan_api/src/model/sign_up_request.dart';
 import 'package:toshokan_api/src/model/token_response.dart';
@@ -106,7 +107,7 @@ class AuthenticationApi {
   }
 
   /// Register a new user
-  /// Create a new user account and receive an authentication token
+  /// Create a new user account and receive an authentication token.  **Note:** This endpoint may require admin access (&#x60;X-Admin-Token&#x60; header) depending on server configuration. When &#x60;ADMIN_ONLY_SIGNUP&#x3D;true&#x60;, only requests with a valid admin token will be accepted.
   ///
   /// Parameters:
   /// * [signUpRequest]

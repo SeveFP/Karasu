@@ -9,7 +9,6 @@ import 'package:json_annotation/json_annotation.dart';
 
 part 'get_lesson_state_response.g.dart';
 
-
 @CopyWith()
 @JsonSerializable(
   checked: true,
@@ -19,35 +18,22 @@ part 'get_lesson_state_response.g.dart';
 )
 class GetLessonStateResponse {
   /// Returns a new [GetLessonStateResponse] instance.
-  GetLessonStateResponse({
+  GetLessonStateResponse({required this.lessonState});
 
-    required  this.lessonState,
-  });
-
-      /// Map of lesson UUID to lesson state (lesson_id → LessonState)
-  @JsonKey(
-    
-    name: r'lesson_state',
-    required: true,
-    includeIfNull: false,
-  )
-
-
+  /// Map of lesson UUID to lesson state (lesson_id → LessonState)
+  @JsonKey(name: r'lesson_state', required: true, includeIfNull: false)
   final Map<String, LessonState> lessonState;
 
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is GetLessonStateResponse && other.lessonState == lessonState;
 
+  @override
+  int get hashCode => lessonState.hashCode;
 
-
-
-    @override
-    bool operator ==(Object other) => identical(this, other) || other is GetLessonStateResponse &&
-      other.lessonState == lessonState;
-
-    @override
-    int get hashCode =>
-        lessonState.hashCode;
-
-  factory GetLessonStateResponse.fromJson(Map<String, dynamic> json) => _$GetLessonStateResponseFromJson(json);
+  factory GetLessonStateResponse.fromJson(Map<String, dynamic> json) =>
+      _$GetLessonStateResponseFromJson(json);
 
   Map<String, dynamic> toJson() => _$GetLessonStateResponseToJson(this);
 
@@ -55,6 +41,4 @@ class GetLessonStateResponse {
   String toString() {
     return toJson().toString();
   }
-
 }
-

@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:toshokan_api/toshokan_api.dart';
 import 'package:dio/dio.dart';
 import 'package:logger/logger.dart';
@@ -31,6 +32,9 @@ class OpenApiClient {
     }
     return client;
   }
+
+  @visibleForTesting
+  set api(ToshokanApi api) => _api = api;
 
   Future<void> initialize() async {
     final config = ConfigService().config;

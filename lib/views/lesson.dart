@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:karasu/services/lesson_loader.dart';
 import 'package:karasu/services/lesson_service.dart';
 import 'package:karasu/services/logger_service.dart';
 import 'package:karasu/services/openapi_client.dart';
@@ -20,8 +21,19 @@ enum BottomNextPageBarButtonState {
 /// - ![audio](url) for audio playback
 /// - ![deck](uuid) for interactive deck rounds
 class LessonView extends StatefulWidget {
-  final api.LessonWithProgress lesson;
-  const LessonView({super.key, required this.lesson});
+  /// The lesson as listed, without its body. The body is loaded by ID.
+  final api.BodylessLessonWithProgress lesson;
+
+  /// The lesson already loading in full, when the lessons screen preloaded it.
+  final Future<LoadedLesson>? preloaded;
+  final LessonService service;
+
+  LessonView({
+    super.key,
+    required this.lesson,
+    this.preloaded,
+    LessonService? service,
+  }) : service = service ?? LessonService.instance;
 
   @override
   State<LessonView> createState() => _LessonViewState();
@@ -29,17 +41,19 @@ class LessonView extends StatefulWidget {
 
 class _LessonViewState extends State<LessonView> {
   String? _error;
+  String? _body;
+  String? _bodyError;
   bool completedLessonInThisSession = false;
   late BottomNextPageBarButtonState completeLessonButtonState;
   Map<String, bool>? _deckStates = {};
+  Map<String, api.Deck> _decks = {};
 
-  // Removed misplaced code
   bool _isLoading = true;
 
   @override
   void initState() {
     super.initState();
-    _fetchLessonState();
+    _load(usePreloaded: true);
 
     switch (widget.lesson.isCompleted) {
       case true:
@@ -53,34 +67,37 @@ class _LessonViewState extends State<LessonView> {
     }
   }
 
-  Future<void> _fetchLessonState() async {
+  // The preloaded lesson is only used for the first load. Retry loads again.
+  Future<void> _load({bool usePreloaded = false}) async {
+    setState(() {
+      _isLoading = true;
+      _bodyError = null;
+      _error = null;
+    });
+
     try {
-      final response = await LessonService.instance.getLessonState(
-        widget.lesson.courseId,
-        widget.lesson.id,
-      );
-      if (mounted) {
-        setState(() {
-          _deckStates = LessonService.instance.extractDeckStates(
-            response,
-            widget.lesson.id,
-          );
-          _isLoading = false;
-        });
-      }
+      final loaded = usePreloaded && widget.preloaded != null
+          ? await widget.preloaded!
+          : await loadLesson(
+              widget.service,
+              widget.lesson.courseId,
+              widget.lesson.id,
+            );
+      if (!mounted) return;
+      setState(() {
+        _body = loaded.lesson.body;
+        _deckStates = loaded.deckStates;
+        _error = loaded.stateError?.toString();
+        _decks = loaded.decks;
+        _isLoading = false;
+      });
     } catch (e) {
-      if (mounted) {
-        setState(() {
-          LoggerService.instance.e(
-            '_fetchLessonState: Failed to load lesson state',
-            error: e,
-          );
-          _isLoading = false;
-          _error = e.toString();
-          // Default to empty map so decks still work
-          _deckStates = {};
-        });
-      }
+      LoggerService.instance.e('_load: Failed to load lesson', error: e);
+      if (!mounted) return;
+      setState(() {
+        _bodyError = e.toString();
+        _isLoading = false;
+      });
     }
   }
 
@@ -105,7 +122,6 @@ class _LessonViewState extends State<LessonView> {
     } catch (e) {
       LoggerService.instance.e(
         '_onCompletedDeck: Failed to refresh lesson state',
-        // Removed misplaced code
       );
     }
   }
@@ -116,6 +132,8 @@ class _LessonViewState extends State<LessonView> {
       title: AppLocalizations.of(context)!.lessonsTitle,
       body: _isLoading
           ? const Center(child: CircularProgressIndicator())
+          : _bodyError != null
+          ? _buildBodyError()
           : SingleChildScrollView(
               padding: const EdgeInsets.all(16.0),
               child: Column(
@@ -143,11 +161,12 @@ class _LessonViewState extends State<LessonView> {
                     const SizedBox(height: 24),
                   ],
                   LessonMarkdown(
-                    data: widget.lesson.body,
+                    data: _body!,
                     onCompletedDeck: _onCompletedDeck,
                     courseId: widget.lesson.courseId,
                     lessonId: widget.lesson.id,
                     deckStates: _deckStates,
+                    decks: _decks,
                     forceResponsive: false,
                     responsiveTableStyle: ResponsiveTableStyle.stacked,
                   ),
@@ -161,10 +180,35 @@ class _LessonViewState extends State<LessonView> {
             ),
     );
   }
+
+  Widget _buildBodyError() {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(
+            Icons.error_outline,
+            size: 48,
+            color: Theme.of(context).colorScheme.error,
+          ),
+          const SizedBox(height: 16),
+          Text(
+            AppLocalizations.of(context)!.failedToLoadLesson(_bodyError ?? ''),
+            textAlign: TextAlign.center,
+          ),
+          const SizedBox(height: 16),
+          ElevatedButton(
+            onPressed: () => _load(),
+            child: Text(AppLocalizations.of(context)!.retry),
+          ),
+        ],
+      ),
+    );
+  }
 }
 
 class BottomNextPageBar extends StatefulWidget {
-  final api.LessonWithProgress lesson;
+  final api.BodylessLessonWithProgress lesson;
   final BottomNextPageBarButtonState buttonState;
 
   const BottomNextPageBar({

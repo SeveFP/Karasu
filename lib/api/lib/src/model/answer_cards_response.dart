@@ -8,7 +8,6 @@ import 'package:json_annotation/json_annotation.dart';
 
 part 'answer_cards_response.g.dart';
 
-
 @CopyWith()
 @JsonSerializable(
   checked: true,
@@ -18,35 +17,22 @@ part 'answer_cards_response.g.dart';
 )
 class AnswerCardsResponse {
   /// Returns a new [AnswerCardsResponse] instance.
-  AnswerCardsResponse({
+  AnswerCardsResponse({required this.success});
 
-    required  this.success,
-  });
-
-      /// Whether the operation succeeded
-  @JsonKey(
-    
-    name: r'success',
-    required: true,
-    includeIfNull: false,
-  )
-
-
+  /// Whether the operation succeeded
+  @JsonKey(name: r'success', required: true, includeIfNull: false)
   final bool success;
 
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is AnswerCardsResponse && other.success == success;
 
+  @override
+  int get hashCode => success.hashCode;
 
-
-
-    @override
-    bool operator ==(Object other) => identical(this, other) || other is AnswerCardsResponse &&
-      other.success == success;
-
-    @override
-    int get hashCode =>
-        success.hashCode;
-
-  factory AnswerCardsResponse.fromJson(Map<String, dynamic> json) => _$AnswerCardsResponseFromJson(json);
+  factory AnswerCardsResponse.fromJson(Map<String, dynamic> json) =>
+      _$AnswerCardsResponseFromJson(json);
 
   Map<String, dynamic> toJson() => _$AnswerCardsResponseToJson(this);
 
@@ -54,6 +40,4 @@ class AnswerCardsResponse {
   String toString() {
     return toJson().toString();
   }
-
 }
-

@@ -12,6 +12,7 @@
     "completeLessonContinue": "Completa la lliçó i continua",
     "lessonLocked": "Lliçó blocada. Cal completar les lliçons anteriors.",
     "failedToLoadLessons": "No s'han pogut carregar les lliçons: {error}",
+    "failedToLoadLesson": "No s'ha pogut carregar la lliçó: {error}",
     "couldNotLoadProgress": "No s'ha pogut carregar el progrés: {error}",
     "loginFailed": "No s'ha pogut entrar: {error}",
     "ok": "D'acord",

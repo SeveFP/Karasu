@@ -8,7 +8,6 @@ import 'package:json_annotation/json_annotation.dart';
 
 part 'answer.g.dart';
 
-
 @CopyWith()
 @JsonSerializable(
   checked: true,
@@ -18,67 +17,36 @@ part 'answer.g.dart';
 )
 class Answer {
   /// Returns a new [Answer] instance.
-  Answer({
+  Answer({required this.id, this.cardId, required this.text, this.isCorrect});
 
-    required  this.id,
-
-    required  this.text,
-
-     this.isCorrect,
-  });
-
-      /// Answer UUID
-  @JsonKey(
-    
-    name: r'id',
-    required: true,
-    includeIfNull: false,
-  )
-
-
+  /// Answer UUID
+  @JsonKey(name: r'id', required: true, includeIfNull: false)
   final String id;
 
+  /// UUID of the card the answer belongs to
+  @JsonKey(name: r'card_id', required: false, includeIfNull: false)
+  final String? cardId;
 
-
-      /// Answer text
-  @JsonKey(
-    
-    name: r'text',
-    required: true,
-    includeIfNull: false,
-  )
-
-
+  /// Answer text
+  @JsonKey(name: r'text', required: true, includeIfNull: false)
   final String text;
 
-
-
-      /// Whether this is the correct answer
-  @JsonKey(
-    
-    name: r'is_correct',
-    required: false,
-    includeIfNull: false,
-  )
-
-
+  /// Whether this is the correct answer
+  @JsonKey(name: r'is_correct', required: false, includeIfNull: false)
   final bool? isCorrect;
 
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is Answer &&
+          other.id == id &&
+          other.cardId == cardId &&
+          other.text == text &&
+          other.isCorrect == isCorrect;
 
-
-
-
-    @override
-    bool operator ==(Object other) => identical(this, other) || other is Answer &&
-      other.id == id &&
-      other.text == text &&
-      other.isCorrect == isCorrect;
-
-    @override
-    int get hashCode =>
-        id.hashCode +
-        text.hashCode +
-        isCorrect.hashCode;
+  @override
+  int get hashCode =>
+      id.hashCode + cardId.hashCode + text.hashCode + isCorrect.hashCode;
 
   factory Answer.fromJson(Map<String, dynamic> json) => _$AnswerFromJson(json);
 
@@ -88,6 +56,4 @@ class Answer {
   String toString() {
     return toJson().toString();
   }
-
 }
-

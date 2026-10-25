@@ -8,7 +8,6 @@ import 'package:json_annotation/json_annotation.dart';
 
 part 'answer_input.g.dart';
 
-
 @CopyWith()
 @JsonSerializable(
   checked: true,
@@ -18,52 +17,28 @@ part 'answer_input.g.dart';
 )
 class AnswerInput {
   /// Returns a new [AnswerInput] instance.
-  AnswerInput({
+  AnswerInput({required this.text, this.isCorrect});
 
-    required  this.text,
-
-     this.isCorrect,
-  });
-
-      /// Answer text
-  @JsonKey(
-    
-    name: r'text',
-    required: true,
-    includeIfNull: false,
-  )
-
-
+  /// Answer text
+  @JsonKey(name: r'text', required: true, includeIfNull: false)
   final String text;
 
-
-
-      /// Whether this is the correct answer
-  @JsonKey(
-    
-    name: r'is_correct',
-    required: false,
-    includeIfNull: false,
-  )
-
-
+  /// Whether this is the correct answer
+  @JsonKey(name: r'is_correct', required: false, includeIfNull: false)
   final bool? isCorrect;
 
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is AnswerInput &&
+          other.text == text &&
+          other.isCorrect == isCorrect;
 
+  @override
+  int get hashCode => text.hashCode + isCorrect.hashCode;
 
-
-
-    @override
-    bool operator ==(Object other) => identical(this, other) || other is AnswerInput &&
-      other.text == text &&
-      other.isCorrect == isCorrect;
-
-    @override
-    int get hashCode =>
-        text.hashCode +
-        isCorrect.hashCode;
-
-  factory AnswerInput.fromJson(Map<String, dynamic> json) => _$AnswerInputFromJson(json);
+  factory AnswerInput.fromJson(Map<String, dynamic> json) =>
+      _$AnswerInputFromJson(json);
 
   Map<String, dynamic> toJson() => _$AnswerInputToJson(this);
 
@@ -71,6 +46,4 @@ class AnswerInput {
   String toString() {
     return toJson().toString();
   }
-
 }
-

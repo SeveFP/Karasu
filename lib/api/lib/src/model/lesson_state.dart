@@ -9,7 +9,6 @@ import 'package:json_annotation/json_annotation.dart';
 
 part 'lesson_state.g.dart';
 
-
 @CopyWith()
 @JsonSerializable(
   checked: true,
@@ -20,68 +19,39 @@ part 'lesson_state.g.dart';
 class LessonState {
   /// Returns a new [LessonState] instance.
   LessonState({
+    required this.decks,
 
-    required  this.decks,
+    required this.isCompleted,
 
-    required  this.isCompleted,
-
-     this.completedAt,
+    this.completedAt,
   });
 
-      /// Map of deck UUID to deck state (deck_id → DeckState)
-  @JsonKey(
-    
-    name: r'decks',
-    required: true,
-    includeIfNull: false,
-  )
-
-
+  /// Map of deck UUID to deck state (deck_id → DeckState)
+  @JsonKey(name: r'decks', required: true, includeIfNull: false)
   final Map<String, DeckState> decks;
 
-
-
-      /// Whether all decks in the lesson are completed
-  @JsonKey(
-    
-    name: r'is_completed',
-    required: true,
-    includeIfNull: false,
-  )
-
-
+  /// Whether all decks in the lesson are completed
+  @JsonKey(name: r'is_completed', required: true, includeIfNull: false)
   final bool isCompleted;
 
-
-
-      /// Timestamp when the lesson was completed
-  @JsonKey(
-    
-    name: r'completed_at',
-    required: false,
-    includeIfNull: false,
-  )
-
-
+  /// Timestamp when the lesson was completed
+  @JsonKey(name: r'completed_at', required: false, includeIfNull: false)
   final DateTime? completedAt;
 
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is LessonState &&
+          other.decks == decks &&
+          other.isCompleted == isCompleted &&
+          other.completedAt == completedAt;
 
+  @override
+  int get hashCode =>
+      decks.hashCode + isCompleted.hashCode + completedAt.hashCode;
 
-
-
-    @override
-    bool operator ==(Object other) => identical(this, other) || other is LessonState &&
-      other.decks == decks &&
-      other.isCompleted == isCompleted &&
-      other.completedAt == completedAt;
-
-    @override
-    int get hashCode =>
-        decks.hashCode +
-        isCompleted.hashCode +
-        completedAt.hashCode;
-
-  factory LessonState.fromJson(Map<String, dynamic> json) => _$LessonStateFromJson(json);
+  factory LessonState.fromJson(Map<String, dynamic> json) =>
+      _$LessonStateFromJson(json);
 
   Map<String, dynamic> toJson() => _$LessonStateToJson(this);
 
@@ -89,6 +59,4 @@ class LessonState {
   String toString() {
     return toJson().toString();
   }
-
 }
-

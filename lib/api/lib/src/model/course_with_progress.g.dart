@@ -15,7 +15,7 @@ abstract class _$CourseWithProgressCWProxy {
 
   CourseWithProgress createdAt(DateTime createdAt);
 
-  CourseWithProgress editedAt(DateTime? editedAt);
+  CourseWithProgress updatedAt(DateTime? updatedAt);
 
   CourseWithProgress deletedAt(DateTime? deletedAt);
 
@@ -32,7 +32,7 @@ abstract class _$CourseWithProgressCWProxy {
     String title,
     String description,
     DateTime createdAt,
-    DateTime? editedAt,
+    DateTime? updatedAt,
     DateTime? deletedAt,
     String currentLessonId,
   });
@@ -59,7 +59,8 @@ class _$CourseWithProgressCWProxyImpl implements _$CourseWithProgressCWProxy {
       this(createdAt: createdAt);
 
   @override
-  CourseWithProgress editedAt(DateTime? editedAt) => this(editedAt: editedAt);
+  CourseWithProgress updatedAt(DateTime? updatedAt) =>
+      this(updatedAt: updatedAt);
 
   @override
   CourseWithProgress deletedAt(DateTime? deletedAt) =>
@@ -81,7 +82,7 @@ class _$CourseWithProgressCWProxyImpl implements _$CourseWithProgressCWProxy {
     Object? title = const $CopyWithPlaceholder(),
     Object? description = const $CopyWithPlaceholder(),
     Object? createdAt = const $CopyWithPlaceholder(),
-    Object? editedAt = const $CopyWithPlaceholder(),
+    Object? updatedAt = const $CopyWithPlaceholder(),
     Object? deletedAt = const $CopyWithPlaceholder(),
     Object? currentLessonId = const $CopyWithPlaceholder(),
   }) {
@@ -102,10 +103,10 @@ class _$CourseWithProgressCWProxyImpl implements _$CourseWithProgressCWProxy {
           ? _value.createdAt
           // ignore: cast_nullable_to_non_nullable
           : createdAt as DateTime,
-      editedAt: editedAt == const $CopyWithPlaceholder()
-          ? _value.editedAt
+      updatedAt: updatedAt == const $CopyWithPlaceholder()
+          ? _value.updatedAt
           // ignore: cast_nullable_to_non_nullable
-          : editedAt as DateTime?,
+          : updatedAt as DateTime?,
       deletedAt: deletedAt == const $CopyWithPlaceholder()
           ? _value.deletedAt
           // ignore: cast_nullable_to_non_nullable
@@ -152,8 +153,8 @@ CourseWithProgress _$CourseWithProgressFromJson(Map<String, dynamic> json) =>
             'created_at',
             (v) => DateTime.parse(v as String),
           ),
-          editedAt: $checkedConvert(
-            'edited_at',
+          updatedAt: $checkedConvert(
+            'updated_at',
             (v) => v == null ? null : DateTime.parse(v as String),
           ),
           deletedAt: $checkedConvert(
@@ -169,7 +170,7 @@ CourseWithProgress _$CourseWithProgressFromJson(Map<String, dynamic> json) =>
       },
       fieldKeyMap: const {
         'createdAt': 'created_at',
-        'editedAt': 'edited_at',
+        'updatedAt': 'updated_at',
         'deletedAt': 'deleted_at',
         'currentLessonId': 'current_lesson_id',
       },
@@ -181,7 +182,7 @@ Map<String, dynamic> _$CourseWithProgressToJson(CourseWithProgress instance) =>
       'title': instance.title,
       'description': instance.description,
       'created_at': instance.createdAt.toIso8601String(),
-      'edited_at': ?instance.editedAt?.toIso8601String(),
+      'updated_at': ?instance.updatedAt?.toIso8601String(),
       'deleted_at': ?instance.deletedAt?.toIso8601String(),
       'current_lesson_id': instance.currentLessonId,
     };

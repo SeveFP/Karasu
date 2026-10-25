@@ -43,6 +43,7 @@ class DeckBuilder extends MarkdownElementBuilder {
   final String? courseId;
   final String? lessonId;
   final Map<String, bool>? deckStates;
+  final Map<String, api.Deck> decks;
   final void Function(String deckId) onCompletedDeck;
   final void Function(bool isCorrect) playResultSound;
 
@@ -51,6 +52,7 @@ class DeckBuilder extends MarkdownElementBuilder {
     this.courseId,
     this.lessonId,
     this.deckStates,
+    this.decks = const {},
     required this.playResultSound,
   });
 
@@ -58,6 +60,19 @@ class DeckBuilder extends MarkdownElementBuilder {
   Widget? visitElementAfter(md.Element element, TextStyle? preferredStyle) {
     final deckId = element.textContent;
     if (deckId.isEmpty) return const SizedBox.shrink();
+
+    final loadedDeck = decks[deckId];
+    if (loadedDeck != null) {
+      return LessonDeckPlayer(
+        deck: loadedDeck,
+        onCompleted: onCompletedDeck,
+        courseId: courseId,
+        lessonId: lessonId,
+        initiallyCompleted: deckStates?[loadedDeck.id] ?? false,
+        playResultSound: playResultSound,
+      );
+    }
+
     final future = LessonService.instance.getDeck(deckId);
     return FutureBuilder<api.Deck>(
       future: future,

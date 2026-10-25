@@ -11,6 +11,7 @@ import 'package:dio/dio.dart';
 
 import 'package:toshokan_api/src/model/answer_cards_response.dart';
 import 'package:toshokan_api/src/model/card_answer.dart';
+import 'package:toshokan_api/src/model/error.dart';
 import 'package:toshokan_api/src/model/get_lesson_state_response.dart';
 
 class ProgressApi {
