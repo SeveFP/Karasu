@@ -173,6 +173,60 @@ abstract class AppLocalizations {
   /// **'Failed to load lesson: {error}'**
   String failedToLoadLesson(Object error);
 
+  /// No description provided for @reviewTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Review'**
+  String get reviewTitle;
+
+  /// No description provided for @reviewAll.
+  ///
+  /// In en, this message translates to:
+  /// **'Review all'**
+  String get reviewAll;
+
+  /// No description provided for @reviewCourse.
+  ///
+  /// In en, this message translates to:
+  /// **'Review course'**
+  String get reviewCourse;
+
+  /// No description provided for @reviewLesson.
+  ///
+  /// In en, this message translates to:
+  /// **'Review lesson'**
+  String get reviewLesson;
+
+  /// No description provided for @reviewDeck.
+  ///
+  /// In en, this message translates to:
+  /// **'Review'**
+  String get reviewDeck;
+
+  /// No description provided for @nothingToReview.
+  ///
+  /// In en, this message translates to:
+  /// **'Nothing to review yet'**
+  String get nothingToReview;
+
+  /// No description provided for @nothingToReviewDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Cards show up here once you\'ve answered them in lessons.'**
+  String get nothingToReviewDescription;
+
+  /// No description provided for @failedToLoadReview.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to load review: {error}'**
+  String failedToLoadReview(Object error);
+
+  /// No description provided for @reviewAgain.
+  ///
+  /// In en, this message translates to:
+  /// **'Review again'**
+  String get reviewAgain;
+
   /// No description provided for @couldNotLoadProgress.
   ///
   /// In en, this message translates to:

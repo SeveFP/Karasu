@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:karasu/services/lesson_loader.dart';
 import 'package:karasu/views/lessons.dart';
 import 'package:karasu/views/lesson.dart';
+import 'package:karasu/views/review.dart';
 import 'package:toshokan_api/toshokan_api.dart' as api;
 
 /// Centralized app routing configuration.
@@ -12,6 +13,7 @@ class AppRouter {
   // Route names
   static const String lessons = '/lessons';
   static const String lesson = '/lesson';
+  static const String review = '/review';
 
   /// Generate routes based on RouteSettings.
   /// Returns null if route is not found or arguments are invalid.
@@ -33,6 +35,17 @@ class AppRouter {
         final preloaded = args?['preloaded'] as Future<LoadedLesson>?;
         return MaterialPageRoute(
           builder: (_) => LessonView(lesson: lessonData, preloaded: preloaded),
+          settings: settings,
+        );
+
+      case review:
+        final args = settings.arguments as Map<String, dynamic>?;
+        return MaterialPageRoute(
+          builder: (_) => ReviewView(
+            deckId: args?['deckId'] as String?,
+            lessonId: args?['lessonId'] as String?,
+            courseId: args?['courseId'] as String?,
+          ),
           settings: settings,
         );
 

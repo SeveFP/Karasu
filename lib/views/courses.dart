@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:karasu/router.dart';
 import 'package:karasu/widgets/shell_scaffold.dart';
 import 'package:karasu/l10n/app_localizations.dart';
 import 'courses_body.dart';
@@ -11,6 +12,13 @@ class CoursesView extends StatelessWidget {
   Widget build(BuildContext context) {
     return ShellScaffold(
       title: AppLocalizations.of(context)!.coursesViewTitle,
+      actions: [
+        IconButton(
+          icon: const Icon(Icons.style_rounded),
+          tooltip: AppLocalizations.of(context)!.reviewAll,
+          onPressed: () => Navigator.pushNamed(context, AppRouter.review),
+        ),
+      ],
       body: const CoursesBody(),
     );
   }

@@ -242,4 +242,60 @@ void main() {
     expect(find.text('The body of the lesson'), findsOneWidget);
     expect(service.getLessonCalls, [lessonId]);
   });
+
+  testWidgets('review lesson shows once a card is answered and opens review', (
+    tester,
+  ) async {
+    final pushed = <RouteSettings>[];
+    final service = FakeLessonService(lessonResponses: [fullLesson]);
+    final preloaded = Future.value(
+      LoadedLesson(
+        lesson: fullLesson,
+        deckStates: {},
+        stateError: null,
+        decks: {},
+        hasAnsweredCard: true,
+      ),
+    );
+
+    await tester.pumpWidget(
+      MaterialApp(
+        localizationsDelegates: AppLocalizations.localizationsDelegates,
+        supportedLocales: AppLocalizations.supportedLocales,
+        onGenerateRoute: (settings) {
+          pushed.add(settings);
+          return MaterialPageRoute(builder: (_) => const SizedBox());
+        },
+        home: LessonView(
+          lesson: listedLesson,
+          preloaded: preloaded,
+          service: service,
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.byTooltip('Review lesson'));
+    await tester.pumpAndSettle();
+
+    expect(pushed.single.name, '/review');
+    expect(pushed.single.arguments, {'lessonId': lessonId});
+  });
+
+  testWidgets('review lesson is hidden while no card is answered', (
+    tester,
+  ) async {
+    final service = FakeLessonService(lessonResponses: [fullLesson]);
+
+    await tester.pumpWidget(
+      MaterialApp(
+        localizationsDelegates: AppLocalizations.localizationsDelegates,
+        supportedLocales: AppLocalizations.supportedLocales,
+        home: LessonView(lesson: listedLesson, service: service),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    expect(find.byTooltip('Review lesson'), findsNothing);
+  });
 }

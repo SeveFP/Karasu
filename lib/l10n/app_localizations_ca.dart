@@ -52,6 +52,35 @@ class AppLocalizationsCa extends AppLocalizations {
   }
 
   @override
+  String get reviewTitle => 'Repassar';
+
+  @override
+  String get reviewAll => 'Repassa-ho tot';
+
+  @override
+  String get reviewCourse => 'Repassa el curs';
+
+  @override
+  String get reviewLesson => 'Repassa la lliçó';
+
+  @override
+  String get reviewDeck => 'Repassa';
+
+  @override
+  String get nothingToReview => 'Encara no hi ha res per repassar';
+
+  @override
+  String get nothingToReviewDescription => 'Les cartes apareixen aquí quan les has respost a les lliçons.';
+
+  @override
+  String failedToLoadReview(Object error) {
+    return 'No s\'ha pogut carregar la revisió de cartes: $error';
+  }
+
+  @override
+  String get reviewAgain => 'Torna a repassar';
+
+  @override
   String couldNotLoadProgress(Object error) {
     return 'No s\'ha pogut carregar el progrés: $error';
   }

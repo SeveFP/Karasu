@@ -1,7 +1,6 @@
-import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_markdown_plus/flutter_markdown_plus.dart';
-import 'package:karasu/services/settings_service.dart';
+import 'package:karasu/services/result_sound.dart';
 import 'package:markdown/markdown.dart' as md;
 import 'package:toshokan_api/toshokan_api.dart' as api;
 import 'package:karasu/widgets/markdown_builders.dart';
@@ -46,15 +45,7 @@ class LessonMarkdown extends StatelessWidget {
   /// The deck ID is passed as a parameter.
   final void Function(String deckId) onCompletedDeck;
 
-  // Audio player for playing correct/incorrect sounds
-  final AudioPlayer _audioPlayer = AudioPlayer();
-
-  Future<void> _playResultSound(bool isCorrect) async {
-    if (!SettingsService.soundEnabled) return;
-
-    final asset = isCorrect ? 'correct.mp3' : 'incorrect.mp3';
-    await _audioPlayer.play(AssetSource(asset));
-  }
+  final ResultSound _resultSound = ResultSound();
 
   LessonMarkdown({
     super.key,
@@ -95,7 +86,7 @@ class LessonMarkdown extends StatelessWidget {
           lessonId: lessonId,
           deckStates: deckStates,
           decks: decks,
-          playResultSound: _playResultSound,
+          playResultSound: _resultSound.play,
         ),
       },
       extensionSet:

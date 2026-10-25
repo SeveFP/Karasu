@@ -72,4 +72,65 @@ void main() {
 
     expect(loadLesson(service, courseId, lessonId), throwsA(isA<Exception>()));
   });
+
+  test('a lesson with an answered card has cards to review', () async {
+    final service = FakeLessonService(
+      lessonResponses: [lesson],
+      decks: {deckA: deckAData},
+      lessonState: api.GetLessonStateResponse(
+        lessonState: {
+          lessonId: api.LessonState(
+            decks: {
+              deckA: api.DeckState(
+                cards: {
+                  'card-1': api.CardState(
+                    correctAnswers: 0,
+                    incorrectAnswers: 1,
+                    isCompleted: false,
+                  ),
+                },
+                isCompleted: false,
+              ),
+            },
+            isCompleted: false,
+          ),
+        },
+      ),
+    );
+
+    final actual = await loadLesson(service, courseId, lessonId);
+
+    expect(actual.hasAnsweredCard, isTrue);
+    expect(actual.deckStates, {deckA: false});
+  });
+
+  test('a lesson without answered cards has nothing to review', () async {
+    final service = FakeLessonService(
+      lessonResponses: [lesson],
+      decks: {deckA: deckAData},
+      lessonState: api.GetLessonStateResponse(
+        lessonState: {
+          lessonId: api.LessonState(
+            decks: {
+              deckA: api.DeckState(
+                cards: {
+                  'card-1': api.CardState(
+                    correctAnswers: 0,
+                    incorrectAnswers: 0,
+                    isCompleted: false,
+                  ),
+                },
+                isCompleted: false,
+              ),
+            },
+            isCompleted: false,
+          ),
+        },
+      ),
+    );
+
+    final actual = await loadLesson(service, courseId, lessonId);
+
+    expect(actual.hasAnsweredCard, isFalse);
+  });
 }

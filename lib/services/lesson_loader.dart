@@ -17,11 +17,16 @@ class LoadedLesson {
   /// it's shown.
   final Map<String, api.Deck> decks;
 
+  /// Whether the user answered any card of the lesson, so it has cards to
+  /// review.
+  final bool hasAnsweredCard;
+
   const LoadedLesson({
     required this.lesson,
     required this.deckStates,
     required this.stateError,
     required this.decks,
+    this.hasAnsweredCard = false,
   });
 }
 
@@ -68,14 +73,22 @@ Future<LoadedLesson> loadLesson(
     );
   }
 
+  final lessonState =
+      (state as api.GetLessonStateResponse).lessonState[lessonId];
+  final hasAnsweredCard =
+      lessonState?.decks.values.any(
+        (deck) => deck.cards.values.any(
+          (card) => card.correctAnswers + card.incorrectAnswers > 0,
+        ),
+      ) ??
+      false;
+
   return LoadedLesson(
     lesson: lesson,
-    deckStates: service.extractDeckStates(
-      state as api.GetLessonStateResponse,
-      lessonId,
-    ),
+    deckStates: service.extractDeckStates(state, lessonId),
     stateError: null,
     decks: decks,
+    hasAnsweredCard: hasAnsweredCard,
   );
 }
 

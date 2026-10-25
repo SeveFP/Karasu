@@ -9,6 +9,7 @@ import 'package:karasu/services/logger_service.dart';
 /// - Lesson operations (create, list, get one)
 /// - Progress tracking (get state, submit answers)
 /// - Deck operations (create, get, delete)
+/// - Review (get cards to review, submit review answers)
 class LessonService {
   LessonService._();
   static final LessonService instance = LessonService._();
@@ -243,6 +244,45 @@ class LessonService {
       _logger.i('Deck deleted: $deckId');
     } catch (e) {
       _logger.e('Delete deck failed', error: e);
+      rethrow;
+    }
+  }
+
+  // ===== Review Operations =====
+
+  /// Get up to [maxCards] cards the user has already answered, from one
+  /// deck, lesson or course, or from all of them when no scope is given.
+  Future<List<Card>> getReview({
+    required int maxCards,
+    String? deckId,
+    String? lessonId,
+    String? courseId,
+  }) async {
+    try {
+      final res = await _client.review.getReview(
+        maxCards: maxCards,
+        deckId: deckId,
+        lessonId: lessonId,
+        courseId: courseId,
+      );
+      _logger.d('Review: ${res.data?.cards.length ?? 0} cards');
+      return res.data!.cards;
+    } catch (e) {
+      _logger.e('Get review failed', error: e);
+      rethrow;
+    }
+  }
+
+  /// Submit review answers. A correct answer raises the card's level, a wrong
+  /// one lowers it.
+  Future<void> submitReviewAnswers(List<String> answerIds) async {
+    try {
+      await _client.review.submitReviewAnswers(
+        reviewAnswersRequest: ReviewAnswersRequest(answerIds: answerIds),
+      );
+      _logger.i('Submitted ${answerIds.length} review answers');
+    } catch (e) {
+      _logger.e('Submit review answers failed', error: e);
       rethrow;
     }
   }

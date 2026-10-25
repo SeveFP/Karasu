@@ -257,6 +257,17 @@ class _LessonsViewState extends State<LessonsView> with RouteAware {
   Widget build(BuildContext context) {
     return ShellScaffold(
       title: AppLocalizations.of(context)!.lessonsTitle,
+      actions: [
+        IconButton(
+          icon: const Icon(Icons.style_rounded),
+          tooltip: AppLocalizations.of(context)!.reviewCourse,
+          onPressed: () => Navigator.pushNamed(
+            context,
+            AppRouter.review,
+            arguments: {'courseId': widget.courseId},
+          ),
+        ),
+      ],
       body: _buildBody(),
     );
   }
