@@ -287,23 +287,11 @@ abstract class AppLocalizations {
   /// **'Log in'**
   String get loginButton;
 
-  /// No description provided for @errorTitle.
-  ///
-  /// In en, this message translates to:
-  /// **'Error'**
-  String get errorTitle;
-
   /// No description provided for @submitButton.
   ///
   /// In en, this message translates to:
   /// **'Submit'**
   String get submitButton;
-
-  /// No description provided for @deckLabel.
-  ///
-  /// In en, this message translates to:
-  /// **'Deck'**
-  String get deckLabel;
 
   /// No description provided for @scoreSummary.
   ///
@@ -376,12 +364,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Logout'**
   String get logoutButton;
-
-  /// No description provided for @noDecks.
-  ///
-  /// In en, this message translates to:
-  /// **'No decks'**
-  String get noDecks;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

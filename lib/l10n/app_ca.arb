@@ -32,9 +32,7 @@
     "passwordLabel": "Contrasenya",
     "passwordMissing": "Cal indicar la contrasenya",
     "loginButton": "Entra",
-    "errorTitle": "Error",
     "submitButton": "Envia",
-    "deckLabel": "Baralla",
     "scoreSummary": "{correct} / {total}",
     "noCardsAvailable": "No hi ha cap carta disponible",
     "correctAnswers": "Respostes correctes: {count}",
@@ -46,6 +44,5 @@
     "settingsTitle": "Configuració",
     "toggleTheme": "Canvia el tema",
     "toggleSound": "Activa/Desactiva el so",
-    "logoutButton": "Surt",
-    "noDecks": "Cap baralla"
+    "logoutButton": "Surt"
 }

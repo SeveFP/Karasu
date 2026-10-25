@@ -2,31 +2,25 @@ import 'package:karasu/l10n/app_localizations.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
-import 'package:graphql_flutter/graphql_flutter.dart';
-import 'package:karasu/models/store.dart';
 import 'package:karasu/models/app_config.dart';
 import 'package:karasu/services/auth_service.dart';
 import 'package:karasu/services/audio_service.dart';
 import 'package:karasu/services/config_service.dart';
-import 'package:karasu/services/graphql_service.dart';
 import 'package:karasu/services/openapi_client.dart';
 import 'package:karasu/services/logger_service.dart';
 import 'package:karasu/services/settings_service.dart';
 import 'package:karasu/views/login.dart';
 import 'package:karasu/views/courses.dart';
-// import 'package:karasu/views/popularDecks.dart';
 import 'package:karasu/widgets/app_actions.dart';
 import 'package:karasu/router.dart';
 
 void main() async {
-  await initHiveForFlutter();
-  await KStore.load();
-
+  // Loading the config reads the app's assets, which needs the bindings first.
+  WidgetsFlutterBinding.ensureInitialized();
   await ConfigService().loadConfig();
 
   debugPaintSizeEnabled = ConfigService().config.debugPaintSizeEnabled;
 
-  await GraphQLService().initialize();
   await OpenApiClient.instance.initialize();
 
   // Pre-initialize audio player here to avoid UI freeze on first play
@@ -135,7 +129,6 @@ class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
     final config = ConfigService().config;
-    final graphqlService = GraphQLService();
 
     Widget body = LoginView(
       credentialsCallback: _setHasLoggedIn,
@@ -148,45 +141,42 @@ class _MyAppState extends State<MyApp> {
 
     // Use config.language if set, otherwise default to 'en'
     final forcedLocale = Locale(config.language ?? 'en');
-    return GraphQLProvider(
-      client: graphqlService.client,
-      child: MaterialApp(
-        title: config.appName,
-        theme: ThemeData(
-          colorScheme: ColorScheme.fromSeed(
-            seedColor: Color(config.colorScheme.primaryColor),
-            brightness: Brightness.light,
-          ),
+    return MaterialApp(
+      title: config.appName,
+      theme: ThemeData(
+        colorScheme: ColorScheme.fromSeed(
+          seedColor: Color(config.colorScheme.primaryColor),
+          brightness: Brightness.light,
         ),
-        darkTheme: ThemeData(
-          colorScheme: ColorScheme.fromSeed(
-            seedColor: Color(config.colorScheme.primaryColor),
-            brightness: Brightness.dark,
-          ),
-        ),
-        themeMode: _themeMode,
-        home: body,
-        onGenerateRoute: AppRouter.onGenerateRoute,
-        navigatorObservers: [AppRouter.routeObserver],
-        locale: forcedLocale,
-        localizationsDelegates: const [
-          AppLocalizations.delegate,
-          GlobalMaterialLocalizations.delegate,
-          GlobalWidgetsLocalizations.delegate,
-          GlobalCupertinoLocalizations.delegate,
-        ],
-        supportedLocales: const [Locale('en'), Locale('ca')],
-        builder: (context, child) {
-          return AppActions(
-            onThemeToggle: _toggleTheme,
-            currentThemeMode: _themeMode,
-            soundEnabled: SettingsService.soundEnabled,
-            onToggleSound: _toggleSound,
-            onLogout: _handleLogout,
-            child: child ?? const SizedBox.shrink(),
-          );
-        },
       ),
+      darkTheme: ThemeData(
+        colorScheme: ColorScheme.fromSeed(
+          seedColor: Color(config.colorScheme.primaryColor),
+          brightness: Brightness.dark,
+        ),
+      ),
+      themeMode: _themeMode,
+      home: body,
+      onGenerateRoute: AppRouter.onGenerateRoute,
+      navigatorObservers: [AppRouter.routeObserver],
+      locale: forcedLocale,
+      localizationsDelegates: const [
+        AppLocalizations.delegate,
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+      ],
+      supportedLocales: const [Locale('en'), Locale('ca')],
+      builder: (context, child) {
+        return AppActions(
+          onThemeToggle: _toggleTheme,
+          currentThemeMode: _themeMode,
+          soundEnabled: SettingsService.soundEnabled,
+          onToggleSound: _toggleSound,
+          onLogout: _handleLogout,
+          child: child ?? const SizedBox.shrink(),
+        );
+      },
     );
   }
 }

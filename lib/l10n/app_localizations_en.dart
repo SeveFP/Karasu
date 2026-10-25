@@ -115,13 +115,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get loginButton => 'Log in';
 
   @override
-  String get errorTitle => 'Error';
-
-  @override
   String get submitButton => 'Submit';
-
-  @override
-  String get deckLabel => 'Deck';
 
   @override
   String scoreSummary(Object correct, Object total) {
@@ -164,7 +158,4 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get logoutButton => 'Logout';
-
-  @override
-  String get noDecks => 'No decks';
 }
