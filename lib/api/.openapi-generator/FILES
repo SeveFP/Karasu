@@ -36,6 +36,7 @@ lib/src/model/course_edge.dart
 lib/src/model/course_with_progress.dart
 lib/src/model/course_with_progress_edge.dart
 lib/src/model/courses_with_progress_connection_response.dart
+lib/src/model/create_answer_request.dart
 lib/src/model/create_course_request.dart
 lib/src/model/create_lesson_request.dart
 lib/src/model/deck.dart
@@ -47,10 +48,12 @@ lib/src/model/error.dart
 lib/src/model/get_focused_lessons200_response.dart
 lib/src/model/get_lesson_state_response.dart
 lib/src/model/lesson.dart
+lib/src/model/lesson_edge.dart
 lib/src/model/lesson_progress_detail.dart
 lib/src/model/lesson_state.dart
 lib/src/model/lesson_with_progress.dart
 lib/src/model/lesson_with_progress_edge.dart
+lib/src/model/lessons_connection_response.dart
 lib/src/model/lessons_with_progress_connection_response.dart
 lib/src/model/log_in_request.dart
 lib/src/model/page_info.dart

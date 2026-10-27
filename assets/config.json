@@ -1,7 +1,7 @@
 {
     "language": "ca",
     "appName": "Karasu",
-    "toshokanURL": "localhost:8000",
+    "toshokanURL": "localhost:8080",
     "protocol": "http://",
     "logoPath": "assets/logo.png",
     "logoBackgroundColor": 4294967295,

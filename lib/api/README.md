@@ -101,23 +101,29 @@ Class | Method | HTTP request | Description
 ------------ | ------------- | ------------- | -------------
 [*AuthenticationApi*](doc/AuthenticationApi.md) | [**logIn**](doc/AuthenticationApi.md#login) | **POST** /login | Login
 [*AuthenticationApi*](doc/AuthenticationApi.md) | [**signUp**](doc/AuthenticationApi.md#signup) | **POST** /signup | Register a new user
+[*BackofficeApi*](doc/BackofficeApi.md) | [**adminGetLessons**](doc/BackofficeApi.md#admingetlessons) | **GET** /admin/courses/{courseId}/lessons | Get a course&#39;s lessons with their bodies (Admin only)
 [*BackofficeApi*](doc/BackofficeApi.md) | [**getAllCourses**](doc/BackofficeApi.md#getallcourses) | **GET** /admin/courses | List all courses (Admin only)
 [*BackofficeApi*](doc/BackofficeApi.md) | [**getStudentsProgress**](doc/BackofficeApi.md#getstudentsprogress) | **GET** /admin/courses/{courseId}/students/progress | Get students progress for a course (Admin only)
 [*BackofficeApi*](doc/BackofficeApi.md) | [**getUserState**](doc/BackofficeApi.md#getuserstate) | **GET** /admin/courses/{courseId}/users/{userId}/state | Get user state for debugging (Admin only)
 [*BackofficeApi*](doc/BackofficeApi.md) | [**setUserState**](doc/BackofficeApi.md#setuserstate) | **PUT** /admin/courses/{courseId}/users/{userId}/state | Set user state for debugging (Admin only)
 [*CoursesApi*](doc/CoursesApi.md) | [**createCourse**](doc/CoursesApi.md#createcourse) | **POST** /courses | Create a new course
+[*CoursesApi*](doc/CoursesApi.md) | [**deleteCourse**](doc/CoursesApi.md#deletecourse) | **DELETE** /courses/{courseId} | Delete a course (Admin only)
 [*CoursesApi*](doc/CoursesApi.md) | [**enrollCourse**](doc/CoursesApi.md#enrollcourse) | **POST** /courses/{courseId}/enroll | Enroll in a course
 [*CoursesApi*](doc/CoursesApi.md) | [**getCourse**](doc/CoursesApi.md#getcourse) | **GET** /courses/{courseId} | Get course details
 [*CoursesApi*](doc/CoursesApi.md) | [**getEnrolledCourses**](doc/CoursesApi.md#getenrolledcourses) | **GET** /courses/enrolled | Get enrolled courses
 [*CoursesApi*](doc/CoursesApi.md) | [**updateCourse**](doc/CoursesApi.md#updatecourse) | **PATCH** /courses/{courseId} | Update a course
+[*DecksApi*](doc/DecksApi.md) | [**createAnswer**](doc/DecksApi.md#createanswer) | **POST** /decks/{deckId}/cards/{cardId}/answers | Add an answer to a card (Admin only)
 [*DecksApi*](doc/DecksApi.md) | [**createCard**](doc/DecksApi.md#createcard) | **POST** /decks/{deckId}/cards | Add a card to a deck
 [*DecksApi*](doc/DecksApi.md) | [**createDeck**](doc/DecksApi.md#createdeck) | **POST** /decks | Create a new deck
-[*DecksApi*](doc/DecksApi.md) | [**deleteDeck**](doc/DecksApi.md#deletedeck) | **DELETE** /decks/{deckId} | Delete a deck
+[*DecksApi*](doc/DecksApi.md) | [**deleteAnswer**](doc/DecksApi.md#deleteanswer) | **DELETE** /decks/{deckId}/cards/{cardId}/answers/{answerId} | Delete an answer (Admin only)
+[*DecksApi*](doc/DecksApi.md) | [**deleteCard**](doc/DecksApi.md#deletecard) | **DELETE** /decks/{deckId}/cards/{cardId} | Delete a card (Admin only)
+[*DecksApi*](doc/DecksApi.md) | [**deleteDeck**](doc/DecksApi.md#deletedeck) | **DELETE** /decks/{deckId} | Delete a deck (Admin only)
 [*DecksApi*](doc/DecksApi.md) | [**getDeck**](doc/DecksApi.md#getdeck) | **GET** /decks/{deckId} | Get deck details
 [*DecksApi*](doc/DecksApi.md) | [**updateAnswer**](doc/DecksApi.md#updateanswer) | **PATCH** /decks/{deckId}/cards/{cardId}/answers/{answerId} | Update an answer
 [*DecksApi*](doc/DecksApi.md) | [**updateCard**](doc/DecksApi.md#updatecard) | **PATCH** /decks/{deckId}/cards/{cardId} | Update a card
 [*DecksApi*](doc/DecksApi.md) | [**updateDeck**](doc/DecksApi.md#updatedeck) | **PATCH** /decks/{deckId} | Update a deck
 [*LessonsApi*](doc/LessonsApi.md) | [**createLesson**](doc/LessonsApi.md#createlesson) | **POST** /courses/{courseId}/lessons | Create a new lesson
+[*LessonsApi*](doc/LessonsApi.md) | [**deleteLesson**](doc/LessonsApi.md#deletelesson) | **DELETE** /courses/{courseId}/lessons/{lessonId} | Delete a lesson (Admin only)
 [*LessonsApi*](doc/LessonsApi.md) | [**getFocusedLessons**](doc/LessonsApi.md#getfocusedlessons) | **GET** /courses/{courseId}/lessons/focused | Get lessons with progress (deprecated)
 [*LessonsApi*](doc/LessonsApi.md) | [**getLesson**](doc/LessonsApi.md#getlesson) | **GET** /courses/{courseId}/lessons/{lessonId} | Get a lesson
 [*LessonsApi*](doc/LessonsApi.md) | [**getLessons**](doc/LessonsApi.md#getlessons) | **GET** /courses/{courseId}/lessons | Get lessons for a course with progress
@@ -150,6 +156,7 @@ Class | Method | HTTP request | Description
  - [CourseWithProgress](doc/CourseWithProgress.md)
  - [CourseWithProgressEdge](doc/CourseWithProgressEdge.md)
  - [CoursesWithProgressConnectionResponse](doc/CoursesWithProgressConnectionResponse.md)
+ - [CreateAnswerRequest](doc/CreateAnswerRequest.md)
  - [CreateCourseRequest](doc/CreateCourseRequest.md)
  - [CreateLessonRequest](doc/CreateLessonRequest.md)
  - [Deck](doc/Deck.md)
@@ -161,10 +168,12 @@ Class | Method | HTTP request | Description
  - [GetFocusedLessons200Response](doc/GetFocusedLessons200Response.md)
  - [GetLessonStateResponse](doc/GetLessonStateResponse.md)
  - [Lesson](doc/Lesson.md)
+ - [LessonEdge](doc/LessonEdge.md)
  - [LessonProgressDetail](doc/LessonProgressDetail.md)
  - [LessonState](doc/LessonState.md)
  - [LessonWithProgress](doc/LessonWithProgress.md)
  - [LessonWithProgressEdge](doc/LessonWithProgressEdge.md)
+ - [LessonsConnectionResponse](doc/LessonsConnectionResponse.md)
  - [LessonsWithProgressConnectionResponse](doc/LessonsWithProgressConnectionResponse.md)
  - [LogInRequest](doc/LogInRequest.md)
  - [PageInfo](doc/PageInfo.md)

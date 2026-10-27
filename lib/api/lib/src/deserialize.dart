@@ -17,6 +17,7 @@ import 'package:toshokan_api/src/model/course_edge.dart';
 import 'package:toshokan_api/src/model/course_with_progress.dart';
 import 'package:toshokan_api/src/model/course_with_progress_edge.dart';
 import 'package:toshokan_api/src/model/courses_with_progress_connection_response.dart';
+import 'package:toshokan_api/src/model/create_answer_request.dart';
 import 'package:toshokan_api/src/model/create_course_request.dart';
 import 'package:toshokan_api/src/model/create_lesson_request.dart';
 import 'package:toshokan_api/src/model/deck.dart';
@@ -28,10 +29,12 @@ import 'package:toshokan_api/src/model/error.dart';
 import 'package:toshokan_api/src/model/get_focused_lessons200_response.dart';
 import 'package:toshokan_api/src/model/get_lesson_state_response.dart';
 import 'package:toshokan_api/src/model/lesson.dart';
+import 'package:toshokan_api/src/model/lesson_edge.dart';
 import 'package:toshokan_api/src/model/lesson_progress_detail.dart';
 import 'package:toshokan_api/src/model/lesson_state.dart';
 import 'package:toshokan_api/src/model/lesson_with_progress.dart';
 import 'package:toshokan_api/src/model/lesson_with_progress_edge.dart';
+import 'package:toshokan_api/src/model/lessons_connection_response.dart';
 import 'package:toshokan_api/src/model/lessons_with_progress_connection_response.dart';
 import 'package:toshokan_api/src/model/log_in_request.dart';
 import 'package:toshokan_api/src/model/page_info.dart';
@@ -123,6 +126,9 @@ ReturnType deserialize<ReturnType, BaseType>(
             value as Map<String, dynamic>,
           )
           as ReturnType;
+    case 'CreateAnswerRequest':
+      return CreateAnswerRequest.fromJson(value as Map<String, dynamic>)
+          as ReturnType;
     case 'CreateCourseRequest':
       return CreateCourseRequest.fromJson(value as Map<String, dynamic>)
           as ReturnType;
@@ -152,6 +158,8 @@ ReturnType deserialize<ReturnType, BaseType>(
           as ReturnType;
     case 'Lesson':
       return Lesson.fromJson(value as Map<String, dynamic>) as ReturnType;
+    case 'LessonEdge':
+      return LessonEdge.fromJson(value as Map<String, dynamic>) as ReturnType;
     case 'LessonProgressDetail':
       return LessonProgressDetail.fromJson(value as Map<String, dynamic>)
           as ReturnType;
@@ -162,6 +170,9 @@ ReturnType deserialize<ReturnType, BaseType>(
           as ReturnType;
     case 'LessonWithProgressEdge':
       return LessonWithProgressEdge.fromJson(value as Map<String, dynamic>)
+          as ReturnType;
+    case 'LessonsConnectionResponse':
+      return LessonsConnectionResponse.fromJson(value as Map<String, dynamic>)
           as ReturnType;
     case 'LessonsWithProgressConnectionResponse':
       return LessonsWithProgressConnectionResponse.fromJson(
