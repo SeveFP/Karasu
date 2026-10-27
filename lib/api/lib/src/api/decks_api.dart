@@ -14,6 +14,7 @@ import 'package:toshokan_api/src/model/answer_update.dart';
 import 'package:toshokan_api/src/model/card.dart';
 import 'package:toshokan_api/src/model/card_input.dart';
 import 'package:toshokan_api/src/model/card_update.dart';
+import 'package:toshokan_api/src/model/create_answer_request.dart';
 import 'package:toshokan_api/src/model/deck.dart';
 import 'package:toshokan_api/src/model/deck_input.dart';
 import 'package:toshokan_api/src/model/deck_update.dart';
@@ -23,6 +24,116 @@ class DecksApi {
   final Dio _dio;
 
   const DecksApi(this._dio);
+
+  /// Add an answer to a card (Admin only)
+  /// Add an answer to an existing card of the deck.  **Requires admin access** (&#x60;X-Admin-Token&#x60; header).
+  ///
+  /// Parameters:
+  /// * [deckId] - Deck UUID
+  /// * [cardId] - Card UUID
+  /// * [createAnswerRequest]
+  /// * [cancelToken] - A [CancelToken] that can be used to cancel the operation
+  /// * [headers] - Can be used to add additional headers to the request
+  /// * [extras] - Can be used to add flags to the request
+  /// * [validateStatus] - A [ValidateStatus] callback that can be used to determine request success based on the HTTP status of the response
+  /// * [onSendProgress] - A [ProgressCallback] that can be used to get the send progress
+  /// * [onReceiveProgress] - A [ProgressCallback] that can be used to get the receive progress
+  ///
+  /// Returns a [Future] containing a [Response] with a [Answer] as data
+  /// Throws [DioException] if API call or serialization fails
+  Future<Response<Answer>> createAnswer({
+    required String deckId,
+    required String cardId,
+    required CreateAnswerRequest createAnswerRequest,
+    CancelToken? cancelToken,
+    Map<String, dynamic>? headers,
+    Map<String, dynamic>? extra,
+    ValidateStatus? validateStatus,
+    ProgressCallback? onSendProgress,
+    ProgressCallback? onReceiveProgress,
+  }) async {
+    final _path = r'/decks/{deckId}/cards/{cardId}/answers'
+        .replaceAll(
+          '{'
+          r'deckId'
+          '}',
+          deckId.toString(),
+        )
+        .replaceAll(
+          '{'
+          r'cardId'
+          '}',
+          cardId.toString(),
+        );
+    final _options = Options(
+      method: r'POST',
+      headers: <String, dynamic>{...?headers},
+      extra: <String, dynamic>{
+        'secure': <Map<String, String>>[
+          {
+            'type': 'apiKey',
+            'name': 'AdminAuth',
+            'keyName': 'X-Admin-Token',
+            'where': 'header',
+          },
+          {'type': 'http', 'scheme': 'bearer', 'name': 'BearerAuth'},
+        ],
+        ...?extra,
+      },
+      contentType: 'application/json',
+      validateStatus: validateStatus,
+    );
+
+    dynamic _bodyData;
+
+    try {
+      _bodyData = jsonEncode(createAnswerRequest);
+    } catch (error, stackTrace) {
+      throw DioException(
+        requestOptions: _options.compose(_dio.options, _path),
+        type: DioExceptionType.unknown,
+        error: error,
+        stackTrace: stackTrace,
+      );
+    }
+
+    final _response = await _dio.request<Object>(
+      _path,
+      data: _bodyData,
+      options: _options,
+      cancelToken: cancelToken,
+      onSendProgress: onSendProgress,
+      onReceiveProgress: onReceiveProgress,
+    );
+
+    Answer? _responseData;
+
+    try {
+      final rawData = _response.data;
+      _responseData = rawData == null
+          ? null
+          : deserialize<Answer, Answer>(rawData, 'Answer', growable: true);
+    } catch (error, stackTrace) {
+      throw DioException(
+        requestOptions: _response.requestOptions,
+        response: _response,
+        type: DioExceptionType.unknown,
+        error: error,
+        stackTrace: stackTrace,
+      );
+    }
+
+    return Response<Answer>(
+      data: _responseData,
+      headers: _response.headers,
+      isRedirect: _response.isRedirect,
+      requestOptions: _response.requestOptions,
+      redirects: _response.redirects,
+      statusCode: _response.statusCode,
+      statusMessage: _response.statusMessage,
+      extra: _response.extra,
+    );
+  }
 
   /// Add a card to a deck
   /// Add one card, with its answers, to an existing deck. Users enrolled in a course using this deck see the lesson as not completed again after their next sync, with the new card unanswered.  **Note:** This endpoint may require admin access (&#x60;X-Admin-Token&#x60; header) depending on server configuration.
@@ -207,8 +318,150 @@ class DecksApi {
     );
   }
 
-  /// Delete a deck
-  /// Delete an existing deck
+  /// Delete an answer (Admin only)
+  /// Delete an answer of a card. A card must keep at least one answer and one correct answer.  **Requires admin access** (&#x60;X-Admin-Token&#x60; header).
+  ///
+  /// Parameters:
+  /// * [deckId] - Deck UUID
+  /// * [cardId] - Card UUID
+  /// * [answerId] - Answer UUID
+  /// * [cancelToken] - A [CancelToken] that can be used to cancel the operation
+  /// * [headers] - Can be used to add additional headers to the request
+  /// * [extras] - Can be used to add flags to the request
+  /// * [validateStatus] - A [ValidateStatus] callback that can be used to determine request success based on the HTTP status of the response
+  /// * [onSendProgress] - A [ProgressCallback] that can be used to get the send progress
+  /// * [onReceiveProgress] - A [ProgressCallback] that can be used to get the receive progress
+  ///
+  /// Returns a [Future]
+  /// Throws [DioException] if API call or serialization fails
+  Future<Response<void>> deleteAnswer({
+    required String deckId,
+    required String cardId,
+    required String answerId,
+    CancelToken? cancelToken,
+    Map<String, dynamic>? headers,
+    Map<String, dynamic>? extra,
+    ValidateStatus? validateStatus,
+    ProgressCallback? onSendProgress,
+    ProgressCallback? onReceiveProgress,
+  }) async {
+    final _path = r'/decks/{deckId}/cards/{cardId}/answers/{answerId}'
+        .replaceAll(
+          '{'
+          r'deckId'
+          '}',
+          deckId.toString(),
+        )
+        .replaceAll(
+          '{'
+          r'cardId'
+          '}',
+          cardId.toString(),
+        )
+        .replaceAll(
+          '{'
+          r'answerId'
+          '}',
+          answerId.toString(),
+        );
+    final _options = Options(
+      method: r'DELETE',
+      headers: <String, dynamic>{...?headers},
+      extra: <String, dynamic>{
+        'secure': <Map<String, String>>[
+          {
+            'type': 'apiKey',
+            'name': 'AdminAuth',
+            'keyName': 'X-Admin-Token',
+            'where': 'header',
+          },
+          {'type': 'http', 'scheme': 'bearer', 'name': 'BearerAuth'},
+        ],
+        ...?extra,
+      },
+      validateStatus: validateStatus,
+    );
+
+    final _response = await _dio.request<Object>(
+      _path,
+      options: _options,
+      cancelToken: cancelToken,
+      onSendProgress: onSendProgress,
+      onReceiveProgress: onReceiveProgress,
+    );
+
+    return _response;
+  }
+
+  /// Delete a card (Admin only)
+  /// Delete a card of the deck. Learners&#39; progress drops the card on their next sync.  **Requires admin access** (&#x60;X-Admin-Token&#x60; header).
+  ///
+  /// Parameters:
+  /// * [deckId] - Deck UUID
+  /// * [cardId] - Card UUID
+  /// * [cancelToken] - A [CancelToken] that can be used to cancel the operation
+  /// * [headers] - Can be used to add additional headers to the request
+  /// * [extras] - Can be used to add flags to the request
+  /// * [validateStatus] - A [ValidateStatus] callback that can be used to determine request success based on the HTTP status of the response
+  /// * [onSendProgress] - A [ProgressCallback] that can be used to get the send progress
+  /// * [onReceiveProgress] - A [ProgressCallback] that can be used to get the receive progress
+  ///
+  /// Returns a [Future]
+  /// Throws [DioException] if API call or serialization fails
+  Future<Response<void>> deleteCard({
+    required String deckId,
+    required String cardId,
+    CancelToken? cancelToken,
+    Map<String, dynamic>? headers,
+    Map<String, dynamic>? extra,
+    ValidateStatus? validateStatus,
+    ProgressCallback? onSendProgress,
+    ProgressCallback? onReceiveProgress,
+  }) async {
+    final _path = r'/decks/{deckId}/cards/{cardId}'
+        .replaceAll(
+          '{'
+          r'deckId'
+          '}',
+          deckId.toString(),
+        )
+        .replaceAll(
+          '{'
+          r'cardId'
+          '}',
+          cardId.toString(),
+        );
+    final _options = Options(
+      method: r'DELETE',
+      headers: <String, dynamic>{...?headers},
+      extra: <String, dynamic>{
+        'secure': <Map<String, String>>[
+          {
+            'type': 'apiKey',
+            'name': 'AdminAuth',
+            'keyName': 'X-Admin-Token',
+            'where': 'header',
+          },
+          {'type': 'http', 'scheme': 'bearer', 'name': 'BearerAuth'},
+        ],
+        ...?extra,
+      },
+      validateStatus: validateStatus,
+    );
+
+    final _response = await _dio.request<Object>(
+      _path,
+      options: _options,
+      cancelToken: cancelToken,
+      onSendProgress: onSendProgress,
+      onReceiveProgress: onReceiveProgress,
+    );
+
+    return _response;
+  }
+
+  /// Delete a deck (Admin only)
+  /// Delete an existing deck.  **Requires admin access** (&#x60;X-Admin-Token&#x60; header).
   ///
   /// Parameters:
   /// * [deckId] - Deck UUID
@@ -241,6 +494,12 @@ class DecksApi {
       headers: <String, dynamic>{...?headers},
       extra: <String, dynamic>{
         'secure': <Map<String, String>>[
+          {
+            'type': 'apiKey',
+            'name': 'AdminAuth',
+            'keyName': 'X-Admin-Token',
+            'where': 'header',
+          },
           {'type': 'http', 'scheme': 'bearer', 'name': 'BearerAuth'},
         ],
         ...?extra,

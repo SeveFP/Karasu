@@ -116,6 +116,73 @@ class LessonsApi {
     );
   }
 
+  /// Delete a lesson (Admin only)
+  /// Delete a lesson of the course. The decks it embeds aren&#39;t deleted. Learners&#39; progress drops the lesson on their next sync.  **Requires admin access** (&#x60;X-Admin-Token&#x60; header).
+  ///
+  /// Parameters:
+  /// * [courseId] - Course UUID
+  /// * [lessonId] - Lesson UUID
+  /// * [cancelToken] - A [CancelToken] that can be used to cancel the operation
+  /// * [headers] - Can be used to add additional headers to the request
+  /// * [extras] - Can be used to add flags to the request
+  /// * [validateStatus] - A [ValidateStatus] callback that can be used to determine request success based on the HTTP status of the response
+  /// * [onSendProgress] - A [ProgressCallback] that can be used to get the send progress
+  /// * [onReceiveProgress] - A [ProgressCallback] that can be used to get the receive progress
+  ///
+  /// Returns a [Future]
+  /// Throws [DioException] if API call or serialization fails
+  Future<Response<void>> deleteLesson({
+    required String courseId,
+    required String lessonId,
+    CancelToken? cancelToken,
+    Map<String, dynamic>? headers,
+    Map<String, dynamic>? extra,
+    ValidateStatus? validateStatus,
+    ProgressCallback? onSendProgress,
+    ProgressCallback? onReceiveProgress,
+  }) async {
+    final _path = r'/courses/{courseId}/lessons/{lessonId}'
+        .replaceAll(
+          '{'
+          r'courseId'
+          '}',
+          courseId.toString(),
+        )
+        .replaceAll(
+          '{'
+          r'lessonId'
+          '}',
+          lessonId.toString(),
+        );
+    final _options = Options(
+      method: r'DELETE',
+      headers: <String, dynamic>{...?headers},
+      extra: <String, dynamic>{
+        'secure': <Map<String, String>>[
+          {
+            'type': 'apiKey',
+            'name': 'AdminAuth',
+            'keyName': 'X-Admin-Token',
+            'where': 'header',
+          },
+          {'type': 'http', 'scheme': 'bearer', 'name': 'BearerAuth'},
+        ],
+        ...?extra,
+      },
+      validateStatus: validateStatus,
+    );
+
+    final _response = await _dio.request<Object>(
+      _path,
+      options: _options,
+      cancelToken: cancelToken,
+      onSendProgress: onSendProgress,
+      onReceiveProgress: onReceiveProgress,
+    );
+
+    return _response;
+  }
+
   /// Get lessons with progress (deprecated)
   /// Deprecated: use &#x60;GET /courses/{courseId}/lessons&#x60;.  Retrieve the course&#39;s lessons, oldest first, with the user&#39;s progress on each one. Use &#x60;bodyless&#x3D;true&#x60; to leave out lesson bodies.
   ///

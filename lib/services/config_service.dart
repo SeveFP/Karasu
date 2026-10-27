@@ -23,51 +23,41 @@ class ConfigService {
     final assets = bundle ?? rootBundle;
     AppConfig baseConfig;
 
-    // Try to load dev config first
     try {
-      final jsonString = await assets.loadString('assets/config.dev.json');
+      final jsonString = await assets.loadString('assets/config.json');
       final jsonMap = jsonDecode(jsonString) as Map<String, dynamic>;
       baseConfig = AppConfig.fromJson(jsonMap);
-      _logger.i('Loaded development config');
+      _logger.i('Loaded config');
     } catch (e) {
-      _logger.w('No development config found, loading default config');
-      // Fallback to default config
-      try {
-        final jsonString = await assets.loadString('assets/config.json');
-        final jsonMap = jsonDecode(jsonString) as Map<String, dynamic>;
-        baseConfig = AppConfig.fromJson(jsonMap);
-        _logger.i('Loaded default config');
-      } catch (e) {
-        _logger.e('Error loading config: $e');
-        // Use hardcoded defaults as last resort, but better defaults should be set
-        baseConfig = AppConfig(
-          appName: 'Karasu',
-          toshokanURL: 'localhost:8080',
-          protocol: 'https://',
-          logoPath: 'assets/logo.png',
-          logoBackgroundColor: 4294967295,
-          colorScheme: AppColorScheme(
-            primaryColor: 0xFF6750A4,
-            secondaryColor: 0xFF625B71,
-            tertiaryColor: 0xFF7D5260,
-          ),
-          statusColors: AppStatusColors(
-            successColorLight: 4281896508,
-            successColorDark: 4284922730,
-            successContainerLight: 4291356361,
-            successContainerDark: 4279983648,
-            errorColorLight: 4292030255,
-            errorColorDark: 4293874512,
-            errorContainerLight: 4294954450,
-            errorContainerDark: 4290190364,
-          ),
-          debugPaintSizeEnabled: false,
-          themeMode: AppThemeMode.system,
-          defaultMaxCards: 10,
-          mode: AppMode.production,
-          lockLessons: true,
-        );
-      }
+      _logger.e('Error loading config: $e');
+      // Use hardcoded defaults as last resort, but better defaults should be set
+      baseConfig = AppConfig(
+        appName: 'Karasu',
+        toshokanURL: 'localhost:8080',
+        protocol: 'https://',
+        logoPath: 'assets/logo.png',
+        logoBackgroundColor: 4294967295,
+        colorScheme: AppColorScheme(
+          primaryColor: 0xFF6750A4,
+          secondaryColor: 0xFF625B71,
+          tertiaryColor: 0xFF7D5260,
+        ),
+        statusColors: AppStatusColors(
+          successColorLight: 4281896508,
+          successColorDark: 4284922730,
+          successContainerLight: 4291356361,
+          successContainerDark: 4279983648,
+          errorColorLight: 4292030255,
+          errorColorDark: 4293874512,
+          errorContainerLight: 4294954450,
+          errorContainerDark: 4290190364,
+        ),
+        debugPaintSizeEnabled: false,
+        themeMode: AppThemeMode.system,
+        defaultMaxCards: 10,
+        mode: AppMode.production,
+        lockLessons: true,
+      );
     }
 
     _config = AppConfig(
